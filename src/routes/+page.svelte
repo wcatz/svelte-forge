@@ -149,7 +149,7 @@
 							/>
 						</svg>
 					</button>
-					<button
+					<button on:click={() => handleClick(location.href='https://tosidrop.io/')}
 						rel="nofollow"
 						href="https://tosidrop.io/"
 						tabIndex="0"
@@ -158,7 +158,7 @@
 					>
 						Tosidrop ☔
 					</button>
-					<button
+					<button on:click={() => handleClick(location.href='https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')}
 						rel="nofollow"
 						type="button"
 						href="https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
@@ -166,7 +166,7 @@
 					>
 						PoolPM
 					</button>
-					<button
+					<button on:click={() => handleClick(location.href='https://cardanoscan.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')}
 						rel="nofollow"
 						href="https://cardanoscan.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
 						type="button"
@@ -174,7 +174,7 @@
 					>
 						Cardanoscan
 					</button>
-					<button
+					<button on:click={() => handleClick(location.href='https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')}
 						rel="nofollow"
 						href="https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
 						type="button"
@@ -182,13 +182,13 @@
 					>
 						PoolTool
 					</button>
-					<button
+					<button on:click={() => handleClick(location.href='https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c')}
 						rel="nofollow"
-						href="https://adatools.io/pools/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
+						href="https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"
 						type="button"
 						class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none md:rounded-r-md"
 					>
-						AdaTools
+						Cexplorer
 					</button>
 				</span>
 
