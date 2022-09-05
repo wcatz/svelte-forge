@@ -1,0 +1,37 @@
+{
+	"name": "svelte-forge",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"test": "playwright test",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.25.0",
+		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/adapter-node": "^1.0.0-next.88",
+		"@sveltejs/kit": "next",
+		"@tailwindcss/forms": "^0.5.0",
+		"@tailwindcss/typography": "^0.5.2",
+		"autoprefixer": "^10.4.8",
+		"eslint": "^8.16.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"postcss": "^8.4.16",
+		"prettier": "^2.6.2",
+		"prettier-plugin-svelte": "^2.7.0",
+		"svelte": "^3.44.0",
+		"svelte-preprocess": "^4.10.7",
+		"tailwindcss": "^3.1.8",
+		"vite": "^3.1.0-beta.1"
+	},
+	"type": "module",
+	"dependencies": {
+		"daisyui": "^2.24.2",
+		"theme-change": "^2.2.0"
+	}
+}
