@@ -1,0 +1,213 @@
+<svelte:head>
+	<title>Cardano Stake Pool Star Forge - Gallery</title>
+    <meta name="description" content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."/>
+
+
+</svelte:head>
+
+
+<script>
+	import { base } from '$app/paths';
+	// delegate Nami
+	function handleClick() {
+		var pool_id = 'c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae';
+		var blockfrost_project_id = 'mainnet5KZZo60WRq8nMsRWNvrvPqyrHtqucJlM';
+		var link =
+			'https://armada-alliance.com/delegation-widget?pool_id=' +
+			pool_id +
+			'&blockfrost_project_id=' +
+			blockfrost_project_id;
+		var width = 600;
+		var height = Math.min(800, parseInt(window.outerHeight, 10));
+		var left = parseInt(window.outerWidth, 10) / 2 - width / 2;
+		var top = (parseInt(window.outerHeight, 10) - height) / 2;
+		window.open(
+			link,
+			'Delegate',
+			'width=' +
+				width +
+				',height=' +
+				height +
+				',toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=1,left=' +
+				left +
+				',top=' +
+				top
+		);
+	}
+</script>
+
+<div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+	<!-- Static sidebar for desktop -->
+</div>
+<div class="flex flex-1 flex-col md:pl-64">
+   <!-- Main content -->
+   <div class="flex flex-1 items-stretch overflow-hidden">
+    <main class="flex-1 overflow-y-auto">
+        <div class="mx-auto max-w-7xl py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-baseline sm:justify-between">
+                <h2
+                    class="pt-24 text-2xl font-bold tracking-tight mt-2 block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
+                >
+                    Gallery
+                </h2>
+            </div>
+        </div>
+		
+        <div class="">
+            <div class="mx-auto max-w-7xl py-4 px-4 sm:py-4 sm:px-6 lg:px-8">
+                <div class="sm:flex sm:items-baseline sm:justify-between">
+                    <h2
+                        class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
+                    >
+                        Star Forge Images
+                    </h2>
+                </div>
+        
+                <div class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8">
+                    <div
+                        class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
+                    >
+                        <img
+                            src="{base}/assets/images/m2-star-forge.jpg"
+                            alt="Starlink connected crypto currency stake pool"
+                            class="object-cover object-center group-hover:opacity-75"
+                        />
+                        <div aria-hidden="true" class="bg-gradient-to-b from-transparent to-black opacity-50" />
+                    </div>
+                    <div
+                        class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
+                    >
+                        <img
+                            src="{base}/assets/images/better-img.png"
+                            alt="Solar powered Stake pool ADA"
+                            class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
+                        />
+                        <div
+                            aria-hidden="true"
+                            class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
+                        />
+                        <div class="flex items-end p-6 sm:absolute sm:inset-0" />
+                    </div>
+                    <div
+                        class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
+                    >
+                        <img
+                            src="{base}/assets/images/m1-star-forge.jpg"
+                            alt="ARM64 Cardano relay and stake pool"
+                            class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
+                        />
+                        <div
+                            aria-hidden="true"
+                            class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl py-8 sm:py-8 lg:max-w-none lg:py-8">
+                <div class="sm:flex sm:items-baseline sm:justify-between">
+                    <h2
+                        class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
+                    >
+                        Original Pi-Pool
+                    </h2>
+                </div>
+        
+                <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+                    <div class="group relative">
+                        <div
+                            class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+                        >
+                            <img
+							src="{base}/assets/images/stake-cardano.jpg"
+                                alt="Stake pool operating on the Cardano blockchain"
+                                class="h-full w-full object-cover object-center ring-2 ring-accent"
+                            />
+                        </div>
+                    </div>
+        
+                    <div class="group relative">
+                        <div
+                            class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+                        >
+                            <img
+							src="{base}/assets/images/ssd-stake-pool.jpg"
+                                alt="Stake pool rewards ADA Cardano"
+                                class="h-full w-full object-cover object-center "
+                            />
+                        </div>
+                    </div>
+        
+                    <div class="group relative">
+                        <div
+                            class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+                        >
+                            <img
+							src="{base}/assets/images/cardano-stake-pool.jpg"
+                                alt="Efficient yeild farming. Best Cardano stake pool"
+                                class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="mx-auto max-w-7xl py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
+                <div class="sm:flex sm:items-baseline sm:justify-between">
+                    <h2
+                        class="pt-4 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
+                    >
+                        Strawberries
+                    </h2>
+                </div>
+        
+                <div class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8">
+                    <div
+                        class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
+                    >
+                        <img
+                            src="{base}/assets/images/strawberry-cardano.jpeg"
+                            alt="Best Cardano stake pool, stake ada merchandise"
+                            class="object-cover object-center group-hover:opacity-75"
+                        />
+                        <div aria-hidden="true" class="bg-gradient-to-b from-transparent to-black opacity-50" />
+                        <div class="flex items-end p-6" />
+                    </div>
+                    <div
+                        class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
+                    >
+                        <img
+						src="{base}/assets/images/strawberry-blossom.jpeg"
+                            
+                            alt="Strawberry Blossoms Cardano developer"
+                            class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
+                        />
+                        <div
+                            aria-hidden="true"
+                            class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
+                        />
+                        <div class="flex items-end p-6 sm:absolute sm:inset-0" />
+                    </div>
+                    <div
+                        class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
+                    >
+                        <img
+						src="{base}/assets/images/strawberries-bins.jpeg"
+                            alt="Small single Cardano stake pool operator. Organic strawberries."
+                            class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
+                        />
+                        <div
+                            aria-hidden="true"
+                            class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
+                        />
+                        <div class="flex items-end p-6 sm:absolute sm:inset-0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>

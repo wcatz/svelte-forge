@@ -17,13 +17,16 @@ const config = {
 		}
 	},
 
-	plugins: [require("@tailwindcss/typography"), require('daisyui'), forms, typography],
+	plugins: [require('@tailwindcss/aspect-ratio'), require("@tailwindcss/typography"), require('daisyui'), forms, typography],
 	daisyui: {
 		themes: [
 			{
 				luxury: {
 					...require('daisyui/src/colors/themes')['[data-theme=luxury]'],
-					accent: '#6366f1'
+					accent: '#6366f1',
+					neutral: '#9ca3af',
+					'base-content': '#e5e7eb',
+					
 				}
 			},
 			{
@@ -32,7 +35,7 @@ const config = {
 					primary: '#e5e7eb',
 					secondary: '#152747',
 					accent: '#fdd202',
-					neutral: '#9ca3af',
+					neutral: '#ffff',
 					'base-100': '#6b7280',
 					info: '#357CED',
 					success: '#487423',
