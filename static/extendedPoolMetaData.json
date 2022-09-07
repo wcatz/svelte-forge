@@ -1,0 +1,25 @@
+{
+  "info": {
+    "url_png_icon_64x64": "https://adamantium.online/sun-64.png",
+    "url_png_logo": "https://adamantium.online/sun.png",
+    "location": "New Hampshire, USA",
+    "social": {
+      "twitter_handle": "OTG_WCat",
+      "telegram_handle": "WCat13",
+      "discord_handle": "WCat#6737",
+      "github_handle": "wcatz"
+    },
+    "about": {
+      "me": "https://armada-alliance.com/guides/run-a-cardano-node-using-a-prebuilt-image",
+      "server": "Fully ARMed stake pool using 110 watts +-. Starlink, Solar, Off The Grid",
+      "company": "🌟 Star Forge ⚡"
+    },
+    "my-pool-ids": {
+      "0": "c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
+    },
+    "when-satured-then-recommend": {
+      "0": "1fd1a22c53e08de6bae42053ce40d5c0f7e0b52b33eb728867505a36",
+      "1": "2a748e3885f6f73320ad16a8331247b81fe01b8d39f57eec9caa5091"
+    }
+  }
+}
