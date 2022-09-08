@@ -169,7 +169,7 @@
 				⚡
 			</h1>
 			<img
-				class="h-28 m-auto my-8"
+				class="h-28 w-28 m-auto my-8"
 				src="{base}/assets/images/Star-Forge-Logo-06.svg"
 				alt="Cardano Stake Pool Star Forge"
 			/>
