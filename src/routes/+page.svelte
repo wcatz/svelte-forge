@@ -1,10 +1,3 @@
-<svelte:head>
-	<title>🌟 Star Forge ⚡ Cardano Stake Pool</title>
-	<meta name="description" content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."/>
-</svelte:head>
-
-
-
 <script>
 	import { base } from '$app/paths';
 	import Typewriter from 'svelte-typewriter';
@@ -64,10 +57,17 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Star Forge Cardano Stake Pool</title>
+	<meta
+		name="description"
+		content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."
+	/>
+</svelte:head>
+
 <div class="">
 	<div class="absolute inset-x-10 top-56 grid grid-cols-8 gap-1 z-30">
-		<div class="hidden lg:block col-start-1 col-span-1">
-		</div>
+		<div class="hidden lg:block col-start-1 col-span-1" />
 		<div class="col-start-2 col-span-6 place-self-center">
 			<Typewriter cursor={false} mode="loopOnce" interval="150" delay="400" wordInterval="1250">
 				<h1 class="text-2xl">Welcome traveler!</h1>
@@ -78,6 +78,7 @@
 		</div>
 		<div class="hidden lg:block col-end-9 col-span-1 place-self-end">
 			<video class="rounded-t-full opacity-50" width="170" autoPlay muted playsInline loop>
+				<source src="{base}/assets/videos/Tosi_Matrix.webm" type="video/webm" />
 				<source src="{base}/assets/videos/Tosi_Matrix.mp4" type="video/mp4" />
 			</video>
 		</div>
@@ -342,17 +343,16 @@
 		</div>
 	</div>
 	<h1
-	class="relative container text-center py-6 mb-12 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
->
-<img
-class="md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 h-28 m-auto my-8"
-src="{base}/assets/images/tokens/MGTRN.gif"
-alt="Cardano Stake Pool Star Forge"
-/> Star Forge Stake Pool Token Offering 
-</h1>
+		class="relative container text-center py-6 mb-12 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
+	>
+		<img
+			class="md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 h-28 m-auto my-8"
+			src="{base}/assets/images/tokens/MGTRN.gif"
+			alt="Cardano Stake Pool Star Forge"
+		/> Star Forge Stake Pool Token Offering
+	</h1>
 
 	<div class="relative mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8">
-		
 		<div class="absolute top-0 bottom-0 left-3/4 hidden w-screen lg:block" />
 
 		<div class="mt-8 lg:grid lg:grid-cols-2 lg:gap-8">
@@ -404,12 +404,16 @@ alt="Cardano Stake Pool Star Forge"
 						playsInline
 						loop
 					>
+						<source src="{base}/assets/videos/TosiDrop.webm" type="video/webm" />
 						<source src="{base}/assets/videos/TosiDrop.mp4" type="video/mp4" />
 					</video>
 					<div>
-						
 						<div>
-							<h4 class="py-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center">How To Claim</h4>
+							<h4
+								class="py-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+							>
+								How To Claim
+							</h4>
 						</div>
 						<div class="-mb-5 flex items-center justify-center" />
 					</div>
@@ -428,72 +432,106 @@ alt="Cardano Stake Pool Star Forge"
 						.
 					</p>
 					<section class="overflow-hidden px-4">
-
 						<div class="flex flex-wrap -m-1 md:-m-2">
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="Cardano World Mobile Token stake pool" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/WMT.webp">							</div>
-						  </div>
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="Cardano MELD token stake ADA" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/MELD.webp">							</div>
-						  </div>
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="Cardano EMP token Delegate" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/EMP.webp">							</div>
-						  </div>
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="Nunet NTX Cardano token" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/NXT.webp">							</div>
-						  </div>
-
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="PAVIA Metaverse token Cardano" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/PAVIA.webp">							</div>
-						  </div>
-
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="cTOSI Cardano Token claim" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/cTOSI.webp">							</div>
-						  </div>
-						  <div class="flex flex-wrap w-1/4">
-							  <div class="w-full p-1 md:p-2">
-								<img alt="CLAP Cardano native token" class="block object-cover object-center w-full h-full rounded-lg"
-								src="{base}/assets/images/tokens/CLAP.webp">							  </div>
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="Cardano World Mobile Token stake pool"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/WMT.webp"
+									/>
+								</div>
 							</div>
 							<div class="flex flex-wrap w-1/4">
-							  <div class="w-full p-1 md:p-2">
-								<img alt="HOSKY token claim Cardano" class="block object-cover object-center w-full h-full rounded-lg"
-								  src="{base}/assets/images/tokens/HOSKY.webp">
-							  </div>
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="Cardano MELD token stake ADA"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/MELD.webp"
+									/>
+								</div>
+							</div>
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="Cardano EMP token Delegate"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/EMP.webp"
+									/>
+								</div>
+							</div>
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="Nunet NTX Cardano token"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/NXT.webp"
+									/>
+								</div>
+							</div>
+
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="PAVIA Metaverse token Cardano"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/PAVIA.webp"
+									/>
+								</div>
+							</div>
+
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="cTOSI Cardano Token claim"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/cTOSI.webp"
+									/>
+								</div>
+							</div>
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="CLAP Cardano native token"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/CLAP.webp"
+									/>
+								</div>
+							</div>
+							<div class="flex flex-wrap w-1/4">
+								<div class="w-full p-1 md:p-2">
+									<img
+										alt="HOSKY token claim Cardano"
+										class="block object-cover object-center w-full h-full rounded-lg"
+										src="{base}/assets/images/tokens/HOSKY.webp"
+									/>
+								</div>
 							</div>
 						</div>
 					</section>
-
-
 				</div>
 			</div>
 		</div>
-		<h4 class="pt-12 pb-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center">
+		<h4
+			class="pt-12 pb-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+		>
 			Token Offering Details
 		</h4>
 		<p class="mx-auto mb-10 mt-5 max-w-prose text-xl">
-			Every epoch you stake with OTG you will unlock a new tier of tokens. This round is scheduled for 20 epochs ending on epoch 380.
-			You must stake atleast 1,000 ADA to the pool to qualify. Rewards are available to claim for 3 epochs from the time they are given. 
-			For more information visit the Vending Machines distribution page. <a class="underline" href="http://vm.adaseal.eu/distributions">Vending Machine distributions</a>
+			Every epoch you stake with OTG you will unlock a new tier of tokens. This round is scheduled
+			for 20 epochs ending on epoch 380. You must stake atleast 1,000 ADA to the pool to qualify.
+			Rewards are available to claim for 3 epochs from the time they are given. For more information
+			visit the Vending Machines distribution page. <a
+				class="underline"
+				href="http://vm.adaseal.eu/distributions">Vending Machine distributions</a
+			>
 		</p>
 	</div>
-	
-	
 
 	<div>
-		<h4 class="py-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center">
+		<h4
+			class="py-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+		>
 			Reasons to Delegate ADA
 		</h4>
 	</div>
@@ -501,7 +539,6 @@ alt="Cardano Stake Pool Star Forge"
 	<div
 		class="mx-auto w-3/4 max-w-7xl py-8 px-4 sm:px-6 lg:grid lg:grid-cols-3 lg:gap-x-8 lg:py-12 lg:px-8"
 	>
-	
 		<div />
 		<div class="mt-12 lg:col-span-4 lg:mt-0">
 			<dl
@@ -545,7 +582,8 @@ alt="Cardano Stake Pool Star Forge"
 						<p class="ml-9 text-lg font-medium leading-6">Single Stake Pool Operator</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						A highly efficient, secure and decentralized Cardano must have single stake pool operations spread out around the globe.
+						A highly efficient, secure and decentralized Cardano must have single stake pool
+						operations spread out around the globe.
 					</dd>
 				</div>
 
@@ -608,7 +646,8 @@ alt="Cardano Stake Pool Star Forge"
 						<p class="ml-9 text-lg font-medium leading-6">Efficient ARM64 Devops</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						CPU architecture which is much more efficient and powerfull than traditional x86 based processors.
+						CPU architecture which is much more efficient and powerfull than traditional x86 based
+						processors.
 					</dd>
 				</div>
 
@@ -671,7 +710,8 @@ alt="Cardano Stake Pool Star Forge"
 						<p class="ml-9 text-lg font-medium leading-6">Disaster preparedness</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base ">
-						The Cardano stake pool operations have redundant power and internet supply. Fortified hardened and prepared.
+						The Cardano stake pool operations have redundant power and internet supply. Fortified
+						hardened and prepared.
 					</dd>
 				</div>
 			</dl>
@@ -680,7 +720,6 @@ alt="Cardano Stake Pool Star Forge"
 </div>
 
 <style>
-	
 	.starscreen {
 		height: 75vh;
 	}

@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Cardano Stake Pool 🌟 Star Forge ⚡ - Gallery</title>
+	<title>Cardano Stake Pool Star Forge - Gallery</title>
     <meta name="description" content="Stake ADA for passive income, best Cardano stake pool to delegate ADA cryptocurrency"/>
 </svelte:head>
 

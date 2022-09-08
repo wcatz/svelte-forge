@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Cardano Stake Pool 🌟 Star Forge ⚡ - About</title>
+	<title>Cardano Stake Pool Star Forge - About</title>
 	<meta name="description" content="Stake ada on the most efficient blockchain. Cardano is the future and Star Forge stake pool is here to stay"/>
 	
 </svelte:head>
@@ -193,7 +193,7 @@
 						<figure>
 							<img
 								class="w-full rounded-lg"
-								src="{base}/assets/images/m3-star-forge.jpg"
+								src="{base}/assets/images/m3-star-forge.webp"
 								alt="Best return on ADA Cardano Stake Pool"
 								width="1310"
 								height="873"
@@ -217,7 +217,7 @@
 						<figure>
 							<img
 								class="w-full rounded-lg"
-								src="{base}/assets/images/pool-on-stool.jpg"
+								src="{base}/assets/images/pool-on-stool.webp"
 								alt="Raspberry Pi Cardano stake pool"
 								width="1310"
 								height="873"
@@ -245,7 +245,7 @@
 						<figure>
 							<img
 								class="w-full rounded-lg"
-								src="{base}/assets/images/completed-packs.jpg"
+								src="{base}/assets/images/completed-packs.webp"
 								alt="Stake ADA passive income Cardano stake pool delegate."
 								width="1310"
 								height="873"
