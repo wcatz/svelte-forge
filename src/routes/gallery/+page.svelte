@@ -66,7 +66,7 @@
                         class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
                     >
                         <img
-                            src="{base}/assets/images/m2-star-forge.jpg"
+                            src="{base}/assets/images/m2-star-forge.webp"
                             alt="Starlink connected crypto currency stake pool"
                             class="object-cover object-center group-hover:opacity-75"
                         />
@@ -76,7 +76,7 @@
                         class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
                     >
                         <img
-                            src="{base}/assets/images/better-img.png"
+                            src="{base}/assets/images/better-img.webp"
                             alt="Solar powered Stake pool ADA"
                             class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
                         />
@@ -90,7 +90,7 @@
                         class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
                     >
                         <img
-                            src="{base}/assets/images/m1-star-forge.jpg"
+                            src="{base}/assets/images/m1-star-forge.webp"
                             alt="ARM64 Cardano relay and stake pool"
                             class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
                         />
@@ -119,7 +119,7 @@
                             class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
                         >
                             <img
-							src="{base}/assets/images/stake-cardano.jpg"
+							src="{base}/assets/images/stake-cardano.webp"
                                 alt="Stake pool operating on the Cardano blockchain"
                                 class="h-full w-full object-cover object-center ring-2 ring-accent"
                             />
@@ -131,7 +131,7 @@
                             class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
                         >
                             <img
-							src="{base}/assets/images/ssd-stake-pool.jpg"
+							src="{base}/assets/images/ssd-stake-pool.webp"
                                 alt="Stake pool rewards ADA Cardano"
                                 class="h-full w-full object-cover object-center "
                             />
@@ -143,7 +143,7 @@
                             class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
                         >
                             <img
-							src="{base}/assets/images/cardano-stake-pool.jpg"
+							src="{base}/assets/images/cardano-stake-pool.webp"
                                 alt="Efficient yeild farming. Best Cardano stake pool"
                                 class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
                             />
@@ -167,7 +167,7 @@
                         class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
                     >
                         <img
-                            src="{base}/assets/images/strawberry-cardano.jpeg"
+                            src="{base}/assets/images/strawberry-cardano.webp"
                             alt="Best Cardano stake pool, stake ada merchandise"
                             class="object-cover object-center group-hover:opacity-75"
                         />
@@ -178,7 +178,7 @@
                         class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
                     >
                         <img
-						src="{base}/assets/images/strawberry-blossom.jpeg"
+						src="{base}/assets/images/strawberry-blossom.webp"
                             
                             alt="Strawberry Blossoms Cardano developer"
                             class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
@@ -193,7 +193,7 @@
                         class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
                     >
                         <img
-						src="{base}/assets/images/strawberries-bins.jpeg"
+						src="{base}/assets/images/strawberries-bins.webp"
                             alt="Small single Cardano stake pool operator. Organic strawberries."
                             class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
                         />
@@ -222,7 +222,7 @@
                             class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
                         >
                             <img
-							src="{base}/assets/images/baby-ducks.jpeg"
+							src="{base}/assets/images/baby-ducks.webp"
                                 alt="Best rewards are from a stake pool operator who has ducks"
                                 class="h-full w-full object-cover object-center ring-2 ring-accent"
                             />
@@ -234,7 +234,7 @@
                             class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
                         >
                             <img
-							src="{base}/assets/images/ducks-big.jpeg"
+							src="{base}/assets/images/ducks-big.webp"
                                 alt="Ducks who love staking ada"
                                 class="h-full w-full object-cover object-center "
                             />
@@ -246,7 +246,7 @@
                             class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
                         >
                             <img
-							src="{base}/assets/images/ducks-on-grass.jpeg"
+							src="{base}/assets/images/ducks-on-grass.webp"
                                 alt="Duck tokens are available on the Cardano preview testnet"
                                 class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
                             />

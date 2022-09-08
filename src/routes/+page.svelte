@@ -86,7 +86,7 @@
 
 <div
 	class="starscreen relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px]"
-	style:background-image={`url(../assets/images/stake-pool-hero.jpg)`}
+	style:background-image={`url(../assets/images/stake-pool-hero.webp)`}
 >
 	<div class="absolute -bottom-2 z-30 left-1/2 transform -translate-x-1/2">
 		<div class="hidden lg:block">
@@ -384,7 +384,7 @@ alt="Cardano Stake Pool Star Forge"
 						<div class="aspect-w-12 aspect-h-7 lg:aspect-none">
 							<img
 								class="rounded-lg object-cover object-center shadow-lg ring-2 ring-accent"
-								src="{base}/assets/images/better-img.png"
+								src="{base}/assets/images/better-img.webp"
 								alt="Cardano Stake Pool Star Forge"
 								width={599}
 								height={839}
@@ -433,44 +433,44 @@ alt="Cardano Stake Pool Star Forge"
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Cardano World Mobile Token stake pool" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/WMT.png">							</div>
+							  src="{base}/assets/images/tokens/WMT.webp">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Cardano MELD token stake ADA" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/MELD.png">							</div>
+							  src="{base}/assets/images/tokens/MELD.webp">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Cardano EMP token Delegate" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/EMP.png">							</div>
+							  src="{base}/assets/images/tokens/EMP.webp">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Nunet NTX Cardano token" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/NXT.png">							</div>
+							  src="{base}/assets/images/tokens/NXT.webp">							</div>
 						  </div>
 
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="PAVIA Metaverse token Cardano" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/PAVIA.png">							</div>
+							  src="{base}/assets/images/tokens/PAVIA.webp">							</div>
 						  </div>
 
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="cTOSI Cardano Token claim" class="block object-cover object-center w-full h-full rounded-lg"
-							  src="{base}/assets/images/tokens/cTOSI.png">							</div>
+							  src="{base}/assets/images/tokens/cTOSI.webp">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							  <div class="w-full p-1 md:p-2">
 								<img alt="CLAP Cardano native token" class="block object-cover object-center w-full h-full rounded-lg"
-								src="{base}/assets/images/tokens/CLAP.png">							  </div>
+								src="{base}/assets/images/tokens/CLAP.webp">							  </div>
 							</div>
 							<div class="flex flex-wrap w-1/4">
 							  <div class="w-full p-1 md:p-2">
 								<img alt="HOSKY token claim Cardano" class="block object-cover object-center w-full h-full rounded-lg"
-								  src="{base}/assets/images/tokens/HOSKY.png">
+								  src="{base}/assets/images/tokens/HOSKY.webp">
 							  </div>
 							</div>
 						</div>
