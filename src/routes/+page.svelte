@@ -1,3 +1,8 @@
+<svelte:head>
+	<title>Star Forge Cardano Stake Pool</title>
+	<meta name="description" content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."/>
+</svelte:head>
+
 <script>
 	import { base } from '$app/paths';
 	import Typewriter from 'svelte-typewriter';
@@ -57,13 +62,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Star Forge Cardano Stake Pool</title>
-	<meta
-		name="description"
-		content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."
-	/>
-</svelte:head>
 
 <div class="">
 	<div class="absolute inset-x-10 top-56 grid grid-cols-8 gap-1 z-30">
