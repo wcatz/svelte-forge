@@ -346,7 +346,7 @@
 		class="relative container text-center py-6 mb-12 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
 	>
 		<img
-			class="md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 w-28 h-28 m-auto my-8"
+			class="md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 h-28 m-auto my-8"
 			src="{base}/assets/images/tokens/MGTRN.gif"
 			alt="Cardano Stake Pool Star Forge"
 		/> Star Forge Stake Pool Token Offering
