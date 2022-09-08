@@ -650,7 +650,7 @@ alt="Cardano Stake Pool Star Forge"
 						<p class="ml-9 text-lg font-medium leading-6">TosiDrop</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						Star Forge Cardano stake pool delegates by pass the fee for claiming prpemium tokens.
+						Star Forge Cardano stake pool delegates by pass the fee for claiming premium tokens.
 					</dd>
 				</div>
 
