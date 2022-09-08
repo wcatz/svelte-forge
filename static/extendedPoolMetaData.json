@@ -1,6 +1,6 @@
 {
   "info": {
-    "url_png_icon_64x64": "https://adamantium.online/sun-64.png",
+    "url_png_icon_64x64": "https://adamantium.online/sun.png",
     "url_png_logo": "https://adamantium.online/sun.png",
     "location": "New Hampshire, USA",
     "social": {
@@ -10,7 +10,7 @@
       "github_handle": "wcatz"
     },
     "about": {
-      "me": "https://armada-alliance.com/guides/run-a-cardano-node-using-a-prebuilt-image",
+      "me": "https://armada-alliance.com/docs/",
       "server": "Fully ARMed stake pool using 110 watts +-. Starlink, Solar, Off The Grid",
       "company": "🌟 Star Forge ⚡"
     },

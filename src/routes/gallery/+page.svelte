@@ -1,8 +1,6 @@
 <svelte:head>
-	<title>Cardano Stake Pool Star Forge - Gallery</title>
-    <meta name="description" content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."/>
-
-
+	<title>Cardano Stake Pool 🌟 Star Forge ⚡ - Gallery</title>
+    <meta name="description" content="Stake ADA for passive income, best Cardano stake pool to delegate ADA cryptocurrency"/>
 </svelte:head>
 
 
@@ -204,6 +202,55 @@
                             class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
                         />
                         <div class="flex items-end p-6 sm:absolute sm:inset-0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl py-8 sm:py-8 lg:max-w-none lg:py-8">
+                <div class="sm:flex sm:items-baseline sm:justify-between">
+                    <h2
+                        class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
+                    >
+                        The Ducks
+                    </h2>
+                </div>
+        
+                <div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
+                    <div class="group relative">
+                        <div
+                            class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+                        >
+                            <img
+							src="{base}/assets/images/baby-ducks.jpeg"
+                                alt="Best rewards are from a stake pool operator who has ducks"
+                                class="h-full w-full object-cover object-center ring-2 ring-accent"
+                            />
+                        </div>
+                    </div>
+        
+                    <div class="group relative">
+                        <div
+                            class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+                        >
+                            <img
+							src="{base}/assets/images/ducks-big.jpeg"
+                                alt="Ducks who love staking ada"
+                                class="h-full w-full object-cover object-center "
+                            />
+                        </div>
+                    </div>
+        
+                    <div class="group relative">
+                        <div
+                            class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+                        >
+                            <img
+							src="{base}/assets/images/ducks-on-grass.jpeg"
+                                alt="Duck tokens are available on the Cardano preview testnet"
+                                class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

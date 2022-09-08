@@ -1,9 +1,9 @@
 <svelte:head>
-	<title>Star Forge Cardano Stake Pool</title>
+	<title>🌟 Star Forge ⚡ Cardano Stake Pool</title>
 	<meta name="description" content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."/>
-
-
 </svelte:head>
+
+
 
 <script>
 	import { base } from '$app/paths';
@@ -65,8 +65,10 @@
 </script>
 
 <div class="">
-	<div class="absolute inset-x-10 top-64 grid grid-cols-6 gap-1 z-30">
-		<div class="col-start-2 col-span-4 place-self-center">
+	<div class="absolute inset-x-10 top-56 grid grid-cols-8 gap-1 z-30">
+		<div class="hidden lg:block col-start-1 col-span-1">
+		</div>
+		<div class="col-start-2 col-span-6 place-self-center">
 			<Typewriter cursor={false} mode="loopOnce" interval="150" delay="400" wordInterval="1250">
 				<h1 class="text-2xl">Welcome traveler!</h1>
 				<h1 class="text-2xl">Forge authenticated.</h1>
@@ -74,7 +76,7 @@
 				<h1 class="text-2xl">Have a nice day.</h1>
 			</Typewriter>
 		</div>
-		<div class="hidden lg:block col-end-7 col-span-1 place-self-end">
+		<div class="hidden lg:block col-end-9 col-span-1 place-self-end">
 			<video class="rounded-t-full opacity-50" width="170" autoPlay muted playsInline loop>
 				<source src="{base}/assets/videos/Tosi_Matrix.mp4" type="video/mp4" />
 			</video>
@@ -281,6 +283,7 @@
 						>
 							Latest Pool Stats
 						</h1>
+
 						<p class="my-5">Information about pools performance/rewards for the last 5 payouts</p>
 					</div>
 				</div>
@@ -339,9 +342,13 @@
 		</div>
 	</div>
 	<h1
-	class="py-6 mb-12 leading-8 font-extrabold tracking-tight text-center text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
+	class="relative container text-center py-6 mb-12 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
 >
-	Star Forge Stake Pool Token Offering
+<img
+class="md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 h-28 m-auto my-8"
+src="{base}/assets/images/tokens/MGTRN.gif"
+alt="Cardano Stake Pool Star Forge"
+/> Star Forge Stake Pool Token Offering 
 </h1>
 
 	<div class="relative mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8">
@@ -426,49 +433,44 @@
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Cardano World Mobile Token stake pool" class="block object-cover object-center w-full h-full rounded-lg"
-								src="https://pool.pm/registry/1d7f33bd23d85e1a25d87d86fac4f199c3197a2f7afeb662a0f34e1e/worldmobiletoken/logo.png">
-							</div>
+							  src="{base}/assets/images/tokens/WMT.png">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Cardano MELD token stake ADA" class="block object-cover object-center w-full h-full rounded-lg"
-								src="https://pool.pm/registry/6ac8ef33b510ec004fe11585f7c5a9f0c07f0c23428ab4f29c1d7d10/MELD/logo.png">
-							</div>
+							  src="{base}/assets/images/tokens/MELD.png">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Cardano EMP token Delegate" class="block object-cover object-center w-full h-full rounded-lg"
-								src="https://pool.pm/registry/6c8642400e8437f737eb86df0fc8a8437c760f48592b1ba8f5767e81/Empowa/logo.png">
-							</div>
-						  </div>
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="cTOSI Cardano Token claim" class="block object-cover object-center w-full h-full rounded-lg"
-								src="https://nftstorage.link/ipfs/QmXU7xmoFHbxJLWxwAk8sMu11JAb24SYCospBHNXeubL1U">
-							</div>
-						  </div>
-						  <div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-							  <img alt="PAVIA Metaverse token Cardano" class="block object-cover object-center w-full h-full rounded-lg"
-								src="https://pool.pm/registry/884892bcdc360bcef87d6b3f806e7f9cd5ac30d999d49970e7a903ae/PAVIA/logo.png">
-							</div>
+							  src="{base}/assets/images/tokens/EMP.png">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 							  <img alt="Nunet NTX Cardano token" class="block object-cover object-center w-full h-full rounded-lg"
-								src="https://pool.pm/registry/edfd7a1d77bcb8b884c474bdc92a16002d1fb720e454fa6e99344479/NTX/logo.png">
-							</div>
+							  src="{base}/assets/images/tokens/NXT.png">							</div>
+						  </div>
+
+						  <div class="flex flex-wrap w-1/4">
+							<div class="w-full p-1 md:p-2">
+							  <img alt="PAVIA Metaverse token Cardano" class="block object-cover object-center w-full h-full rounded-lg"
+							  src="{base}/assets/images/tokens/PAVIA.png">							</div>
+						  </div>
+
+						  <div class="flex flex-wrap w-1/4">
+							<div class="w-full p-1 md:p-2">
+							  <img alt="cTOSI Cardano Token claim" class="block object-cover object-center w-full h-full rounded-lg"
+							  src="{base}/assets/images/tokens/cTOSI.png">							</div>
 						  </div>
 						  <div class="flex flex-wrap w-1/4">
 							  <div class="w-full p-1 md:p-2">
 								<img alt="CLAP Cardano native token" class="block object-cover object-center w-full h-full rounded-lg"
-								  src="https://pool.pm/registry/db30c7905f598ed0154de14f970de0f61f0cb3943ed82c891968480a/CLAP/logo.png">
-							  </div>
+								src="{base}/assets/images/tokens/CLAP.png">							  </div>
 							</div>
 							<div class="flex flex-wrap w-1/4">
 							  <div class="w-full p-1 md:p-2">
 								<img alt="HOSKY token claim Cardano" class="block object-cover object-center w-full h-full rounded-lg"
-								  src="https://pool.pm/registry/a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235/HOSKY/logo.png">
+								  src="{base}/assets/images/tokens/HOSKY.png">
 							  </div>
 							</div>
 						</div>
@@ -492,7 +494,7 @@
 
 	<div>
 		<h4 class="py-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center">
-			Reasons to Delegate
+			Reasons to Delegate ADA
 		</h4>
 	</div>
 
@@ -522,7 +524,7 @@
 						<p class="ml-9 text-lg font-medium leading-6">Pool Operator Alliance</p>
 					</dt>
 					<dd class="mt-2 ml-9 ">
-						Member of the Armada, Cardano single pool and climate nuetral Cardano alliances.
+						Member of the Armada, Cardano single pool and climate neutral Cardano alliances.
 					</dd>
 				</div>
 
@@ -543,7 +545,7 @@
 						<p class="ml-9 text-lg font-medium leading-6">Single Stake Pool Operator</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						A highly efficient, secure and decentralized Cardano favors single stake pool operations.
+						A highly efficient, secure and decentralized Cardano must have single stake pool operations spread out around the globe.
 					</dd>
 				</div>
 
