@@ -57,7 +57,7 @@
 			class="menu menu-compact p-2 w-48 rounded-box z-50 mb-1 border-t-2 border-2 border-accent bg-secondary bg-opacity-50"
 		>
 		<li class:active={$page.url.pathname === '/'}>
-				<a sveltekit:prefetch href="/">
+				<a data-sveltekit-prefetch href="/">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -77,7 +77,7 @@
 				</a>
 			</li>
 			<li class:active={$page.url.pathname === '/gallery'}>
-				<a sveltekit:prefetch href="/gallery">
+				<a data-sveltekit-prefetch href="/gallery">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -102,7 +102,7 @@
 				</a>
 			</li>
 			<li class:active={$page.url.pathname === '/about'}>
-				<a sveltekit:prefetch href="/about">
+				<a data-sveltekit-prefetch href="/about">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -125,8 +125,8 @@
 	</div>
 </div>
 <div class="btm-nav visible lg:hidden z-50">
-	<button class:active={$page.url.pathname === '/'}>
-		<a sveltekit:prefetch href="/">
+	<button class="border-accent" class:active={$page.url.pathname === '/'}>
+		<a data-sveltekit-prefetch href="/">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -143,8 +143,8 @@
 			</svg>
 		</a>
 	</button>
-	<button class:active={$page.url.pathname === '/gallery'}>
-		<a sveltekit:prefetch href="/gallery">
+	<button class="border-accent" class:active={$page.url.pathname === '/gallery'}>
+		<a data-sveltekit-prefetch href="/gallery">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -166,8 +166,8 @@
 			</svg>
 		</a>
 	</button>
-	<button class:active={$page.url.pathname === '/about'}>
-		<a sveltekit:prefetch href="/about">
+	<button  class="border-accent" class:active={$page.url.pathname === '/about'}>
+		<a data-sveltekit-prefetch href="/about">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
