@@ -1,11 +1,16 @@
 <script>
 	import '../app.css';
+	import { page } from "$app/stores"
 	import { onMount } from 'svelte';
 	import { themeChange } from 'theme-change';
+
+	$: isActive = $page.url.pathname
 	var today = new Date();
 	var year = today.getFullYear();
 
   let current = 'home';
+
+
 
 	// NOTE: the element that is using one of the theme attributes must be in the DOM on mount
 	onMount(() => {
@@ -51,8 +56,8 @@
 		<ul
 			class="menu menu-compact p-2 w-48 rounded-box z-50 mb-1 border-t-2 border-2 border-accent bg-secondary bg-opacity-50"
 		>
-			<li>
-				<a href="/">
+		<li class:active={$page.url.pathname === '/'}>
+				<a sveltekit:prefetch href="/">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -71,8 +76,8 @@
 					Home
 				</a>
 			</li>
-			<li>
-				<a href="/gallery">
+			<li class:active={$page.url.pathname === '/gallery'}>
+				<a sveltekit:prefetch href="/gallery">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -96,8 +101,8 @@
 					Gallery
 				</a>
 			</li>
-			<li>
-				<a href="/about">
+			<li class:active={$page.url.pathname === '/about'}>
+				<a sveltekit:prefetch href="/about">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -120,8 +125,8 @@
 	</div>
 </div>
 <div class="btm-nav visible lg:hidden z-50">
-	<button>
-		<a href="/">
+	<button class:active={$page.url.pathname === '/'}>
+		<a sveltekit:prefetch href="/">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -138,8 +143,8 @@
 			</svg>
 		</a>
 	</button>
-	<button class="">
-		<a href="/gallery">
+	<button class:active={$page.url.pathname === '/gallery'}>
+		<a sveltekit:prefetch href="/gallery">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -161,8 +166,8 @@
 			</svg>
 		</a>
 	</button>
-	<button>
-		<a href="/about">
+	<button class:active={$page.url.pathname === '/about'}>
+		<a sveltekit:prefetch href="/about">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
