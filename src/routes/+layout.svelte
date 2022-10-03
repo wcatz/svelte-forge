@@ -188,7 +188,7 @@
 
 <slot />
 
-<footer class="footer items-center border-t-2 border-accent p-4 text-neutral-content px-10">
+<footer class="footer items-center border-t-2 border-accent p-4 px-10">
 	<div class="items-center grid-flow-col">
 		<svg
 			width="36"

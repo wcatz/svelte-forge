@@ -11,13 +11,13 @@
 
 	let getPoolHistory = (async () => {
 		const res = await fetch(
-			'https://api.koios.rest/api/v0/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
+			'https://koios.tosidrop.io/api/v0/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
 		);
 		return await res.json();
 	})();
 
 	let getPoolInfo = (async () => {
-		const res = await fetch('https://api.koios.rest/api/v0/pool_info', {
+		const res = await fetch('https://koios.tosidrop.io/api/v0/pool_info', {
 			method: 'post',
 			headers: {
 				Accept: 'application/json',
