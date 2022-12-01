@@ -556,10 +556,10 @@
 						>
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
 						</svg>
-						<p class="ml-9 text-lg font-medium leading-6">Pool Operator Alliance</p>
+						<p class="ml-9 text-lg font-medium leading-6">Pool Operator Alliance's</p>
 					</dt>
 					<dd class="mt-2 ml-9 ">
-						Member of the Armada, Cardano single pool and climate neutral Cardano alliances.
+						Member of the <a class="underline" href="https://armada-alliance.com/">Armada (founding)</a>, <a class="underline" href="https://singlepoolalliance.net/">Cardano Single Pool</a> and <a class="underline" href="https://climateneutralcardano.org/">Climate Neutral Cardano</a> alliances.
 					</dd>
 				</div>
 
@@ -602,7 +602,7 @@
 						<p class="ml-9 text-lg font-medium leading-6">Solar Powered</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						The Star Forge is designed to be completely Off The Grid, using renewables for power.
+						The Star Forge is designed to be completely Off The Grid, using the sun for power. 2 weeks runtime on 6 fully charged <a class="underline" href="https://www.amperetime.com/products/ampere-time-12v-300ah-lithium-lifepo4-battery">batteries</a>.
 					</dd>
 				</div>
 
@@ -666,7 +666,7 @@
 						<p class="ml-9 text-lg font-medium leading-6">How To Guides</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						Armada Alliance documentation to help train stake pool operators and provide supprt.
+						<a class="underline" href="https://armada-alliance.com/docs/">Armada Alliance documentation</a> to help train stake pool operators and provide supprt. Always willing to teach somebody Linux.
 					</dd>
 				</div>
 
@@ -687,7 +687,7 @@
 						<p class="ml-9 text-lg font-medium leading-6">TosiDrop</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						Star Forge Cardano stake pool delegates by pass the fee for claiming premium tokens.
+						Star Forge Cardano stake pool delegates by pass the fee for claiming premium tokens. Tosidrop & Vending machine core development team member.
 					</dd>
 				</div>
 
@@ -709,7 +709,7 @@
 					</dt>
 					<dd class="mt-2 ml-9 text-base ">
 						The Cardano stake pool operations have redundant power and internet supply. Fortified
-						hardened and prepared.
+						hardened and prepared. Backup hardware ready to be put into production.
 					</dd>
 				</div>
 			</dl>
