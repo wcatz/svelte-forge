@@ -110,7 +110,7 @@
 						</p>
 						<p>
 							I provide support to other Stake Pool operators, writing guides and providing a
-							flashable image to quickly spin up and
+							image you can flash to quickly spin up and
 							<a
 								href="https://armada-alliance.com/docs/"
 							>
@@ -122,8 +122,8 @@
 							Security & Privacy
 						</h2>
 						<p>
-							The block producer is isolated on a seperate vlan with it's own 1
-							Gbps interface connected directly to Starlinks power brick.
+							The block producer is isolated on a separate vlan with it's own 1
+							Gbps interface connected directly to Starlink's power brick.
 						  </p>
 						  <blockquote>
 							<p>
@@ -163,7 +163,7 @@
 						</h2>
 						<p>
 							True decentralization of the Cardano blockchain provides
-							security to everyones investment. Staking to a baremetal single
+							security to everyone's investment. Staking to a baremetal single
 							pool operator is extremely important and it is up to you to
 							stake responsibly. The Star Forge is doing it's part by
 							providing an extremely efficient and secure option. Please
@@ -238,7 +238,7 @@
 						<p>
 							Building this battery took hundreds of hours and I do not recommend it. Each cell has
 							to be obtained, taken apart and fully charged. Then discharged while measuring it's
-							capacity and charged back up to a storage charge untill all the rest are processed.
+							capacity and charged back up to a storage charge until all the rest are processed.
 							Then the banks need to be balanced, assembled and then soldered with 5 amp fast blow
 							glass fuses on both sides. The soldering itself took over 50 hours.
 						</p>
