@@ -75,7 +75,7 @@
 			</Typewriter>
 		</div>
 		<div class="hidden lg:block col-end-9 col-span-1 place-self-end">
-			<video class="rounded-t-full opacity-50" width="170" autoPlay muted playsInline loop>
+			<video class="rounded-t-full opacity-50" width="120" autoPlay muted playsInline loop>
 				<source src="{base}/assets/videos/Tosi_Matrix.webm" type="video/webm" />
 				<source src="{base}/assets/videos/Tosi_Matrix.mp4" type="video/mp4" />
 			</video>
@@ -168,7 +168,7 @@
 			</h1>
 			<img
 				class="h-28 w-28 m-auto my-8"
-				src="{base}/assets/images/Star-Forge-Logo-06.svg"
+				src="{base}/assets/images/Star-Forge-Sun.webp"
 				alt="Cardano Stake Pool Star Forge"
 			/>
 			<p
