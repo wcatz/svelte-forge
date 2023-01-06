@@ -1,8 +1,3 @@
-<svelte:head>
-	<title>Star Forge Cardano Stake Pool</title>
-	<meta name="description" content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."/>
-</svelte:head>
-
 <script>
 	import { base } from '$app/paths';
 	import Typewriter from 'svelte-typewriter';
@@ -62,6 +57,13 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Star Forge Cardano Stake Pool</title>
+	<meta
+		name="description"
+		content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."
+	/>
+</svelte:head>
 
 <div class="">
 	<div class="absolute inset-x-10 top-56 grid grid-cols-8 gap-1 z-30">
@@ -102,7 +104,7 @@
 					/>
 				</div>
 			{:then data}
-				<div class="flex justify-center text-center">
+				<div class=" flex justify-center text-center">
 					<dl
 						class="flex flex-cols-1 gap-2 sm:flex-cols-7 bg-secondary bg-opacity-50 mb-1 border-opacity-70 border-t-2 border-l-2 border-r-2 border-accent rounded-t-lg"
 					>
@@ -344,7 +346,7 @@
 		class="relative container text-center py-6 mb-12 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
 	>
 		<img
-			class="md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 h-28 m-auto my-8"
+			class="animate-pulse md:relative lg:absolute -top-10 md:-top-10 lg:pl-24 h-28 m-auto my-8"
 			src="{base}/assets/images/tokens/MGTRN.gif"
 			alt="Cardano Stake Pool Star Forge"
 		/> Star Forge Stake Pool Token Offering
@@ -559,7 +561,13 @@
 						<p class="ml-9 text-lg font-medium leading-6">Pool Operator Alliance's</p>
 					</dt>
 					<dd class="mt-2 ml-9 ">
-						Member of the <a class="underline" href="https://armada-alliance.com/">Armada (founding)</a>, <a class="underline" href="https://singlepoolalliance.net/">Cardano Single Pool</a> and <a class="underline" href="https://climateneutralcardano.org/">Climate Neutral Cardano</a> alliances.
+						Member of the <a class="underline" href="https://armada-alliance.com/"
+							>Armada (founding)</a
+						>, <a class="underline" href="https://singlepoolalliance.net/">Cardano Single Pool</a>
+						and
+						<a class="underline" href="https://climateneutralcardano.org/"
+							>Climate Neutral Cardano</a
+						> alliances.
 					</dd>
 				</div>
 
@@ -602,7 +610,12 @@
 						<p class="ml-9 text-lg font-medium leading-6">Solar Powered</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						The Star Forge is designed to be completely Off The Grid, using the sun for power. 2 weeks runtime on 6 fully charged <a class="underline" href="https://www.amperetime.com/products/ampere-time-12v-300ah-lithium-lifepo4-battery">batteries</a>.
+						The Star Forge is designed to be completely Off The Grid, using the sun for power. 2
+						weeks runtime on 6 fully charged <a
+							class="underline"
+							href="https://www.amperetime.com/products/ampere-time-12v-300ah-lithium-lifepo4-battery"
+							>batteries</a
+						>.
 					</dd>
 				</div>
 
@@ -666,7 +679,10 @@
 						<p class="ml-9 text-lg font-medium leading-6">How To Guides</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						<a class="underline" href="https://armada-alliance.com/docs/">Armada Alliance documentation</a> to help train stake pool operators and provide supprt. Always willing to teach somebody Linux.
+						<a class="underline" href="https://armada-alliance.com/docs/"
+							>Armada Alliance documentation</a
+						> to help train stake pool operators and provide supprt. Always willing to teach somebody
+						Linux.
 					</dd>
 				</div>
 
@@ -687,7 +703,8 @@
 						<p class="ml-9 text-lg font-medium leading-6">TosiDrop</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						Star Forge Cardano stake pool delegates by pass the fee for claiming premium tokens. Tosidrop & Vending machine core development team member.
+						Star Forge Cardano stake pool delegates by pass the fee for claiming premium tokens.
+						Tosidrop & Vending machine core development team member.
 					</dd>
 				</div>
 

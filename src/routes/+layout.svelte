@@ -259,7 +259,7 @@
 
 	</div>
 	<div class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-		<a href="https://matrix.to/#/#star-forge:matrix.adamantium.online"
+		<a href="https://chat.adamantium.online/"
 		><svg
 			width="75"
 			height="32"
