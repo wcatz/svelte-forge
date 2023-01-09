@@ -563,11 +563,8 @@
 					<dd class="mt-2 ml-9 ">
 						Member of the <a class="underline" href="https://armada-alliance.com/"
 							>Armada (founding)</a
-						>, <a class="underline" href="https://singlepoolalliance.net/">Cardano Single Pool</a>
-						and
-						<a class="underline" href="https://climateneutralcardano.org/"
-							>Climate Neutral Cardano</a
-						> alliances.
+						>and <a class="underline" href="https://singlepoolalliance.net/">Cardano Single Pool</a>
+						alliances.
 					</dd>
 				</div>
 
