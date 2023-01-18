@@ -519,7 +519,7 @@
 		</h4>
 		<p class="mx-auto mb-10 mt-5 max-w-prose text-xl">
 			Every epoch you stake with OTG you will unlock a new tier of tokens. This round is scheduled
-			for 20 epochs ending on epoch 380. You must stake atleast 1,000 ADA to the pool to qualify.
+			for 20 epochs ending on epoch 400. You must stake at least 1,000 ADA to the pool to qualify.
 			Rewards are available to claim for 3 epochs from the time they are given. For more information
 			visit the Vending Machines distribution page. <a
 				class="underline"
