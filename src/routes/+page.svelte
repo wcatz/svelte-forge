@@ -6,13 +6,13 @@
 
 	let getPoolHistory = (async () => {
 		const res = await fetch(
-			'https://koios.tosidrop.io/api/v0/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
+			'https://api.koios.rest/api/v0/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
 		);
 		return await res.json();
 	})();
 
 	let getPoolInfo = (async () => {
-		const res = await fetch('https://koios.tosidrop.io/api/v0/pool_info', {
+		const res = await fetch('https://api.koios.rest/api/v0/pool_info', {
 			method: 'post',
 			headers: {
 				Accept: 'application/json',
@@ -76,12 +76,7 @@
 				<h1 class="text-2xl">Have a nice day.</h1>
 			</Typewriter>
 		</div>
-		<div class="hidden lg:block col-end-9 col-span-1 place-self-end">
-			<video class="rounded-t-full opacity-50" width="120" autoPlay muted playsInline loop>
-				<source src="{base}/assets/videos/Tosi_Matrix.webm" type="video/webm" />
-				<source src="{base}/assets/videos/Tosi_Matrix.mp4" type="video/mp4" />
-			</video>
-		</div>
+		<div class="hidden lg:block col-end-9 col-span-1 place-self-end" />
 	</div>
 </div>
 
@@ -204,14 +199,14 @@
 					</svg>
 				</button>
 				<button
-					on:click={() => handleClick((location.href = 'https://tosidrop.io/'))}
+					on:click={() => handleClick((location.href = 'https://claim.silktoad.io/cardano/claim'))}
 					rel="nofollow"
-					href="https://tosidrop.io/"
+					href="https://claim.silktoad.io/cardano/claim"
 					tabIndex="0"
 					type="button"
 					class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none"
 				>
-					Tosidrop ☔
+					Silk Toad 🐸
 				</button>
 				<button
 					on:click={() =>
@@ -393,21 +388,121 @@
 					</figure>
 				</div>
 			</div>
-			<div class="mt-8 lg:mt-0">
+			<div class="mt-4 lg:mt-0">
+				<h4
+					class="pb-12 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+				>
+					Token Offering Details
+				</h4>
+
+				<section class="overflow-hidden px-4">
+					<div class="flex flex-wrap -m-1 md:-m-2">
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="Cardano Singularity Net Token"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/AGIX.webp"
+								/>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="Cardano World Mobile Token"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/WMT.webp"
+								/>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="Cardano MELD token stake ADA"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/MELD.webp"
+								/>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="Cardano EMP token Delegate"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/EMP.webp"
+								/>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="Nunet NTX Cardano token"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/NXT.webp"
+								/>
+							</div>
+						</div>
+
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="CLAY Metaverse token Cardano"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/CLAY.webp"
+								/>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="DING Cardano native token"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/DING.webp"
+								/>
+							</div>
+						</div>
+
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="DISCO Cardano Token claim"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/DISCO.webp"
+								/>
+							</div>
+						</div>
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="Cardano World Mobile Token stake pool"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/Cyclr.webp"
+								/>
+							</div>
+						</div>
+
+						<div class="flex flex-wrap w-1/5">
+							<div class="w-full p-1 md:p-2">
+								<img
+									alt="HOSKY token claim Cardano"
+									class="block object-cover object-center w-full h-full rounded-lg"
+									src="{base}/assets/images/tokens/HOSKY.webp"
+								/>
+							</div>
+						</div>
+					</div>
+				</section>
 				<div class="mx-auto">
-					<video
-						class="mb-5 rounded-xl ring-2 ring-accent"
-						width="750"
-						height="500"
-						autoPlay
-						muted
-						playsInline
-						loop
-					>
-						<source src="{base}/assets/videos/TosiDrop.webm" type="video/webm" />
-						<source src="{base}/assets/videos/TosiDrop.mp4" type="video/mp4" />
-					</video>
 					<div>
+						<p class="mx-auto mb-10 mt-5 max-w-prose text-xl">
+							Every epoch you stake with OTG you will unlock a new tier of tokens. This round is
+							scheduled for 20 epochs ending on epoch 420. You must stake at least 1,000 ADA to the
+							pool to qualify. Rewards are available to claim for 3 epochs from the time they are
+							given. For more information visit the Vending Machines distribution page. <a
+								class="underline"
+								href="http://vm.adaseal.eu/distributions">Vending Machine distributions</a
+							>
+						</p>
 						<div>
 							<h4
 								class="py-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
@@ -419,113 +514,21 @@
 					</div>
 					<p class="mx-auto mb-10 mt-8 max-w-prose text-xl">
 						To be eligible to claim all you have to do is stake your ADA to the Star Forge. That's
-						it, then at the beggining of every epoch go to
+						it, then at the beginning of every epoch go to
 						<a
 							rel="nofollow"
-							href="https://tosidrop.io/"
+							href="https://claim.silktoad.io/cardano/claim"
 							tabIndex="0"
 							type="link"
 							class="underline"
 						>
-							https://tosidrop.io
+							https://claim.silktoad.io/cardano/claim
 						</a>
 						.
 					</p>
-					<section class="overflow-hidden px-4">
-						<div class="flex flex-wrap -m-1 md:-m-2">
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="Cardano World Mobile Token stake pool"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/WMT.webp"
-									/>
-								</div>
-							</div>
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="Cardano MELD token stake ADA"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/MELD.webp"
-									/>
-								</div>
-							</div>
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="Cardano EMP token Delegate"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/EMP.webp"
-									/>
-								</div>
-							</div>
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="Nunet NTX Cardano token"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/NXT.webp"
-									/>
-								</div>
-							</div>
-
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="PAVIA Metaverse token Cardano"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/PAVIA.webp"
-									/>
-								</div>
-							</div>
-
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="cTOSI Cardano Token claim"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/cTOSI.webp"
-									/>
-								</div>
-							</div>
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="CLAP Cardano native token"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/CLAP.webp"
-									/>
-								</div>
-							</div>
-							<div class="flex flex-wrap w-1/4">
-								<div class="w-full p-1 md:p-2">
-									<img
-										alt="HOSKY token claim Cardano"
-										class="block object-cover object-center w-full h-full rounded-lg"
-										src="{base}/assets/images/tokens/HOSKY.webp"
-									/>
-								</div>
-							</div>
-						</div>
-					</section>
 				</div>
 			</div>
 		</div>
-		<h4
-			class="pt-12 pb-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
-		>
-			Token Offering Details
-		</h4>
-		<p class="mx-auto mb-10 mt-5 max-w-prose text-xl">
-			Every epoch you stake with OTG you will unlock a new tier of tokens. This round is scheduled
-			for 20 epochs ending on epoch 400. You must stake at least 1,000 ADA to the pool to qualify.
-			Rewards are available to claim for 3 epochs from the time they are given. For more information
-			visit the Vending Machines distribution page. <a
-				class="underline"
-				href="http://vm.adaseal.eu/distributions">Vending Machine distributions</a
-			>
-		</p>
 	</div>
 
 	<div>
@@ -582,11 +585,10 @@
 						>
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
 						</svg>
-						<p class="ml-9 text-lg font-medium leading-6">Single Stake Pool Operator</p>
+						<p class="ml-9 text-lg font-medium leading-6">World Mobile Earth Node</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						A highly efficient, secure and decentralized Cardano must have single stake pool
-						operations spread out around the globe.
+						Currently building the Earth Node on Testnet. Stake your WMT to the Star Forge Earth Node and earn WMT + Bonus WMT staking you Magnetron tokens.
 					</dd>
 				</div>
 
@@ -630,10 +632,10 @@
 						>
 							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
 						</svg>
-						<p class="ml-9 text-lg font-medium leading-6">Starlink Sattelite</p>
+						<p class="ml-9 text-lg font-medium leading-6">Starlink Satellite</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						The Star Forge Cardano stake pool uses SpaceX Starlink sattelite & cable backup.
+						The Star Forge Cardano stake pool uses SpaceX Starlink satellite & cable backup.
 					</dd>
 				</div>
 
@@ -654,7 +656,7 @@
 						<p class="ml-9 text-lg font-medium leading-6">Efficient ARM64 Devops</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						CPU architecture which is much more efficient and powerfull than traditional x86 based
+						CPU architecture which is much more efficient and powerful than traditional x86 based
 						processors.
 					</dd>
 				</div>
@@ -678,7 +680,7 @@
 					<dd class="mt-2 ml-9 text-base">
 						<a class="underline" href="https://armada-alliance.com/docs/"
 							>Armada Alliance documentation</a
-						> to help train stake pool operators and provide supprt. Always willing to teach somebody
+						> to help train stake pool operators and provide support. Always willing to teach somebody
 						Linux.
 					</dd>
 				</div>
