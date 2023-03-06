@@ -588,7 +588,8 @@
 						<p class="ml-9 text-lg font-medium leading-6">World Mobile Earth Node</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						Currently building the Earth Node on Testnet. Stake your WMT to the Star Forge Earth Node and earn WMT + Bonus WMT staking you Magnetron tokens.
+						Currently building the Earth Node on Testnet. Stake your WMT to the Star Forge Earth
+						Node and earn WMT + Bonus WMT staking you Magnetron tokens.
 					</dd>
 				</div>
 
