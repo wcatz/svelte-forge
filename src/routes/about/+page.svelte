@@ -96,7 +96,7 @@
 								Star Forge
 							</a>
 							is solar powered with 2 weeks of LiFePo4 battery storage and connected to the internet
-							through Starlink with a failover onto cable internet provider. The pool consumes just 110
+							through Starlink with failover onto cable internet provider. The pool consumes just 110
 							watts of power.
 						</p>
 						<p>
