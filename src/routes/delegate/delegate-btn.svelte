@@ -5,6 +5,8 @@
   import EternlIcon from "../../lib/icons/eternl.svelte";
   import FlintIcon from "../../lib/icons/flint.svelte";
   import YoroiIcon from "../../lib/icons/yoroi.svelte";
+  import LaceIcon from "../../lib/icons/lace.svelte";
+  import GeroIcon from "../../lib/icons/gero.svelte";
   import Modal from "../../lib/component/modal.svelte";
 
   const poolId = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
@@ -20,6 +22,7 @@
   let networkErrorModal;
   let alreadyDelegatedErrorModal;
   let txSentModal;
+  let insufficientFundsModal;
   let successModal;
 
   function toggleShow() {
@@ -50,6 +53,15 @@
         return null;
       }
 
+      // Flint workaround
+      if(!(await connector.isEnabled())) {
+        wallet = await connector.enable();
+        if(!(await connector.isEnabled())) {
+          stopWait();
+          return null;
+        }
+      }
+
       if ((await wallet.getNetworkId()) !== 1) {
         networkErrorModal.open();
         return null;
@@ -75,7 +87,12 @@
           // User declined to sign the transaction.
           stopWait();
           return null;
+        } else if (e === 'Insufficient input in transaction') {
+          console.error(e);
+          insufficientFundsModal.open();
+          return null;
         }
+        console.error(e);
         errorModal.open();
         return;
       }
@@ -133,6 +150,22 @@
             Yoroi
           </div>
         </div>
+        <div on:click|stopPropagation={() => delegate('gerowallet')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
+            <GeroIcon/>
+          </div>
+          <div class="font-bold text-white flex items-center pl-4 pr-2">
+            Gero
+          </div>
+        </div>
+        <div on:click|stopPropagation={() => delegate('lace')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
+            <LaceIcon/>
+          </div>
+          <div class="font-bold text-white flex items-center pl-4 pr-2">
+            Lace
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -156,6 +189,13 @@
   <svelte:fragment slot="title"><span class="text-error">Wrong network!</span></svelte:fragment>
   <p slot="body">
     Make sure the selected wallet is set to mainnet.
+  </p>
+</Modal>
+
+<Modal bind:this="{insufficientFundsModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
+  <svelte:fragment slot="title"><span class="text-error">Insufficient funds!</span></svelte:fragment>
+  <p slot="body">
+    Make sure the selected account have sufficient funds.
   </p>
 </Modal>
 

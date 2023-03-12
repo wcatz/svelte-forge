@@ -87,10 +87,10 @@ export default class Delegate {
 				if (res.ok) {
 					return res.json();
 				} else {
-					console.log(res.status, res.url, res.statusText);
+					console.error(res.status, res.url, res.statusText);
 					return null;
 				}
 			})
-			.catch(console.log);
+			.catch(console.error);
 	}
 }
