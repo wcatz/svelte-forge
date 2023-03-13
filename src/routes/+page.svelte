@@ -28,33 +28,6 @@
 	})();
 
 	function handleClick() {}
-
-	// delegate Nami
-	function handleDelegate() {
-		var pool_id = 'c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae';
-		var blockfrost_project_id = 'mainnet5KZZo60WRq8nMsRWNvrvPqyrHtqucJlM';
-		var link =
-			'https://armada-alliance.com/delegation-widget?pool_id=' +
-			pool_id +
-			'&blockfrost_project_id=' +
-			blockfrost_project_id;
-		var width = 600;
-		var height = Math.min(800, parseInt(window.outerHeight, 10));
-		var left = parseInt(window.outerWidth, 10) / 2 - width / 2;
-		var top = (parseInt(window.outerHeight, 10) - height) / 2;
-		window.open(
-			link,
-			'Delegate',
-			'width=' +
-				width +
-				',height=' +
-				height +
-				',toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=1,left=' +
-				left +
-				',top=' +
-				top
-		);
-	}
 </script>
 
 <svelte:head>
@@ -175,36 +148,15 @@
 			</p>
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG</p>
 			<span
-				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-6 md:gap-0"
+				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 			>
-				<button
-					on:click={handleDelegate}
-					class="btn-ghost relative -ml-px inline-flex items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none md:rounded-l-md"
-					type="button"
-				>
-					Delegate
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="ml-1 h-6 w-6 animate-pulse text-red-500"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-						/>
-					</svg>
-				</button>
 				<button
 					on:click={() => handleClick((location.href = 'https://claim.silktoad.io/cardano/claim'))}
 					rel="nofollow"
 					href="https://claim.silktoad.io/cardano/claim"
 					tabIndex="0"
 					type="button"
-					class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none"
+					class="btn-ghost relative -ml-px inline-flex items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none md:rounded-l-md"
 				>
 					Silk Toad 🐸
 				</button>
