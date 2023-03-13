@@ -1,0 +1,75 @@
+==================================================================
+https://keybase.io/star_forge
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://adamantium.online
+  * I am star_forge (https://keybase.io/star_forge) on keybase.
+  * I have a public key with fingerprint 9B28 8E08 CD6C B614 B2BD  ABA1 C7E5 C00F 9D2D 9E8B
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01200f10f7f5cc75de4461cf2574c5dbe347d20f0fc35969443c0f224766218ae66c0a",
+      "fingerprint": "9b288e08cd6cb614b2bdaba1c7e5c00f9d2d9e8b",
+      "host": "keybase.io",
+      "key_id": "c7e5c00f9d2d9e8b",
+      "kid": "0101001df66243cbb97cf1f4e88f4b019bf07898beeaaaf56387e4e406d3ae2ecdec0a",
+      "uid": "bf392112e5ddeed5279ceb4457403019",
+      "username": "star_forge"
+    },
+    "service": {
+      "hostname": "adamantium.online",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1678697290,
+  "expire_in": 157680000,
+  "prev": "9b611f76f7e24ff1d7fb2f62c35354c3d586621558609508e3ad20bf85146f2c",
+  "seqno": 13,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.1.13
+Comment: https://keybase.io/crypto
+
+yMNwAnicbVJ7UFRVHN5VQN4wOaaJw+Q1GCfA7vuxljyypsAMs7RhoO0+zlmuwN5l
+9y6CTNiDAUFTF8NpQgkBMUDJGoYMQx4DqKHNOIXYWAOyQA1NDtLgIIh0Lul/nfPH
+b8453/ed7/foDVluCjRfHu8KOxlXfdA80P2l26SEepMLMUlTCjBLIZYFlgLIVoBL
+t2apCmbBcILEcUjgkIOMLHOMAmiaJWRIMhwtM4oEKJpTSBziUKYYgRVompJxSJI0
+x7IkwYuAZWVcxGIxqNptwOlwqnYdyQoSyfMA52WFlSWWoCVSUkRJJGQOMDL6UFBI
+RQC8hIiZmstgIHOS6AKbVA3doYN1yd7/4J/4RhsnFIhsIEuSJHAyJCANeB7SEk4I
+EsQ5XuAlAERRhAxL8RygAY2zCiUCEsgK+M+3e0lOgpRAEgQJGEUBQGFITpCBRNOo
+CjiF1AygCzjtYg5AaJcuOq1Qc9oA9kEshu7zVBkYpTVyeYwRFTFHtOuqO2eTZs9W
+7QBJOJyarslaNnrO1HWHy2LQ9QKHgd8LJOtjJauk2hVUTsTIA06XqtkxC4GQsq4a
+0gTL8azAkQIei4F8h+oEVtVAMBzL42gZ/4C8pSawBAE5FnKApCEkFA5KJGRJ1EmK
+oWVKYXijiQwKuMDgPKBE1GoJ8gxBs5CUMSO3XLuGtCnkU7QZqas2u6i7nSjznu50
+H5M50OTnu8yYM1NgQPiT6dtpDXsY8vGBKaLp0IWsXOY7//mh9e/69WJcTKL/5AX+
+tkfT35fvlVU2f12a1rXh0DdjNWtW3i1b3L0ryOw1BfssDI7lN01QI1WzK+o62PVH
+fZrap4/m1fYllpwaj0+6OnPnH8uDm2LCQly0cxe5XauoqD3TFixP7Z1MWJ4U4Q1q
+7G8/XrSjf7EneGBEvNWrjpQW3ejMKBuOLtwQ+XqnOBy7+pmtr/iWuxtLrr446wlK
+6QhbCX4NH15V8+G++uK6+VXt97ecrOn8bT5TP6uradhTlpak8PQXHmFH6qs4MmNr
+/JWXY6wLTy9uC5iLTGpszP0h9txLYydyzr86VzwzyTsmPFOK471nI1dPNY1GtaiL
+QsP10h+9DaFV1l/irGszunwon41Zefvfvh41d9fzyek/t0cPDbpTss/fIR8iFlv9
+hS1Zbk7TM1IbeqI//aPt70tFM9/nnX0Q8Pwpx8X88urBsUfZE6nHlSlveEWE72ly
+80LrNW7U8VmvuyF2z0f7cD/z9O1bbccqd86fc14ObCrz78DOvFnfmfjz563XRtcu
+5E6f6Fth3riu+K2Ds8fWHJ6rfaP1Yunm7hQlxmbyJM/C8amo39srx2Dksh1g//24
+ocItWnvM4ZCvmnMGvX2XEjzl6ff0dwakmJLK0ecKMrYdWJf67ZH6/ohkz83XrjT8
+Fbonwid+940Wou6nrn8Bg7PLXQ==
+=42ZS
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/star_forge
+
+==================================================================
