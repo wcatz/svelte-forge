@@ -1,13 +1,15 @@
-<svelte:head>
-	<title>Cardano Stake Pool Star Forge - About</title>
-	<meta name="description" content="Stake ada on the most efficient blockchain. Cardano is the future and Star Forge stake pool is here to stay"/>
-	
-</svelte:head>
-
-
 <script>
 	import { base } from '$app/paths';
+	import DelegateBtn from './delegate/delegate-btn.svelte';
 </script>
+
+<svelte:head>
+	<title>Cardano Stake Pool Star Forge - About</title>
+	<meta
+		name="description"
+		content="Stake ada on the most efficient blockchain. Cardano is the future and Star Forge stake pool is here to stay"
+	/>
+</svelte:head>
 
 <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
 	<!-- Static sidebar for desktop -->
@@ -100,8 +102,8 @@
 							watts of power.
 						</p>
 						<p>
-							Totally off the grid stakepool using solar panels, LiFePo4 batteries Apple Silicon
-							and Starlink. I am a founding member of the
+							Totally off the grid stakepool using solar panels, LiFePo4 batteries Apple Silicon and
+							Starlink. I am a founding member of the
 							<a class="underline" href="https://armada-alliance.com"> Armada Alliance </a>
 							& on the core dev team for
 							<a rel="nofollow" href="https://tosidrop.io/" class="underline"> Tosidrop </a>
@@ -109,11 +111,9 @@
 							computers.
 						</p>
 						<p>
-							I provide support to other Stake Pool operators, writing guides and providing a
-							image you can flash to quickly spin up and
-							<a
-								href="https://armada-alliance.com/docs/"
-							>
+							I provide support to other Stake Pool operators, writing guides and providing a image
+							you can flash to quickly spin up and
+							<a href="https://armada-alliance.com/docs/">
 								sync a node within an hour on a Raspberry Pi.
 							</a>
 						</p>
@@ -122,17 +122,16 @@
 							Security & Privacy
 						</h2>
 						<p>
-							The block producer is isolated on a separate vlan with it's own 1
-							Gbps interface connected directly to Starlink's power brick.
-						  </p>
-						  <blockquote>
+							The block producer is isolated on a separate vlan with it's own 1 Gbps interface
+							connected directly to Starlink's power brick.
+						</p>
+						<blockquote>
 							<p>
-							  All communication to the Core is through a Wireguard UDP VPN.
-							  Essentially the pool looks like a couple encrypted webcam feeds
-							  on the wire. Network failover to broadband ISP with DDNS
-							  updating DNS records.
+								All communication to the Core is through a Wireguard UDP VPN. Essentially the pool
+								looks like a couple encrypted webcam feeds on the wire. Network failover to
+								broadband ISP with DDNS updating DNS records.
 							</p>
-						  </blockquote>
+						</blockquote>
 						<ul class="text-accent">
 							<li>
 								<a
@@ -162,13 +161,12 @@
 							Hardware
 						</h2>
 						<p>
-							True decentralization of the Cardano blockchain provides
-							security to everyone's investment. Staking to a baremetal single
-							pool operator is extremely important and it is up to you to
-							stake responsibly. The Star Forge is doing it's part by
-							providing an extremely efficient and secure option. Please
-							support my work by delegating to my pool. Thank you!
-						  </p>
+							True decentralization of the Cardano blockchain provides security to everyone's
+							investment. Staking to a baremetal single pool operator is extremely important and it
+							is up to you to stake responsibly. The Star Forge is doing it's part by providing an
+							extremely efficient and secure option. Please support my work by delegating to my
+							pool. Thank you!
+						</p>
 						<ul class="">
 							<li>
 								<a
@@ -185,6 +183,7 @@
 							<li>
 								<a href="https://www.starlink.com/">Starlink</a> internet service provider
 							</li>
+							<li />
 							<li>
 								<a href="https://www.victronenergy.com/">Victron Solar</a>
 								MPPT charge controller and inverter
@@ -205,14 +204,14 @@
 						</h2>
 
 						<p>
-							It all started in the BERRY pool group. Before the BERRY telegram group was overun with NFT collectors
-							there where many pool operators running on Raspi's. As time went on more and more upgraded to more
-							powerfull servers.
+							It all started in the BERRY pool group. Before the BERRY telegram group was overun
+							with NFT collectors there where many pool operators running on Raspi's. As time went
+							on more and more upgraded to more powerfull servers.
 						</p>
 						<p />
 						<p>
-							The Raspberry Pi is stil viable as of this writing on mainnet as a node. That is very impressive when 
-							compared to other chains.
+							The Raspberry Pi is stil viable as of this writing on mainnet as a node. That is very
+							impressive when compared to other chains.
 						</p>
 						<figure>
 							<img
