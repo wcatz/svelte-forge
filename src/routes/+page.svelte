@@ -28,6 +28,33 @@
 	})();
 
 	function handleClick() {}
+
+	// delegate Nami
+	function handleDelegate() {
+		var pool_id = 'c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae';
+		var blockfrost_project_id = 'mainnet5KZZo60WRq8nMsRWNvrvPqyrHtqucJlM';
+		var link =
+			'https://armada-alliance.com/delegation-widget?pool_id=' +
+			pool_id +
+			'&blockfrost_project_id=' +
+			blockfrost_project_id;
+		var width = 600;
+		var height = Math.min(800, parseInt(window.outerHeight, 10));
+		var left = parseInt(window.outerWidth, 10) / 2 - width / 2;
+		var top = (parseInt(window.outerHeight, 10) - height) / 2;
+		window.open(
+			link,
+			'Delegate',
+			'width=' +
+				width +
+				',height=' +
+				height +
+				',toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=1,left=' +
+				left +
+				',top=' +
+				top
+		);
+	}
 </script>
 
 <svelte:head>
@@ -148,7 +175,7 @@
 			</p>
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG</p>
 			<span
-				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
+				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-6 md:gap-0"
 			>
 				<button
 					on:click={() => handleClick((location.href = 'https://claim.silktoad.io/cardano/claim'))}
