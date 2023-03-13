@@ -175,7 +175,7 @@
 			</p>
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG</p>
 			<span
-				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-6 md:gap-0"
+				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 			>
 				<button
 					on:click={() => handleClick((location.href = 'https://claim.silktoad.io/cardano/claim'))}
