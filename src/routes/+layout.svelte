@@ -244,7 +244,7 @@
 			/></svg
 		></a
 	>
-		<a class="pt-1" href="https://twitter.com/OTG_WCat"
+		<a class="pt-1" href="https://twitter.com/Star_Forge_Pool"
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
