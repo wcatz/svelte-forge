@@ -171,9 +171,9 @@
 			<p
 				class="mt-2 bg-gradient-to-r from-accent to-teal-500 bg-clip-text text-3xl font-semibold tracking-wider text-transparent lg:text-4xl"
 			>
-				Cardano Stake Pool
+				Mobile Cardano Stake Pool
 			</p>
-			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG</p>
+			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG (Off The Grid)</p>
 			<span
 				class="relative z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 			>
