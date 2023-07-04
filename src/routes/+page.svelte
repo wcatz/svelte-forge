@@ -376,16 +376,16 @@
 
 				<section class="overflow-hidden px-4">
 					<div class="flex flex-wrap -m-1 md:-m-2">
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
-									alt="Cardano Singularity Net Token"
+									alt="Cardano Iagon Token"
 									class="block object-cover object-center w-full h-full rounded-lg"
-									src="{base}/assets/images/tokens/AGIX.webp"
+									src="{base}/assets/images/tokens/IAG.png"
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="Cardano World Mobile Token"
@@ -394,7 +394,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="Cardano MELD token stake ADA"
@@ -403,26 +403,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/5">
-							<div class="w-full p-1 md:p-2">
-								<img
-									alt="Cardano EMP token Delegate"
-									class="block object-cover object-center w-full h-full rounded-lg"
-									src="{base}/assets/images/tokens/EMP.webp"
-								/>
-							</div>
-						</div>
-						<div class="flex flex-wrap w-1/5">
-							<div class="w-full p-1 md:p-2">
-								<img
-									alt="Nunet NTX Cardano token"
-									class="block object-cover object-center w-full h-full rounded-lg"
-									src="{base}/assets/images/tokens/NXT.webp"
-								/>
-							</div>
-						</div>
-
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="CLAY Metaverse token Cardano"
@@ -431,7 +412,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="DING Cardano native token"
@@ -441,7 +422,7 @@
 							</div>
 						</div>
 
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="DISCO Cardano Token claim"
@@ -450,7 +431,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="Cardano World Mobile Token stake pool"
@@ -460,7 +441,7 @@
 							</div>
 						</div>
 
-						<div class="flex flex-wrap w-1/5">
+						<div class="flex flex-wrap w-1/4">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="HOSKY token claim Cardano"
@@ -475,7 +456,7 @@
 					<div>
 						<p class="mx-auto mb-10 mt-5 max-w-prose text-xl">
 							Every epoch you stake with OTG you will unlock a new tier of tokens. This round is
-							scheduled for 20 epochs ending on epoch 420. You must stake at least 1,000 ADA to the
+							scheduled for 20 epochs ending on epoch 440. You must stake at least 1,000 ADA to the
 							pool to qualify. Rewards are available to claim for 3 epochs from the time they are
 							given. For more information visit the Vending Machines distribution page. <a
 								class="underline"
