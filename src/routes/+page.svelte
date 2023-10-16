@@ -376,7 +376,7 @@
 
 				<section class="overflow-hidden px-4">
 					<div class="flex flex-wrap -m-1 md:-m-2">
-						<div class="flex flex-wrap w-1/4">
+						<div class="flex flex-wrap w-1/3">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="Cardano Iagon Token"
@@ -385,7 +385,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/4">
+						<div class="flex flex-wrap w-1/3">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="Cardano World Mobile Token"
@@ -394,7 +394,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/4">
+						<div class="flex flex-wrap w-1/3">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="Cardano MELD token stake ADA"
@@ -403,7 +403,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/4">
+						<div class="flex flex-wrap w-1/3">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="CLAY Metaverse token Cardano"
@@ -412,7 +412,7 @@
 								/>
 							</div>
 						</div>
-						<div class="flex flex-wrap w-1/4">
+						<div class="flex flex-wrap w-1/3">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="DING Cardano native token"
@@ -422,31 +422,12 @@
 							</div>
 						</div>
 
-						<div class="flex flex-wrap w-1/4">
+						<div class="flex flex-wrap w-1/3">
 							<div class="w-full p-1 md:p-2">
 								<img
 									alt="DISCO Cardano Token claim"
 									class="block object-cover object-center w-full h-full rounded-lg"
 									src="{base}/assets/images/tokens/DISCO.webp"
-								/>
-							</div>
-						</div>
-						<div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-								<img
-									alt="Cardano World Mobile Token stake pool"
-									class="block object-cover object-center w-full h-full rounded-lg"
-									src="{base}/assets/images/tokens/Cyclr.webp"
-								/>
-							</div>
-						</div>
-
-						<div class="flex flex-wrap w-1/4">
-							<div class="w-full p-1 md:p-2">
-								<img
-									alt="HOSKY token claim Cardano"
-									class="block object-cover object-center w-full h-full rounded-lg"
-									src="{base}/assets/images/tokens/HOSKY.webp"
 								/>
 							</div>
 						</div>

@@ -211,7 +211,7 @@
 						</p>
 						<p />
 						<p>
-							The Raspberry Pi is stil viable as of this writing on mainnet as a node. That is very impressive when 
+							The Raspberry Pi is still viable as of this writing on mainnet as a node. That is very impressive when 
 							compared to other chains.
 						</p>
 						<figure>

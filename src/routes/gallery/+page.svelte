@@ -9,7 +9,7 @@
 	// delegate Nami
 	function handleClick() {
 		var pool_id = 'c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae';
-		var blockfrost_project_id = 'mainnet5KZZo60WRq8nMsRWNvrvPqyrHtqucJlM';
+		var blockfrost_project_id = 'mainnetxziQ3sSBXdg8hry1Z2WGxRDCBhPWsSf8';
 		var link =
 			'https://armada-alliance.com/delegation-widget?pool_id=' +
 			pool_id +

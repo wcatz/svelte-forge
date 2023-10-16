@@ -5,7 +5,7 @@ import { Blockfrost, Lucid } from 'lucid-cardano';
  */
 const CHECK_INTERVAL = 10000;
 const PROVIDER_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
-const API_KEY = 'mainnetqh3YFo6lYYWulDptpTDeYuTVMKG3ZdH6';
+const API_KEY = 'mainnetxziQ3sSBXdg8hry1Z2WGxRDCBhPWsSf8';
 
 export default class Delegate {
 	constructor(api) {
