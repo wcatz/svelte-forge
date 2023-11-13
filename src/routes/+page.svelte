@@ -1,6 +1,7 @@
 <script>
 	import { base } from '$app/paths';
 	import Typewriter from 'svelte-typewriter';
+	import { onMount, onDestroy } from 'svelte';
 
 	const numberFormatter = Intl.NumberFormat('en-US');
 	function handleClick() {}
@@ -33,6 +34,38 @@
 
 		return jsonData;
 	})();
+
+	let video;
+	let observer;
+
+	const options = {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.5
+	};
+
+	function handleIntersection(entries) {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				// Video is in view, start playing
+				video.play();
+			} else {
+				// Video is out of view, pause it
+				video.pause();
+			}
+		});
+	}
+
+	onMount(() => {
+		observer = new IntersectionObserver(handleIntersection, options);
+		observer.observe(video);
+	});
+
+	onDestroy(() => {
+		if (video) {
+			observer.disconnect();
+		}
+	});
 </script>
 
 <svelte:head>
@@ -280,9 +313,11 @@
 					<div class="rounded-lg border-2 border-accent">
 						<!-- svelte-ignore a11y-media-has-caption -->
 						<video
+							bind:this={video}
 							class="rounded-lg"
 							width="100%"
 							controls
+							muted
 							poster="{base}/assets/images/vid-cover.jpg"
 						>
 							<source src="{base}/assets/videos/star-2.mp4" type="video/mp4" />
