@@ -81,9 +81,9 @@
 		<div class="hidden lg:block col-start-1 col-span-1" />
 		<div class="col-start-2 col-span-6 place-self-center">
 			<Typewriter cursor={false} mode="loopOnce" interval="150" delay="400" wordInterval="1250">
-				<h1 class="text-2xl">Welcome Traveler!</h1>
-				<h1 class="text-2xl">To The Only Mobile Off The Grid</h1>
-				<h1 class="text-2xl">Cardano Stake Pool</h1>
+				<h1 class="text-2xl">Welcome traveler!</h1>
+				<h1 class="text-2xl">To the most decentralized</h1>
+				<h1 class="text-2xl">Cardano stake pool</h1>
 				<h1 class="text-2xl">Have A Nice Day!</h1>
 			</Typewriter>
 		</div>
@@ -189,9 +189,9 @@
 				class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 			>
 				<button
-					on:click={() => handleClick((location.href = 'https://claim.silktoad.io/cardano/claim'))}
+					on:click={() => handleClick((location.href = 'https://www.silktoad.io/claims'))}
 					rel="nofollow"
-					href="https://claim.silktoad.io/cardano/claim"
+					href="https://www.silktoad.io/claims"
 					tabIndex="0"
 					type="button"
 					class="btn-ghost relative -ml-px inline-flex items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none md:rounded-l-md"
