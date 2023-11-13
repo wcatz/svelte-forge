@@ -277,21 +277,19 @@
 					</div>
 				</div>
 				<div class="mt-4 lg:mt-0">
-					<section class="overflow-hidden">
-						<div class="wrapper rounded-lg border-2 border-accent">
-							<div class="frame-container">
-								<iframe
-									width="100%"
-									height="500"
-									src="https://www.youtube.com/embed/EDiMqimIg-o?modestbranding=1&autohide=1&showinfo=0&controls=0"
-									title="Cardano SPO Nomad (OTG)"
-									frameborder="0"
-									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-									allowfullscreen
-								/>
-							</div>
-						</div>
-					</section>
+					<div class="rounded-lg border-2 border-accent">
+						<!-- svelte-ignore a11y-media-has-caption -->
+						<video
+							class="rounded-lg"
+							width="100%"
+							controls
+							poster="{base}/assets/images/vid-cover.jpg"
+						>
+							<source src="{base}/assets/videos/star-2.mp4" type="video/mp4" />
+							Your browser does not support the video tag.
+						</video>
+					</div>
+
 					<div class="mx-auto">
 						<div>
 							<h4
@@ -653,9 +651,9 @@
 						<p class="ml-9 text-lg font-medium leading-6">Disaster Preparedness</p>
 					</dt>
 					<dd class="mt-2 ml-9 text-base">
-						Our Cardano stake pool operations are equipped with redundant power and internet. 
-						They are fortified, hardened, and thoroughly prepared, with backup hardware
-						readily available for swift deployment into production.
+						Our Cardano stake pool operations are equipped with redundant power and internet. They
+						are fortified, hardened, and thoroughly prepared, with backup hardware readily available
+						for swift deployment into production.
 					</dd>
 				</div>
 			</dl>
@@ -666,24 +664,5 @@
 <style>
 	.starscreen {
 		height: 75vh;
-	}
-	.frame-container {
-		position: relative;
-		padding-bottom: 56.25%; /* 16:9 */
-		padding-top: 25px;
-		width: 300%; /* enlarge beyond browser width */
-		left: -100%; /* center */
-	}
-
-	.frame-container iframe {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-	.wrapper {
-		overflow: hidden;
-		max-width: 100%;
 	}
 </style>
