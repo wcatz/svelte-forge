@@ -163,7 +163,7 @@
 						</h2>
 						<p>
 							True decentralization of the Cardano blockchain provides
-							security to everyone's investment. Staking to a baremetal single
+							security to everyone's investment. Staking to a bare metal single
 							pool operator is extremely important and it is up to you to
 							stake responsibly. The Star Forge is doing it's part by
 							providing an extremely efficient and secure option. Please
@@ -205,7 +205,7 @@
 						</h2>
 
 						<p>
-							It all started in the BERRY pool group. Before the BERRY telegram group was overun with NFT collectors
+							It all started in the BERRY pool group. Before the BERRY telegram group was over run with NFT collectors
 							there where many pool operators running on Raspi's. As time went on more and more upgraded to more
 							powerfull servers.
 						</p>

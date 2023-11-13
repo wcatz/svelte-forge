@@ -22,7 +22,7 @@
   {/if}
   {#if wait}
     <span class="px-2">
-      <img src="/assets/images/sun.png" alt="OTG Logo" class="animate-spin" width="26" style="animation: spin 1.6s linear infinite;width: 26px;" />
+      <img src="/assets/images/sun.png" alt="OTG Logo" class="animate-pulse" width="26"/>
     </span>
     <span class="animate-pulse">
       {status}

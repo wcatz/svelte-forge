@@ -114,7 +114,7 @@
 <svelte:window on:click|stopPropagation="{handleOutClick}" />
 
 <div class="relative">
-  <ActionBtn action={toggleShow} type="button" text="Delegate" wait="{wait}" status="{status}" />
+  <ActionBtn action={toggleShow} type="button" text="Delegate Now" wait="{wait}" status="{status}" />
   <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
     <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1 border-t-2 border-2 border-accent bg-secondary bg-opacity-50">
       <div class="p-4">
