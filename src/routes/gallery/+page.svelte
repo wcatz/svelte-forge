@@ -26,6 +26,8 @@
 					</h2>
 				</div>
 			</div>
+            
+            
 
 			<div class="">
 				<div class="mx-auto max-w-7xl py-4 px-4 sm:py-4 sm:px-6 lg:px-8">
@@ -33,7 +35,64 @@
 						<h2
 							class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
 						>
-							Star Forge Images
+							Star Forge Mobile
+						</h2>
+					</div>
+
+					<div
+						class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8"
+					>
+						<div
+							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
+						>
+							<img
+								src="{base}/assets/images/stake-pool-batteries.jpg"
+								alt="Starlink connected crypto currency stake pool"
+								class="object-cover object-center group-hover:opacity-75"
+							/>
+							<div
+								aria-hidden="true"
+								class="bg-gradient-to-b from-transparent to-black opacity-50"
+							/>
+						</div>
+						<div
+							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
+						>
+							<img
+								src="{base}/assets/images/stake-pool-batteries.jpg"
+								alt="Solar powered Stake pool ADA"
+								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
+							/>
+							<div
+								aria-hidden="true"
+								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
+							/>
+							<div class="flex items-end p-6 sm:absolute sm:inset-0" />
+						</div>
+						<div
+							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
+						>
+							<img
+								src="{base}/assets/images/mobile-starlink.jpg"
+								alt="ARM64 Cardano relay and stake pool"
+								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
+							/>
+							<div
+								aria-hidden="true"
+								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="">
+				<div class="mx-auto max-w-7xl py-4 px-4 sm:py-4 sm:px-6 lg:px-8">
+					<div class="sm:flex sm:items-baseline sm:justify-between">
+						<h2
+							class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
+						>
+							Star Forge Bare Metal
 						</h2>
 					</div>
 
