@@ -712,6 +712,6 @@
 
 <style>
 	.starscreen {
-		height: 75vh;
+		height: 70vh;
 	}
 </style>
