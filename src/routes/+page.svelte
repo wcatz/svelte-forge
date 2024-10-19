@@ -77,70 +77,7 @@
 </svelte:head>
 
 <div class="">
-	
-	<div class="absolute inset-x-10 top-56 grid grid-cols-8 gap-1 z-30">
-		<div class="hidden lg:block col-start-1 col-span-1" />
-		<div class="col-start-2 col-span-6 place-self-center">
-			<div style="text-align: center;">
-				<Typewriter
-				  cursor={true}
-				  mode="loopOnce"
-				  interval={100}
-				  delay={500}
-				  pauseFor={2000}
-				  wordInterval={1500}
-				>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					Welcome Traveler
-				  </h1>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					To The Star Forge
-				  </h1>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					Mobile Cardano Stake Pool
-				  </h1>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					Please Keep Hands & Feet
-				  </h1>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					Inside The Space Station
-				  </h1>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					At All Times &
-				  </h1>
-				  <h1
-					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-				  >
-					Have A Nice Day!
-				  </h1>
-				</Typewriter>
-			  </div>
-			  
-		</div>
-		<div class="hidden lg:block col-end-9 col-span-1 place-self-end" />
-	</div>
-</div>
-
-<div
+	<div
 	class="starscreen relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px]"
 >
 	<video
@@ -164,7 +101,7 @@
 						  rounded-full
 						  h-10
 						  w-10
-						  border-t-2 border-b-2 border-indigo-500
+						  border-t-2 border-b-2 border-gray-500
 						"
 					/>
 				</div>
@@ -174,37 +111,37 @@
 						class="flex flex-cols-1 gap-2 sm:flex-cols-7 bg-secondary bg-opacity-70 mb-1 border-opacity-70 border-t-2 border-l-2 border-r-2 border-accent rounded-t-lg"
 					>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-400 font-medium truncate">Blocks</dt>
-							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
+							<dt class="text-sm text-amber-500 font-medium truncate">Blocks</dt>
+							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
 								{data[0].block_count}
 							</dd>
-							<div class="stat-desc text-green-400" />
+							<div class="stat-desc text-green-500" />
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-400 font-medium truncate">Pledge</dt>
-							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">500K</dd>
+							<dt class="text-sm text-amber-500 font-medium truncate">Pledge</dt>
+							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">500K</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-400 font-medium truncate">Margin</dt>
-							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
+							<dt class="text-sm text-amber-500 font-medium truncate">Margin</dt>
+							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
 								{data[0].margin * 100}%
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-400 font-medium truncate">Stake</dt>
+							<dt class="text-sm text-amber-500 font-medium truncate">Stake</dt>
 							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
 								{(data[0].live_stake / 1000000000000).toFixed(2)}M
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-400 font-medium truncate">Delegators</dt>
-							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
+							<dt class="text-sm text-amber-500 font-medium truncate">Delegators</dt>
+							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
 								{data[0].live_delegators}
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-400 font-medium truncate">Saturated</dt>
-							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
+							<dt class="text-sm text-amber-500 font-medium truncate">Saturated</dt>
+							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
 								{data[0].live_saturation}%
 							</dd>
 						</div>
@@ -217,26 +154,58 @@
 	</div>
 </div>
 
+
+    <!-- Overlayed Content -->
+    <div class="absolute inset-0 bottom-10 flex flex-col justify-center items-center z-20">
+        <!-- Title and Image Section -->
+        <div class="text-center mb-8">
+            <h1 class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500">
+                🌟 Star Forge ⚡
+            </h1>
+            <img
+                class="h-28 w-28 m-auto my-8"
+                src="{base}/assets/images/Star-Forge-Sun.webp"
+                alt="Cardano Stake Pool Star Forge"
+            />
+        </div>
+
+        <!-- Typewriter Section -->
+        <div class="text-center">
+            <Typewriter
+                cursor={true}
+                mode="loopOnce"
+                interval={100}
+                delay={500}
+                pauseFor={2000}
+                wordInterval={1500}
+            >
+                <h1
+                    class="text-green-400 font-mono text-2xl tracking-widest lg:text-4xl"
+                    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+                >
+                    Welcome Traveler
+                </h1>
+                <h1
+                    class="text-green-400 font-mono text-2xl tracking-widest lg:text-4xl"
+                    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+                >
+                    To The Star Forge
+                </h1>
+                <h1
+                    class="text-green-400 font-mono text-2xl tracking-widest lg:text-4xl"
+                    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+                >
+                    Mobile Cardano Stake Pool
+                </h1>
+            </Typewriter>
+        </div>
+    </div>
+</div>
+
 <div class="overflow-hidden">
 	<div class="relative py-2 sm:py-3 lg:py-4">
 		<div class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
 			<div class="hidden md:block" />
-
-			<h1 class="mt-5 bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl">
-				🌟
-				<span
-					class="mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
-				>
-					Star Forge
-				</span>
-				⚡
-			</h1>
-			
-			<img
-				class="h-28 w-28 m-auto my-8"
-				src="{base}/assets/images/Star-Forge-Sun.webp"
-				alt="Cardano Stake Pool Star Forge"
-			/>
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG (Off The Grid)</p>
 			<span class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0">
 				<button
@@ -366,7 +335,7 @@
 					<div class="mx-auto">
 						<div>
 							<h4
-								class="pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+								class="pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 							>
 								Decentralization First
 							</h4>
@@ -380,7 +349,7 @@
 							</p>
 							<div>
 								<h4
-									class="py-6 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+									class="py-6 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 								>
 									Disaster Preparedness
 								</h4>
@@ -406,7 +375,7 @@
 				<div class="flex items-center">
 					<div class="flex-auto">
 						<h1
-							class="mt-5 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
+							class="mt-5 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
 						>
 							Latest Pool Stats
 						</h1>
@@ -440,7 +409,7 @@
 										  rounded-full
 										  h-10
 										  w-10
-										  border-t-2 border-b-2 border-indigo-500
+										  border-t-2 border-b-2 cyan-500
 										  "
 									/>
 								</div>
@@ -475,7 +444,7 @@
 
 	<div>
 		<h4
-			class="py-6 leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl text-center"
+			class="py-6 leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl text-center"
 		>
 			Reasons to Delegate ADA
 		</h4>
@@ -736,7 +705,7 @@
 
 <style>
 	.starscreen {
-		height: 70vh;
+		height: 90vh;
 	}
 	.fade-in {
     opacity: 0;
