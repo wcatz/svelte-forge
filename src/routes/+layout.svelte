@@ -21,13 +21,13 @@
 <div class="hidden lg:block">
 	<div class="absolute inset-x-10 top-1/4 flex items-center">
 		<ul
-			class="menu menu-compact p-2 w-48 rounded-box z-50 mb-1 border-t-2 border-2 border-accent bg-secondary bg-opacity-80 shadow-lg"
+			class="menu menu-compact p-2 w-48 z-50 mb-1"
 		>
 			<li class:active={$page.url.pathname === '/'}>
 				<a
 					data-sveltekit-prefetch
 					href="/"
-					class="text-green-400 font-mono text-lg flex items-center relative group hover:bg-transparent"
+					class="text-green-400 text-bold font-mono text-lg flex items-center relative group hover:bg-transparent"
 					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal"
 				>
 					<svg
@@ -264,7 +264,7 @@
 </footer>
 
 <!-- Element positioned last so delegation modal overlay properly block UI -->
-<nav class="navbar absolute z-50 bg-transparent" style="top: 0">
+<!--<nav class="navbar absolute z-50 bg-transparent" style="top: 0">
 	<div class="flex-1" />
 	<div>
 		<DelegateBtn />
@@ -297,7 +297,7 @@
 			</svg>
 		</label>
 	</div>
-</nav>
+</nav> -->
 
 <style>
 	.pop-on-hover {

@@ -78,128 +78,119 @@
 
 <div class="">
 	<div
-	class="starscreen relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px]"
->
-	<video
-		autoplay
-		muted
-		playsinline
-		class="absolute inset-0 w-full h-full object-cover"
-		onended="this.pause();"
+		class="starscreen mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
 	>
-		<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
-		Your browser does not support the video tag.
-	</video>
+		<video
+			autoplay
+			muted
+			playsinline
+			class="absolute inset-0 w-full h-full object-cover"
+			onended="this.pause();"
+		>
+			<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
+			Your browser does not support the video tag.
+		</video>
 
-	<div class="absolute -bottom-2 z-30 left-1/2 transform -translate-x-1/2">
-		<div class="hidden lg:block">
-			{#await getPoolInfo}
-				<div class="flex justify-center items-center mb-10">
-					<div
-						class="
+		<div class="absolute -bottom-2 z-30 left-1/2 transform -translate-x-1/2">
+			<div class="hidden lg:block">
+				{#await getPoolInfo}
+					<div class="flex justify-center items-center mb-10">
+						<div
+							class="
 						  animate-spin
 						  rounded-full
 						  h-10
 						  w-10
 						  border-t-2 border-b-2 border-gray-500
 						"
-					/>
-				</div>
-			{:then data}
-				<div class="flex justify-center text-center">
-					<dl
-						class="flex flex-cols-1 gap-2 sm:flex-cols-7 bg-secondary bg-opacity-70 mb-1 border-opacity-70 border-t-2 border-l-2 border-r-2 border-accent rounded-t-lg"
-					>
-						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-500 font-medium truncate">Blocks</dt>
-							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-								{data[0].block_count}
-							</dd>
-							<div class="stat-desc text-green-500" />
-						</div>
-						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-500 font-medium truncate">Pledge</dt>
-							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">500K</dd>
-						</div>
-						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-500 font-medium truncate">Margin</dt>
-							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-								{data[0].margin * 100}%
-							</dd>
-						</div>
-						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-500 font-medium truncate">Stake</dt>
-							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-								{(data[0].live_stake / 1000000000000).toFixed(2)}M
-							</dd>
-						</div>
-						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-500 font-medium truncate">Delegators</dt>
-							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-								{data[0].live_delegators}
-							</dd>
-						</div>
-						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm text-amber-500 font-medium truncate">Saturated</dt>
-							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-								{data[0].live_saturation}%
-							</dd>
-						</div>
-					</dl>
-				</div>
-			{:catch error}
-				<p>Koios API error</p>
-			{/await}
+						/>
+					</div>
+				{:then data}
+					<div class="flex justify-center text-center">
+						<dl class="flex flex-cols-1 gap-2 sm:flex-cols-7 mb-1">
+							<div class="px-4 py-5 sm:p-6">
+								<dt class="text-sm text-amber-500 font-medium truncate">Blocks</dt>
+								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
+									{data[0].block_count}
+								</dd>
+								<div class="stat-desc text-green-500" />
+							</div>
+							<div class="px-4 py-5 sm:p-6">
+								<dt class="text-sm text-amber-500 font-medium truncate">Pledge</dt>
+								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">500K</dd>
+							</div>
+							<div class="px-4 py-5 sm:p-6">
+								<dt class="text-sm text-amber-500 font-medium truncate">Margin</dt>
+								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
+									{data[0].margin * 100}%
+								</dd>
+							</div>
+							<div class="px-4 py-5 sm:p-6">
+								<dt class="text-sm text-amber-500 font-medium truncate">Stake</dt>
+								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
+									{(data[0].live_stake / 1000000000000).toFixed(2)}M
+								</dd>
+							</div>
+							<div class="px-4 py-5 sm:p-6">
+								<dt class="text-sm text-amber-500 font-medium truncate">Delegators</dt>
+								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
+									{data[0].live_delegators}
+								</dd>
+							</div>
+							<div class="px-4 py-5 sm:p-6">
+								<dt class="text-sm text-amber-500 font-medium truncate">Saturated</dt>
+								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
+									{data[0].live_saturation}%
+								</dd>
+							</div>
+						</dl>
+					</div>
+				{:catch error}
+					<p>Koios API error</p>
+				{/await}
+			</div>
 		</div>
 	</div>
-</div>
 
+	<!-- Overlayed Content -->
+	<div class="absolute inset-0 bottom-30 flex flex-col justify-center items-center z-20">
+		<!-- Title and Image Section -->
+		<div class="text-center mb-8">
+			<h1
+				class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500"
+				style="direction: ltr; unicode-bidi: normal;"
+			>
+				🌟 Star Forge ⚡
+			</h1>
+			<img
+				class="h-28 w-28 m-auto my-8"
+				src="{base}/assets/images/Star-Forge-Sun.webp"
+				alt="Cardano Stake Pool Star Forge"
+			/>
+		</div>
 
-    <!-- Overlayed Content -->
-    <div class="absolute inset-0 bottom-10 flex flex-col justify-center items-center z-20">
-        <!-- Title and Image Section -->
-        <div class="text-center mb-8">
-            <h1 class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500">
-                🌟 Star Forge ⚡
-            </h1>
-            <img
-                class="h-28 w-28 m-auto my-8"
-                src="{base}/assets/images/Star-Forge-Sun.webp"
-                alt="Cardano Stake Pool Star Forge"
-            />
-        </div>
-
-        <!-- Typewriter Section -->
-        <div class="text-center">
-            <Typewriter
-                cursor={true}
-                mode="loopOnce"
-                interval={100}
-                delay={500}
-                pauseFor={2000}
-                wordInterval={1500}
-            >
-                <h1
-                    class="text-green-400 font-mono text-2xl tracking-widest lg:text-4xl"
-                    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-                >
-                    Welcome Traveler
-                </h1>
-                <h1
-                    class="text-green-400 font-mono text-2xl tracking-widest lg:text-4xl"
-                    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-                >
-                    To The Star Forge
-                </h1>
-                <h1
-                    class="text-green-400 font-mono text-2xl tracking-widest lg:text-4xl"
-                    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-                >
-                    Mobile Cardano Stake Pool
-                </h1>
-            </Typewriter>
-        </div>
-    </div>
+		<!-- Typewriter Section -->
+		<div class="text-center">
+			<!-- Add a wrapping div with a reserved height -->
+			<div
+				class="typewriter-container text-green-500 font-mono text-2xl tracking-widest lg:text-4xl"
+				style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+			>
+				<Typewriter
+					cursor={true}
+					mode="loopOnce"
+					interval={100}
+					delay={500}
+					pauseFor={2000}
+					wordInterval={1500}
+				>
+					<h1>Welcome Traveler</h1>
+					<h1>To The Star Forge</h1>
+					<h1>Mobile Cardano Stake Pool</h1>
+				</Typewriter>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="overflow-hidden">
@@ -207,71 +198,104 @@
 		<div class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
 			<div class="hidden md:block" />
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG (Off The Grid)</p>
-			<span class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0">
+			<span
+				class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
+			>
 				<button
 					on:click={() => handleClick((location.href = 'https://www.silktoad.io/claims'))}
 					rel="nofollow"
 					href="https://www.silktoad.io/claims"
 					tabIndex="0"
 					type="button"
-					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 				>
 					Silk Toad 🐸
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</button>
-			
+
 				<button
-					on:click={() => handleClick((location.href = 'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae'))}
+					on:click={() =>
+						handleClick(
+							(location.href =
+								'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
+						)}
 					rel="nofollow"
 					type="button"
 					href="https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
-					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 				>
 					PoolPM 🐉
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</button>
-			
+
 				<button
-					on:click={() => handleClick((location.href = 'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae'))}
+					on:click={() =>
+						handleClick(
+							(location.href =
+								'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
+						)}
 					rel="nofollow"
 					href="https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
 					type="button"
-					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 				>
 					PoolTool 🎱
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</button>
-			
+
 				<button
 					on:click={() => handleClick((location.href = 'https://twitter.com/Star_Forge_Pool'))}
 					rel="nofollow"
 					href="https://twitter.com/Star_Forge_Pool"
 					type="button"
-					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
-					style="display: flex; align-items: center;"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 				>
 					<span class="mr-1">Twitter</span>
-					<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 251">
+					<svg
+						width="20"
+						height="20"
+						version="1.1"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 300 251"
+					>
 						<circle cx="150" cy="125.5" r="150" fill="#fff" />
 						<path
 							d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"
 						/>
 					</svg>
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</button>
-			
+
 				<button
-					on:click={() => handleClick((location.href = 'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c'))}
+					on:click={() =>
+						handleClick(
+							(location.href =
+								'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c')
+						)}
 					rel="nofollow"
 					href="https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"
 					type="button"
-					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 				>
 					Cexplorer 🔍
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</button>
 			</span>
-			
 		</div>
 	</div>
 	<div>
@@ -708,12 +732,16 @@
 		height: 90vh;
 	}
 	.fade-in {
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
-}
+		opacity: 0;
+		transition: opacity 2s ease-in-out;
+	}
 
-.fade-in.show {
-    opacity: 1;
-}
-
+	.fade-in.show {
+		opacity: 1;
+	}
+	.typewriter-container {
+		min-height: 100px; /* Set this to a height that accommodates your text */
+		/* You can also set a fixed height if preferred */
+		/* height: 100px; */
+	}
 </style>
