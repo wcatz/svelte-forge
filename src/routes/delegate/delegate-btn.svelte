@@ -116,7 +116,7 @@
 <div class="relative">
   <ActionBtn action={toggleShow} type="button" text="Delegate Now" wait="{wait}" status="{status}" />
   <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
-    <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1 border-t-2 border-2 border-accent bg-secondary bg-opacity-50">
+    <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
       <div class="p-4">
         <div on:click|stopPropagation={() => delegate('nami')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">

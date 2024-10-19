@@ -81,10 +81,21 @@
 		<div class="hidden lg:block col-start-1 col-span-1" />
 		<div class="col-start-2 col-span-6 place-self-center">
 			<Typewriter cursor={false} mode="loopOnce" interval="150" delay="400" wordInterval="1250">
-				<h1 class="text-2xl">Welcome traveler!</h1>
-				<h1 class="text-2xl">To the most decentralized</h1>
-				<h1 class="text-2xl">Cardano stake pool</h1>
-				<h1 class="text-2xl">Have A Nice Day!</h1>
+				<h1
+					class="text-2xl mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+				>
+					Welcome Traveler
+				</h1>
+				<h1
+					class="text-2xl mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+				>
+					To The Star Forge
+				</h1>
+				<h1
+					class="text-2xl mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+				>
+					Mobile Cardano Stake Pool
+				</h1>
 			</Typewriter>
 		</div>
 		<div class="hidden lg:block col-end-9 col-span-1 place-self-end" />
@@ -93,61 +104,69 @@
 
 <div
 	class="starscreen relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px]"
-	style:background-image={`url(../assets/images/stake-pool-hero.webp)`}
 >
+	<video
+		autoplay
+		muted
+		playsinline
+		class="absolute inset-0 w-full h-full object-cover"
+		onended="this.pause();"
+	>
+		<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
+		Your browser does not support the video tag.
+	</video>
+
 	<div class="absolute -bottom-2 z-30 left-1/2 transform -translate-x-1/2">
 		<div class="hidden lg:block">
 			{#await getPoolInfo}
 				<div class="flex justify-center items-center mb-10">
 					<div
 						class="
-				  animate-spin
-				  rounded-full
-				  h-10
-				  w-10
-				  border-t-2 border-b-2 border-indigo-500
-				  "
+						  animate-spin
+						  rounded-full
+						  h-10
+						  w-10
+						  border-t-2 border-b-2 border-indigo-500
+						"
 					/>
 				</div>
 			{:then data}
-				<div class=" flex justify-center text-center">
+				<div class="flex justify-center text-center">
 					<dl
 						class="flex flex-cols-1 gap-2 sm:flex-cols-7 bg-secondary bg-opacity-50 mb-1 border-opacity-70 border-t-2 border-l-2 border-r-2 border-accent rounded-t-lg"
 					>
 						<div class="px-4 py-5 sm:p-6">
 							<dt class="text-sm font-medium truncate">Blocks</dt>
-							<dd class="mt-1 text-3xl font-semibold 0">
+							<dd class="mt-1 text-3xl font-semibold">
 								{data[0].block_count}
 							</dd>
 							<div class="stat-desc text-green-400" />
 						</div>
-
 						<div class="px-4 py-5 sm:p-6">
 							<dt class="text-sm font-medium truncate">Pledge</dt>
-							<dd class="mt-1 text-3xl font-semibold 0">500K</dd>
+							<dd class="mt-1 text-3xl font-semibold">500K</dd>
 						</div>
-
 						<div class="px-4 py-5 sm:p-6">
 							<dt class="text-sm font-medium truncate">Margin</dt>
-							<dd class="mt-1 text-3xl font-semibold 0">
+							<dd class="mt-1 text-3xl font-semibold">
 								{data[0].margin * 100}%
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
 							<dt class="text-sm font-medium truncate">Stake</dt>
-							<dd class="mt-1 text-3xl font-semibold 0">
+							<dd class="mt-1 text-3xl font-semibold">
 								{(data[0].live_stake / 1000000000000).toFixed(2)}M
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
 							<dt class="text-sm font-medium truncate">Delegators</dt>
-							<dd class="mt-1 text-3xl font-semibold 0">
+							<dd class="mt-1 text-3xl font-semibold">
 								{data[0].live_delegators}
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
 							<dt class="text-sm font-medium truncate">Saturated</dt>
-							<dd class="mt-1 text-3xl font-semibold 0">
+							<dd class="mt-1 text-3xl font-semibold">
 								{data[0].live_saturation}%
 							</dd>
 						</div>
@@ -179,11 +198,6 @@
 				src="{base}/assets/images/Star-Forge-Sun.webp"
 				alt="Cardano Stake Pool Star Forge"
 			/>
-			<p
-				class="mt-2 bg-gradient-to-r from-accent to-teal-500 bg-clip-text text-3xl font-semibold tracking-wider text-transparent lg:text-4xl"
-			>
-				Mobile Cardano Stake Pool
-			</p>
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG (Off The Grid)</p>
 			<span
 				class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
