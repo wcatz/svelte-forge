@@ -328,7 +328,7 @@
 					<div class="mx-auto">
 						<div>
 							<h4
-								class="pt-10 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 text-center"
+								class="pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 							>
 								Decentralization First
 							</h4>
@@ -342,7 +342,7 @@
 							</p>
 							<div>
 								<h4
-									class="py-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500  text-center"
+									class="py-6 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 								>
 									Disaster Preparedness
 								</h4>
@@ -368,7 +368,7 @@
 				<div class="flex items-center">
 					<div class="flex-auto">
 						<h1
-							class="mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
+							class="mt-5 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
 						>
 							Latest Pool Stats
 						</h1>
@@ -437,7 +437,7 @@
 
 	<div>
 		<h4
-			class="py-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 text-center"
+			class="py-6 leading-8 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl text-center"
 		>
 			Reasons to Delegate ADA
 		</h4>

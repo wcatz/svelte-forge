@@ -13,7 +13,7 @@
     on:submit|preventDefault
     on:click|preventDefault|stopPropagation={action}
     disabled={wait}
-    class="relative text-green-400 -ml-px inline-flex items-center justify-center rounded-md px-4 py-3 text-lg font-medium transition duration-200 group hover:bg-opacity-10 hover:bg-secondary"
+    class="relative text-green-400 -ml-px inline-flex items-center justify-center rounded-md px-4 py-3 text-lg font-medium transition duration-200 group hover:bg-opacity-10 hover:bg-transparent"
 >
     {#if icon}
         <span class="svg-icon svg-icon-2x position-relative" style="top: -1px">
