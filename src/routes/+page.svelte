@@ -82,17 +82,17 @@
 		<div class="col-start-2 col-span-6 place-self-center">
 			<Typewriter cursor={false} mode="loopOnce" interval="150" delay="400" wordInterval="1250">
 				<h1
-					class="text-2xl mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+					class="text-2xl text-center mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 				>
 					Welcome Traveler
 				</h1>
 				<h1
-					class="text-2xl mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+					class="text-2xl text-center mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 				>
 					To The Star Forge
 				</h1>
 				<h1
-					class="text-2xl mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+					class="text-2xl text-center mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 				>
 					Mobile Cardano Stake Pool
 				</h1>
@@ -133,40 +133,40 @@
 			{:then data}
 				<div class="flex justify-center text-center">
 					<dl
-						class="flex flex-cols-1 gap-2 sm:flex-cols-7 bg-secondary bg-opacity-50 mb-1 border-opacity-70 border-t-2 border-l-2 border-r-2 border-accent rounded-t-lg"
+						class="flex flex-cols-1 gap-2 sm:flex-cols-7 bg-secondary bg-opacity-70 mb-1 border-opacity-70 border-t-2 border-l-2 border-r-2 border-accent rounded-t-lg"
 					>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm font-medium truncate">Blocks</dt>
-							<dd class="mt-1 text-3xl font-semibold">
+							<dt class="text-sm text-amber-400 font-medium truncate">Blocks</dt>
+							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
 								{data[0].block_count}
 							</dd>
 							<div class="stat-desc text-green-400" />
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm font-medium truncate">Pledge</dt>
-							<dd class="mt-1 text-3xl font-semibold">500K</dd>
+							<dt class="text-sm text-amber-400 font-medium truncate">Pledge</dt>
+							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">500K</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm font-medium truncate">Margin</dt>
-							<dd class="mt-1 text-3xl font-semibold">
+							<dt class="text-sm text-amber-400 font-medium truncate">Margin</dt>
+							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
 								{data[0].margin * 100}%
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm font-medium truncate">Stake</dt>
-							<dd class="mt-1 text-3xl font-semibold">
+							<dt class="text-sm text-amber-400 font-medium truncate">Stake</dt>
+							<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
 								{(data[0].live_stake / 1000000000000).toFixed(2)}M
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm font-medium truncate">Delegators</dt>
-							<dd class="mt-1 text-3xl font-semibold">
+							<dt class="text-sm text-amber-400 font-medium truncate">Delegators</dt>
+							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
 								{data[0].live_delegators}
 							</dd>
 						</div>
 						<div class="px-4 py-5 sm:p-6">
-							<dt class="text-sm font-medium truncate">Saturated</dt>
-							<dd class="mt-1 text-3xl font-semibold">
+							<dt class="text-sm text-amber-400 font-medium truncate">Saturated</dt>
+							<dd class="mt-1 text-3xl text-cyan-400 font-semibold">
 								{data[0].live_saturation}%
 							</dd>
 						</div>
@@ -187,98 +187,84 @@
 			<h1 class="mt-5 bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl">
 				🌟
 				<span
-					class="mt-5 bg-gradient-to-r from-accent to-teal-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
+					class="mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
 				>
 					Star Forge
 				</span>
 				⚡
 			</h1>
+			
 			<img
 				class="h-28 w-28 m-auto my-8"
 				src="{base}/assets/images/Star-Forge-Sun.webp"
 				alt="Cardano Stake Pool Star Forge"
 			/>
 			<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG (Off The Grid)</p>
-			<span
-				class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
-			>
+			<span class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0">
 				<button
 					on:click={() => handleClick((location.href = 'https://www.silktoad.io/claims'))}
 					rel="nofollow"
 					href="https://www.silktoad.io/claims"
 					tabIndex="0"
 					type="button"
-					class="btn-ghost relative -ml-px inline-flex items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none md:rounded-l-md"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
 				>
 					Silk Toad 🐸
+					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
 				</button>
+			
 				<button
-					on:click={() =>
-						handleClick(
-							(location.href =
-								'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
-						)}
+					on:click={() => handleClick((location.href = 'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae'))}
 					rel="nofollow"
 					type="button"
 					href="https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
-					class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
 				>
 					PoolPM 🐉
+					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
 				</button>
-
+			
 				<button
-					on:click={() =>
-						handleClick(
-							(location.href =
-								'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
-						)}
+					on:click={() => handleClick((location.href = 'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae'))}
 					rel="nofollow"
 					href="https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
 					type="button"
-					class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
 				>
 					PoolTool 🎱
+					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
 				</button>
+			
 				<button
 					on:click={() => handleClick((location.href = 'https://twitter.com/Star_Forge_Pool'))}
 					rel="nofollow"
 					href="https://twitter.com/Star_Forge_Pool"
 					type="button"
-					class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
 					style="display: flex; align-items: center;"
 				>
 					<span class="mr-1">Twitter</span>
-					<svg
-						width="20"
-						height="20"
-						version="1.1"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 300 251"
-					>
-						<!-- White Circle Background -->
+					<svg width="20" height="20" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 251">
 						<circle cx="150" cy="125.5" r="150" fill="#fff" />
-
-						<!-- Original Path -->
 						<path
 							d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"
 						/>
 					</svg>
+					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
 				</button>
-
+			
 				<button
-					on:click={() =>
-						handleClick(
-							(location.href =
-								'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c')
-						)}
+					on:click={() => handleClick((location.href = 'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c'))}
 					rel="nofollow"
 					href="https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"
 					type="button"
-					class="btn-ghost relative -ml-px items-center justify-center rounded-md border border-accent px-4 py-2 text-sm font-medium hover:border-accent focus:z-10 focus:outline-none focus:ring-1 md:rounded-none md:rounded-r-md"
+					class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 bg-transparent hover:bg-transparent transition duration-200"
 				>
 					Cexplorer 🔍
+					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
 				</button>
 			</span>
+			
 		</div>
 	</div>
 	<div>
@@ -342,7 +328,7 @@
 					<div class="mx-auto">
 						<div>
 							<h4
-								class="pt-10 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+								class="pt-10 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 text-center"
 							>
 								Decentralization First
 							</h4>
@@ -356,7 +342,7 @@
 							</p>
 							<div>
 								<h4
-									class="py-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+									class="py-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500  text-center"
 								>
 									Disaster Preparedness
 								</h4>
@@ -382,7 +368,7 @@
 				<div class="flex items-center">
 					<div class="flex-auto">
 						<h1
-							class="mt-6 leading-8 font-extrabold tracking-tight font- text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
+							class="mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
 						>
 							Latest Pool Stats
 						</h1>
@@ -451,7 +437,7 @@
 
 	<div>
 		<h4
-			class="py-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 text-center"
+			class="py-6 leading-8 font-extrabold tracking-tight text-4xl bg-clip-text text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 text-center"
 		>
 			Reasons to Delegate ADA
 		</h4>

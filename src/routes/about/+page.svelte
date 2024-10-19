@@ -69,7 +69,7 @@
 						<h1>
 							<span class="block text-center text-lg font-semibold">About</span>
 							<span
-								class="pb-4 mt-2 block text-center text-5xl font-bold leading-8 tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500"
+								class="pb-4 mt-2 block text-center text-5xl font-bold leading-8 tracking-tight sm:text-5xl bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text"
 								>The Star Forge</span
 							>
 							<span class="block text-center text-lg font-semibold text-accent"
