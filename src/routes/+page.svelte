@@ -77,26 +77,64 @@
 </svelte:head>
 
 <div class="">
+	
 	<div class="absolute inset-x-10 top-56 grid grid-cols-8 gap-1 z-30">
 		<div class="hidden lg:block col-start-1 col-span-1" />
 		<div class="col-start-2 col-span-6 place-self-center">
-			<Typewriter cursor={false} mode="loopOnce" interval="150" delay="400" wordInterval="1250">
-				<h1
-					class="text-2xl text-center mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
+			<div style="text-align: center;">
+				<Typewriter
+				  cursor={true}
+				  mode="loopOnce"
+				  interval={100}
+				  delay={500}
+				  pauseFor={2000}
+				  wordInterval={1500}
 				>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
 					Welcome Traveler
-				</h1>
-				<h1
-					class="text-2xl text-center mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
-				>
+				  </h1>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
 					To The Star Forge
-				</h1>
-				<h1
-					class="text-2xl text-center mt-5 bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
-				>
+				  </h1>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
 					Mobile Cardano Stake Pool
-				</h1>
-			</Typewriter>
+				  </h1>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
+					Please Keep Hands & Feet
+				  </h1>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
+					Inside The Space Station
+				  </h1>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
+					At All Times &
+				  </h1>
+				  <h1
+					class="text-green-400 font-mono text-2xl text-center mt-5 tracking-widest lg:text-4xl"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+				  >
+					Have A Nice Day!
+				  </h1>
+				</Typewriter>
+			  </div>
+			  
 		</div>
 		<div class="hidden lg:block col-end-9 col-span-1 place-self-end" />
 	</div>
@@ -700,4 +738,13 @@
 	.starscreen {
 		height: 70vh;
 	}
+	.fade-in {
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+.fade-in.show {
+    opacity: 1;
+}
+
 </style>
