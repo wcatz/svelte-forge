@@ -12,7 +12,7 @@
 <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
 	<!-- Static sidebar for desktop -->
 </div>
-<div class="flex flex-1 flex-col md:pl-36">
+<div class="flex flex-1 flex-col md:pl-36 texture">
 	<!-- Main content -->
 	<div class="flex flex-1 items-stretch overflow-hidden">
 		<main class="flex-1 overflow-y-auto">
@@ -258,3 +258,10 @@
 		</main>
 	</div>
 </div>
+
+<style>
+	.texture {
+		background-image: url('../assets/cubes.png');
+		background-size: auto;
+	}
+</style>

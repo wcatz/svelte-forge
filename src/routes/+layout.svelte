@@ -28,34 +28,111 @@
 					class="text-green-500 text-bold font-mono text-lg flex items-center relative group hover:bg-transparent"
 					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#FBBF24" class="w-6 h-6 mr-2">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="#FBBF24"
+						class="w-6 h-6 mr-2"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+						/>
 					</svg>
 					Home
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
+				</a>
+			</li>
+			<li class:active={$page.url.pathname === '/metrics'}>
+				<a
+					href="https://otg-1.boston-woodpecker.ts.net/d/armada-alliance/star-forge?orgId=2&refresh=30s"
+					class="text-green-500 font-mono text-lg flex items-center relative group hover:bg-transparent"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="#FBBF24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+						/>
+					</svg>
+					Metrics
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</a>
 			</li>
 
 			<li class:active={$page.url.pathname === '/gallery'}>
-				<a data-sveltekit-prefetch href="/gallery" class="text-green-500 font-mono text-lg flex items-center relative group hover:bg-transparent"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#FBBF24" class="w-6 h-6 mr-2">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-						<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+				<a
+					data-sveltekit-prefetch
+					href="/gallery"
+					class="text-green-500 font-mono text-lg flex items-center relative group hover:bg-transparent"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="#FBBF24"
+						class="w-6 h-6 mr-2"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+						/>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+						/>
 					</svg>
 					Gallery
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</a>
 			</li>
 
 			<li class:active={$page.url.pathname === '/about'}>
-				<a data-sveltekit-prefetch href="/about" class="text-green-500 font-mono text-lg flex items-center relative group hover:bg-transparent"
-					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#FBBF24" class="w-6 h-6 mr-2">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+				<a
+					data-sveltekit-prefetch
+					href="/about"
+					class="text-green-500 font-mono text-lg flex items-center relative group hover:bg-transparent"
+					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="#FBBF24"
+						class="w-6 h-6 mr-2"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+						/>
 					</svg>
 					About
-					<span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+					<span
+						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+					/>
 				</a>
 			</li>
 		</ul>
@@ -121,7 +198,6 @@
 			</svg>
 		</a>
 	</button>
-
 </div>
 
 <slot />
@@ -196,6 +272,7 @@
 </footer>
 
 <!-- Element positioned last so delegation modal overlay properly block UI -->
+
 <!--<nav class="navbar absolute z-50 bg-transparent" style="top: 0">
 	<div class="flex-1" />
 	<div>
@@ -230,7 +307,6 @@
 		</label>
 	</div>
 </nav> -->
-
 <style>
 	.pop-on-hover {
 		@apply transition duration-300 ease-in-out hover:scale-110;

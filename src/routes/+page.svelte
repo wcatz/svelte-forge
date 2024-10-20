@@ -7,7 +7,7 @@
 	const fullBlockSize = 87.97;
 	const EpochDurationInDays = 5;
 	const SecondsInDay = 24 * 60 * 60;
-	const ShelleyEpochStart = '2020-07-29T21:44:51Z'; // Epoch start date
+	const ShelleyEpochStart = '2020-07-29T21:44:51Z';
 	const StartingEpoch = 208;
 	const epochDurationInSeconds = EpochDurationInDays * SecondsInDay;
 	const startEpochTimestamp = new Date(ShelleyEpochStart).getTime() / 1000;
@@ -23,6 +23,8 @@
 
 	function handleClick() {}
 
+	const endState = { text: 'deleted'};
+
 	let getPoolInfo = (async () => {
 		const res = await fetch('https://koios.tosidrop.io/api/v1/pool_info', {
 			method: 'post',
@@ -35,7 +37,7 @@
 			})
 		});
 		const jsonData = await res.json();
-		//	console.log(jsonData);
+			console.log(jsonData);
 		return jsonData;
 	})();
 
@@ -44,44 +46,44 @@
 			'https://koios.tosidrop.io/api/v1/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
 		);
 		const jsonData = await res.json();
-		//	console.log(jsonData);
+			console.log(jsonData);
 		return jsonData;
 	})();
 
-	let blockCount = 0; // Declare it globally so it's accessible
+	let blockCount = 0;
 
-// Fetch block count for the current epoch
-let getBlockCount = async () => {
-  try {
-	const response = await fetch('https://koios.tosidrop.io/api/v1/pool_blocks', {
-	  method: 'POST',
-	  headers: {
-		Accept: 'application/json',
-		'Content-Type': 'application/json'
-	  },
-	  body: JSON.stringify({
-		_pool_bech32: 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c',
-		_epoch_no: currentEpoch // Calculated current epoch
-	  })
+	// Fetch block count for the current epoch
+	let getBlockCount = async () => {
+		try {
+			const response = await fetch('https://koios.tosidrop.io/api/v1/pool_blocks', {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					_pool_bech32: 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c',
+					_epoch_no: currentEpoch // Calculated current epoch
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch pool blocks');
+			}
+
+			const jsonData = await response.json();
+			blockCount = jsonData.length; // Update the outer blockCount variable
+			console.log(`Number of blocks in epoch ${currentEpoch}: ${blockCount}`);
+		} catch (error) {
+			console.error('Error fetching pool blocks:', error);
+			blockCount = 0;
+		}
+	};
+
+	// Call getBlockCount on component mount
+	onMount(() => {
+		getBlockCount();
 	});
-
-	if (!response.ok) {
-	  throw new Error('Failed to fetch pool blocks');
-	}
-
-	const jsonData = await response.json();
-	blockCount = jsonData.length; // Update the outer blockCount variable
-	console.log(`Number of blocks in epoch ${currentEpoch}: ${blockCount}`);
-  } catch (error) {
-	console.error('Error fetching pool blocks:', error);
-	blockCount = 0;
-  }
-};
-
-// Call getBlockCount on component mount
-onMount(() => {
-  getBlockCount();
-});
 	let video;
 	let observer;
 	const options = {
@@ -112,6 +114,12 @@ onMount(() => {
 			observer.disconnect();
 		}
 	});
+
+	let showTexture = false;
+
+	function handleVideoEnded() {
+		showTexture = true;
+	}
 </script>
 
 <svelte:head>
@@ -122,33 +130,55 @@ onMount(() => {
 	/>
 </svelte:head>
 
-<div class="">
+<div class="texture">
+	<div>
 	<div
-		class="starscreen lg:mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
+		class="starscreen drop-shadow-lg lg:mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
 	>
-		<video
-			autoplay
-			muted
-			playsinline
-			class="absolute inset-0 w-full h-full object-cover"
-			onended="this.pause();"
-		>
-			<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
-			Your browser does not support the video tag.
-		</video>
+	{#if !showTexture}
+	<!-- First video plays initially -->
+	<video
+	  autoplay
+	  muted
+	  playsinline
+	  class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+	  on:ended={handleVideoEnded}
+	  style="opacity: 1;"
+	>
+	  <source src="../assets/videos/star-hero.mp4" type="video/mp4" />
+	  Your browser does not support the video tag.
+	</video>
+  {:else}
+<!-- Container to center the video -->
+<div class="absolute inset-0 flex items-center justify-center animate-fade-in">
+	<!-- Second video plays after the first one ends -->
+	<video
+	  autoplay
+	  muted
+	  loop
+	  playsinline
+	  class="w-1/2 object-cover transition-opacity duration-2000 ease-in-out"
+	  style="opacity: 1;"
+	>
+	  <source src="https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0171.mp4" type="video/mp4" />
+	  Your browser does not support the video tag.
+	</video>
+  </div>
+  
+  {/if}
 
-		<div class="absolute -bottom-2 z-30 left-1/2 transform -translate-x-1/2">
+		<div class="absolute bottom-2 z-30 left-1/2 transform -translate-x-1/2">
 			<div class="hidden lg:block">
 				{#await getPoolInfo}
 					<div class="flex justify-center items-center mb-10">
 						<div
 							class="
-						  animate-spin
-						  rounded-full
-						  h-10
-						  w-10
-						  border-t-2 border-b-2 border-gray-500
-						"
+				animate-spin
+				rounded-full
+				h-10
+				w-10
+				border-t-2 border-b-2 border-gray-500
+			  "
 						/>
 					</div>
 				{:then data}
@@ -197,56 +227,53 @@ onMount(() => {
 			</div>
 		</div>
 	</div>
+</div>
 
-	<!-- Overlayed Content -->
-	<div class="absolute inset-0 flex flex-col justify-center items-center z-20">
-		<!-- Delegate Button at the Top -->
-		<div
-			class="hidden lg:block absolute top-10 text-green-500 font-mono text-lg flex items-center group hover:bg-transparent mb-8"
+<div class="absolute inset-0 flex flex-col justify-center items-center z-20">
+	<div
+		class="hidden lg:block absolute top-10 text-green-500 font-mono text-lg flex items-center group hover:bg-transparent mb-8"
+	>
+		<DelegateBtn />
+		<span
+			class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+		/>
+	</div>
+	<div class="drop-shadow-lg text-center mb-8">
+		<h1
+			class="bg-clip-text text-4xl pb-3 font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500"
+			style="direction: ltr; unicode-bidi: normal;"
 		>
-			<DelegateBtn />
-			<span
-				class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-			/>
-		</div>
-		<!-- Title and Image Section -->
-		<div class="text-center mb-8">
-			<h1
-				class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500"
-				style="direction: ltr; unicode-bidi: normal;"
-			>
-				🌟 Star Forge ⚡
-			</h1>
-			<img
-				class="h-28 w-28 m-auto my-8"
-				src="{base}/assets/images/Star-Forge-Sun.webp"
-				alt="Cardano Stake Pool Star Forge"
-			/>
-		</div>
+			🌟 Star Forge ⚡
+		</h1>
+		<img
+			class="h-28 w-28 m-auto my-8"
+			src="{base}/assets/images/Star-Forge-Sun.webp"
+			alt="Cardano Stake Pool Star Forge"
+		/>
+	</div>
 
-		<!-- Typewriter Section -->
-		<div class="text-center">
-			<!-- Add a wrapping div with a reserved height -->
-			<div
-				class="typewriter-container text-green-500 font-mono text-2xl tracking-widest lg:text-4xl"
-				style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-			>
+	<!-- Typewriter Section -->
+	<div class="text-center">
+		<!-- reserved height -->
+		<div
+			class="typewriter-container text-green-500 font-mono text-2xl tracking-widest lg:text-4xl"
+			style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+		>
 			<Typewriter
-			cursor={true}
-			mode="loopOnce"
-			interval={100}
-			delay={500}
-			pauseFor={2000}
-			wordInterval={1500}
-		  >
-			<h1>Welcome Traveler</h1>
-			<h1>To The Star Forge</h1>
-			<h1>Mobile Cardano Stake Pool</h1>
-			<h1>{`${progressPercentage}% into epoch ${currentEpoch}`}</h1>
-			<h1>{`With ${blockCount} Blocks Forged`}</h1>
-			<h1>Have a Nice Day</h1>
-		  </Typewriter>
-			</div>
+				cursor={true}
+				mode="loopOnce"
+				interval={100}
+				delay={300}
+				pauseFor={2500}
+				wordInterval={1500}
+				repeat={1}
+				endState={endState} 
+			>
+				<h1>{`Epoch: ${currentEpoch}`}</h1>  
+				<h1>{`Progress: ${progressPercentage}%`}</h1>
+				<h1>{`Epoch Blocks: ${blockCount}`}</h1>
+				<h1></h1>
+			</Typewriter>
 		</div>
 	</div>
 </div>
@@ -436,7 +463,7 @@ onMount(() => {
 									Disaster Preparedness
 								</h4>
 							</div>
-							<div class="-mb-5 flex items-center justify-center" />
+							<div class="mb-5 flex items-center justify-center" />
 						</div>
 						<p class="container-fluid mx-auto mb-10 mt-5 max-w-prose text-xl">
 							Capable of forging blocks while in motion, parked remotely with the high performance
@@ -457,7 +484,7 @@ onMount(() => {
 				<div class="flex items-center">
 					<div class="flex-auto">
 						<h1
-							class="mt-5 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-5xl"
+						class="pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
 						>
 							Latest Pool Stats
 						</h1>
@@ -784,6 +811,7 @@ onMount(() => {
 		</div>
 	</div>
 </div>
+</div>
 
 <style>
 	.starscreen {
@@ -798,8 +826,13 @@ onMount(() => {
 		opacity: 1;
 	}
 	.typewriter-container {
-		min-height: 100px; /* Set this to a height that accommodates your text */
-		/* You can also set a fixed height if preferred */
-		/* height: 100px; */
+		min-height: 100px;
 	}
+
+	.texture {
+		background-image: url('../assets/cubes.png');
+		background-size: auto;
+	}
+
+
 </style>

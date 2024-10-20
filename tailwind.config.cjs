@@ -15,7 +15,18 @@ const config = {
 				xl: '5rem',
 				'2xl': '6rem'
 			}
-		}
+		},
+		extend: {
+			animation: {
+				'fade-in': 'fadeIn 1s ease-in-out',
+			},
+			keyframes: {
+				fadeIn: {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' },
+				},
+			},
+		},
 	},
 
 	plugins: [require('@tailwindcss/aspect-ratio'), require("@tailwindcss/typography"), require('daisyui'), forms, typography],
