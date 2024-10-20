@@ -4,7 +4,23 @@
 	import { onMount, onDestroy } from 'svelte';
 	import DelegateBtn from './delegate/delegate-btn.svelte';
 
+	const fullBlockSize = 87.97;
+	const EpochDurationInDays = 5;
+	const SecondsInDay = 24 * 60 * 60;
+	const ShelleyEpochStart = '2020-07-29T21:44:51Z'; // Epoch start date
+	const StartingEpoch = 208;
+	const epochDurationInSeconds = EpochDurationInDays * SecondsInDay;
+	const startEpochTimestamp = new Date(ShelleyEpochStart).getTime() / 1000;
+	const currentTimestamp = Math.floor(Date.now() / 1000);
+	const totalElapsedTime = currentTimestamp - startEpochTimestamp;
+	const elapsedEpochs = Math.floor(totalElapsedTime / epochDurationInSeconds);
+	const currentEpoch = StartingEpoch + elapsedEpochs;
+	const currentEpochStart = startEpochTimestamp + elapsedEpochs * epochDurationInSeconds;
+	const elapsedTimeInCurrentEpoch = currentTimestamp - currentEpochStart;
+	const epochProgress = (elapsedTimeInCurrentEpoch / epochDurationInSeconds) * 100;
+	const progressPercentage = Math.min(epochProgress, 100).toFixed(0);
 	const numberFormatter = Intl.NumberFormat('en-US');
+
 	function handleClick() {}
 
 	let getPoolInfo = (async () => {
@@ -18,10 +34,8 @@
 				_pool_bech32_ids: ['pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c']
 			})
 		});
-
 		const jsonData = await res.json();
 		//	console.log(jsonData);
-
 		return jsonData;
 	})();
 
@@ -29,16 +43,47 @@
 		const res = await fetch(
 			'https://koios.tosidrop.io/api/v1/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
 		);
-
 		const jsonData = await res.json();
 		//	console.log(jsonData);
-
 		return jsonData;
 	})();
 
+	let blockCount = 0; // Declare it globally so it's accessible
+
+// Fetch block count for the current epoch
+let getBlockCount = async () => {
+  try {
+	const response = await fetch('https://koios.tosidrop.io/api/v1/pool_blocks', {
+	  method: 'POST',
+	  headers: {
+		Accept: 'application/json',
+		'Content-Type': 'application/json'
+	  },
+	  body: JSON.stringify({
+		_pool_bech32: 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c',
+		_epoch_no: currentEpoch // Calculated current epoch
+	  })
+	});
+
+	if (!response.ok) {
+	  throw new Error('Failed to fetch pool blocks');
+	}
+
+	const jsonData = await response.json();
+	blockCount = jsonData.length; // Update the outer blockCount variable
+	console.log(`Number of blocks in epoch ${currentEpoch}: ${blockCount}`);
+  } catch (error) {
+	console.error('Error fetching pool blocks:', error);
+	blockCount = 0;
+  }
+};
+
+// Call getBlockCount on component mount
+onMount(() => {
+  getBlockCount();
+});
 	let video;
 	let observer;
-
 	const options = {
 		root: null,
 		rootMargin: '0px',
@@ -129,7 +174,7 @@
 							<div class="px-4 py-5 sm:p-6">
 								<dt class="text-sm text-amber-500 font-medium truncate">Stake</dt>
 								<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-									{(data[0].live_stake / 1000000000000).toFixed(2)}M
+									{(data[0].active_stake / 1000000000000).toFixed(2)}M
 								</dd>
 							</div>
 							<div class="px-4 py-5 sm:p-6">
@@ -154,30 +199,30 @@
 	</div>
 
 	<!-- Overlayed Content -->
-<div class="absolute inset-0 flex flex-col justify-center items-center z-20">
-	<!-- Delegate Button at the Top -->
-	<div class="hidden lg:block absolute top-10 text-green-500 font-mono text-lg flex items-center group hover:bg-transparent mb-8">
-	  <DelegateBtn />
-	  <span
-		class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-	  />
-	</div>
-	<!-- Title and Image Section -->
-	<div class="text-center mb-8">
-	  <h1
-		class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500"
-		style="direction: ltr; unicode-bidi: normal;"
-	  >
-		🌟 Star Forge ⚡
-	  </h1>
-	  <img
-		class="h-28 w-28 m-auto my-8"
-		src="{base}/assets/images/Star-Forge-Sun.webp"
-		alt="Cardano Stake Pool Star Forge"
-	  />
-	</div>
-
-  
+	<div class="absolute inset-0 flex flex-col justify-center items-center z-20">
+		<!-- Delegate Button at the Top -->
+		<div
+			class="hidden lg:block absolute top-10 text-green-500 font-mono text-lg flex items-center group hover:bg-transparent mb-8"
+		>
+			<DelegateBtn />
+			<span
+				class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+			/>
+		</div>
+		<!-- Title and Image Section -->
+		<div class="text-center mb-8">
+			<h1
+				class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500"
+				style="direction: ltr; unicode-bidi: normal;"
+			>
+				🌟 Star Forge ⚡
+			</h1>
+			<img
+				class="h-28 w-28 m-auto my-8"
+				src="{base}/assets/images/Star-Forge-Sun.webp"
+				alt="Cardano Stake Pool Star Forge"
+			/>
+		</div>
 
 		<!-- Typewriter Section -->
 		<div class="text-center">
@@ -186,18 +231,21 @@
 				class="typewriter-container text-green-500 font-mono text-2xl tracking-widest lg:text-4xl"
 				style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 			>
-				<Typewriter
-					cursor={true}
-					mode="loopOnce"
-					interval={100}
-					delay={500}
-					pauseFor={2000}
-					wordInterval={1500}
-				>
-					<h1>Welcome Traveler</h1>
-					<h1>To The Star Forge</h1>
-					<h1>Mobile Cardano Stake Pool</h1>
-				</Typewriter>
+			<Typewriter
+			cursor={true}
+			mode="loopOnce"
+			interval={100}
+			delay={500}
+			pauseFor={2000}
+			wordInterval={1500}
+		  >
+			<h1>Welcome Traveler</h1>
+			<h1>To The Star Forge</h1>
+			<h1>Mobile Cardano Stake Pool</h1>
+			<h1>{`${progressPercentage}% into epoch ${currentEpoch}`}</h1>
+			<h1>{`With ${blockCount} Blocks Forged`}</h1>
+			<h1>Have a Nice Day</h1>
+		  </Typewriter>
 			</div>
 		</div>
 	</div>
