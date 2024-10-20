@@ -830,9 +830,8 @@
 	}
 
 	.texture {
-		background-image: url('../assets/cubes.png');
+		background-image: url('https://adamantium.online/assets/cubes.png');
 		background-size: auto;
 	}
-
 
 </style>
