@@ -114,15 +114,15 @@
 <svelte:window on:click|stopPropagation="{handleOutClick}" />
 
 <div class="relative">
-  <ActionBtn action={toggleShow} type="button" text="Delegate Now" wait="{wait}" status="{status}" />
+  <ActionBtn action={toggleShow} type="button" text="Delegate" wait="{wait}" status="{status}" />
   <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
     <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
-      <div class="p-4">
+      <div class="p-4 flex flex-row"> <!-- Changed to flex-row for horizontal layout -->
         <div on:click|stopPropagation={() => delegate('nami')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <NamiIcon/>
           </div>
-          <div class="font-bold text-white flex items-center pl-4 pr-2">
+          <div class="font-bold text-green-500 flex items-center pl-4 pr-2"> <!-- Applied green color -->
               Nami
           </div>
         </div>
@@ -130,7 +130,7 @@
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <EternlIcon/>
           </div>
-          <div class="font-bold text-white flex items-center pl-4 pr-2">
+          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
             Eternl
           </div>
         </div>
@@ -138,7 +138,7 @@
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <FlintIcon/>
           </div>
-          <div class="font-bold text-white flex items-center pl-4 pr-2">
+          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
             Flint
           </div>
         </div>
@@ -146,7 +146,7 @@
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <YoroiIcon/>
           </div>
-          <div class="font-bold text-white flex items-center pl-4 pr-2">
+          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
             Yoroi
           </div>
         </div>
@@ -154,7 +154,7 @@
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <GeroIcon/>
           </div>
-          <div class="font-bold text-white flex items-center pl-4 pr-2">
+          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
             Gero
           </div>
         </div>
@@ -162,7 +162,7 @@
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <LaceIcon/>
           </div>
-          <div class="font-bold text-white flex items-center pl-4 pr-2">
+          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
             Lace
           </div>
         </div>
@@ -170,6 +170,7 @@
     </div>
   </div>
 </div>
+
 
 <Modal bind:this="{errorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
   <svelte:fragment slot="title"><span class="text-error">Error</span></svelte:fragment>

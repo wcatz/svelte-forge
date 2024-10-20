@@ -9,31 +9,29 @@
 </script>
 
 <button
-    {type}
-    on:submit|preventDefault
-    on:click|preventDefault|stopPropagation={action}
-    disabled={wait}
-    class="relative text-green-400 font-mono text-center mt-5 tracking-widest -ml-px inline-flex items-center justify-center rounded-md px-4 py-3 text-lg font-medium transition duration-200 group hover:bg-opacity-10 hover:bg-transparent"
-    style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
+	{type}
+	on:submit|preventDefault
+	on:click|preventDefault|stopPropagation={action}
+	disabled={wait}
+	class="relative text-green-500 font-mono text-center tracking-widest -ml-px inline-flex items-center justify-center rounded-md text-lg font-medium transition duration-200 group hover:bg-opacity-10 hover:bg-transparent"
+	style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 >
-    {#if icon}
-        <span class="svg-icon svg-icon-2x position-relative" style="top: -1px">
-            <svelte:component this={icon} />
-        </span>
-    {/if}
-    {#if wait}
-        <span class="px-2">
-            <img src="/assets/images/sun.png" alt="OTG Logo" class="animate-pulse" width="26" />
-        </span>
-        <span class="animate-pulse">
-            {status}
-        </span>
-    {:else}
-        {text}
-    {/if}
-    <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+	{#if icon}
+		<span class="svg-icon svg-icon-2x position-relative" style="top: -1px">
+			<svelte:component this={icon} />
+		</span>
+	{/if}
+	{#if wait}
+		<span class="px-2">
+			<img src="/assets/images/sun.png" alt="OTG Logo" class="animate-pulse" width="26" />
+		</span>
+		<span class="animate-pulse">
+			{status}
+		</span>
+	{:else}
+		{text}
+	{/if}
 </button>
-
 
 <style lang="scss">
 	.btn[disabled] {

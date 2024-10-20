@@ -2,6 +2,7 @@
 	import { base } from '$app/paths';
 	import Typewriter from 'svelte-typewriter';
 	import { onMount, onDestroy } from 'svelte';
+	import DelegateBtn from './delegate/delegate-btn.svelte';
 
 	const numberFormatter = Intl.NumberFormat('en-US');
 	function handleClick() {}
@@ -78,7 +79,7 @@
 
 <div class="">
 	<div
-		class="starscreen mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
+		class="starscreen lg:mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
 	>
 		<video
 			autoplay
@@ -153,21 +154,30 @@
 	</div>
 
 	<!-- Overlayed Content -->
-	<div class="absolute inset-0 bottom-30 flex flex-col justify-center items-center z-20">
-		<!-- Title and Image Section -->
-		<div class="text-center mb-8">
-			<h1
-				class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500"
-				style="direction: ltr; unicode-bidi: normal;"
-			>
-				🌟 Star Forge ⚡
-			</h1>
-			<img
-				class="h-28 w-28 m-auto my-8"
-				src="{base}/assets/images/Star-Forge-Sun.webp"
-				alt="Cardano Stake Pool Star Forge"
-			/>
-		</div>
+<div class="absolute inset-0 flex flex-col justify-center items-center z-20">
+	<!-- Delegate Button at the Top -->
+	<div class="hidden lg:block absolute top-10 text-green-500 font-mono text-lg flex items-center group hover:bg-transparent mb-8">
+	  <DelegateBtn />
+	  <span
+		class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+	  />
+	</div>
+	<!-- Title and Image Section -->
+	<div class="text-center mb-8">
+	  <h1
+		class="bg-clip-text text-4xl font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500"
+		style="direction: ltr; unicode-bidi: normal;"
+	  >
+		🌟 Star Forge ⚡
+	  </h1>
+	  <img
+		class="h-28 w-28 m-auto my-8"
+		src="{base}/assets/images/Star-Forge-Sun.webp"
+		alt="Cardano Stake Pool Star Forge"
+	  />
+	</div>
+
+  
 
 		<!-- Typewriter Section -->
 		<div class="text-center">
