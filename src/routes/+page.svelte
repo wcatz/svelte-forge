@@ -37,7 +37,7 @@
 			})
 		});
 		const jsonData = await res.json();
-			console.log(jsonData);
+		//	console.log(jsonData);
 		return jsonData;
 	})();
 
@@ -46,7 +46,7 @@
 			'https://koios.tosidrop.io/api/v1/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
 		);
 		const jsonData = await res.json();
-			console.log(jsonData);
+		//	console.log(jsonData);
 		return jsonData;
 	})();
 
@@ -150,14 +150,14 @@
 	</video>
   {:else}
 <!-- Container to center the video -->
-<div class="absolute inset-0 flex items-center justify-center animate-fade-in">
+<div class="absolute inset-0 flex items-center justify-center opacity-80">
 	<!-- Second video plays after the first one ends -->
 	<video
 	  autoplay
 	  muted
 	  loop
 	  playsinline
-	  class="w-1/2 object-cover transition-opacity duration-2000 ease-in-out"
+	  class="w-3/5 object-cover transition-opacity duration-2000 ease-in-out rounded-t-full"
 	  style="opacity: 1;"
 	>
 	  <source src="https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0171.mp4" type="video/mp4" />
@@ -260,18 +260,18 @@
 			style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 		>
 			<Typewriter
-				cursor={true}
+				cursor={false}
 				mode="loopOnce"
 				interval={100}
-				delay={300}
+				delay={350}
 				pauseFor={2500}
 				wordInterval={1500}
 				repeat={1}
 				endState={endState} 
 			>
-				<h1>{`Epoch: ${currentEpoch}`}</h1>  
-				<h1>{`Progress: ${progressPercentage}%`}</h1>
-				<h1>{`Epoch Blocks: ${blockCount}`}</h1>
+				<h1>{`Epoch:${currentEpoch}`}</h1>  
+				<h1>{`Progress:${progressPercentage}%`}</h1>
+				<h1>{`Epoch Blocks:${blockCount}`}</h1>
 				<h1></h1>
 			</Typewriter>
 		</div>
