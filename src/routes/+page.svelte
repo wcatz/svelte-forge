@@ -531,7 +531,7 @@
 										</td>
 										<td class="">{val.block_cnt}</td>
 										<td class="">
-											{numberFormatter.format((val.deleg_rewards / 100000).toFixed(0))} ₳
+											{numberFormatter.format((val.deleg_rewards / 1000000).toFixed(0))} ₳
 										</td>
 										<td class="">
 											{val.epoch_ros.toFixed(2)} %
