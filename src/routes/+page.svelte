@@ -269,10 +269,10 @@
 				repeat={1}
 				endState={endState} 
 			>
+			    <h1>Welcome</h1>
 				<h1>{`Epoch:${currentEpoch}`}</h1>  
 				<h1>{`Progress:${progressPercentage}%`}</h1>
 				<h1>{`Epoch Blocks:${blockCount}`}</h1>
-				<h1></h1>
 			</Typewriter>
 		</div>
 	</div>
