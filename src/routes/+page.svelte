@@ -285,15 +285,15 @@
 					class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 				>
 					<button
-						on:click={() => handleClick((location.href = 'https://www.silktoad.io/claims'))}
+						on:click={() => handleClick((location.href = 'https://tosidrop.me/claims'))}
 						rel="nofollow"
-						href="https://www.silktoad.io/claims"
+						href="https://tosidrop.me/claims"
 						tabIndex="0"
 						type="button"
 						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
 						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 					>
-						Silk Toad 🐸
+						Tosidrop ☂️
 						<span
 							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 						/>

@@ -1,7 +1,7 @@
 <script>
   import ActionBtn from "../../lib/component/action-button.svelte";
   import Delegate from "./delegate.js";
-  import NamiIcon from "../../lib/icons/nami.svelte";
+  //import NamiIcon from "../../lib/icons/nami.svelte";
   import EternlIcon from "../../lib/icons/eternl.svelte";
   import FlintIcon from "../../lib/icons/flint.svelte";
   import YoroiIcon from "../../lib/icons/yoroi.svelte";
@@ -118,14 +118,6 @@
   <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
     <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
       <div class="p-4 flex flex-row">
-        <div on:click|stopPropagation={() => delegate('nami')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <NamiIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-              Nami
-          </div>
-        </div>
         <div on:click|stopPropagation={() => delegate('eternl')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <EternlIcon/>
