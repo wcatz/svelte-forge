@@ -6,7 +6,7 @@ export async function GET({ url }) {
         queryParams.append(key, value);
     });
 
-    const response = await fetch(`https://koios.tosidrop.io/api/v1/pool_history?${queryParams.toString()}`);
+    const response = await fetch(`https://koios.tosidrop.me/api/v1/pool_history?${queryParams.toString()}`);
 
     if (!response.ok) {
         return json({ error: 'Failed to fetch pool history' }, { status: response.status });
