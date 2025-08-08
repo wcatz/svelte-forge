@@ -2,13 +2,14 @@
     "info": {
       "url_png_icon_64x64": "https://adamantium.online/sun.png",
       "url_png_logo": "https://adamantium.online/sun.png",
-      "location": "New Hampshire, USA",
+      "location": "Mobile, USA",
       "social": {
         "twitter_handle": "Star_Forge_Pool",
         "telegram_handle": "WCat13",
         "discord_handle": "WCat#6737",
         "github_handle": "wcatz"
       },
+      "verification_code": "885-HCC-539",
       "about": {
         "me": "https://armada-alliance.com/docs/",
         "server": "Fully ARMed stake pool using 110 watts +-. Starlink, Solar, Off The Grid",
