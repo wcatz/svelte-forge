@@ -1,0 +1,12 @@
+node_modules
+build
+.svelte-kit
+.git
+.gitignore
+*.md
+.env*
+.DS_Store
+Dockerfile
+.dockerignore
+tests
+playwright.config.js
