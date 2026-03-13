@@ -1,8 +1,10 @@
 import { json } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
 export async function POST({ request }) {
+    const koiosUrl = env.KOIOS_API_URL || 'https://koios.tosidrop.me/api/v1';
     const body = await request.json();
-    const response = await fetch('https://koios.tosidrop.me/api/v1/pool_blocks', {
+    const response = await fetch(`${koiosUrl}/pool_blocks`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

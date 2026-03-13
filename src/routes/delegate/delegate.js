@@ -4,8 +4,7 @@ import { Blockfrost, Lucid } from 'lucid-cardano';
  * Transaction check interval in milliseconds
  */
 const CHECK_INTERVAL = 10000;
-const PROVIDER_URL = 'https://cardano-mainnet.blockfrost.io/api/v0';
-const API_KEY = 'mainnetxziQ3sSBXdg8hry1Z2WGxRDCBhPWsSf8';
+const PROVIDER_URL = '/api/bf';
 
 export default class Delegate {
 	constructor(api) {
@@ -17,7 +16,7 @@ export default class Delegate {
 		if (this.lucid) {
 			return this.lucid;
 		}
-		this.lucid = await Lucid.new(new Blockfrost(PROVIDER_URL, API_KEY));
+		this.lucid = await Lucid.new(new Blockfrost(PROVIDER_URL));
 		return this.lucid;
 	}
 
@@ -41,9 +40,7 @@ export default class Delegate {
 
 		let registered = false;
 
-		const accountInfo = await this.request(PROVIDER_URL, `/accounts/${rewardAddress}`, {
-			project_id: API_KEY
-		});
+		const accountInfo = await this.request(PROVIDER_URL, `/accounts/${rewardAddress}`, {});
 
 		if (accountInfo && accountInfo.active) {
 			registered = true;
