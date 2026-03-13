@@ -5,7 +5,8 @@
 		status = 'Please wait...',
 		icon = undefined,
 		wait = false,
-		action = () => undefined
+		action = () => undefined,
+		customClass = ''
 	} = $props();
 </script>
 
@@ -14,7 +15,7 @@
 	onsubmit={(e) => e.preventDefault()}
 	onclick={(e) => { e.preventDefault(); e.stopPropagation(); action(); }}
 	disabled={wait}
-	class="relative text-green-500 font-mono text-center tracking-widest -ml-px inline-flex items-center justify-center rounded-md text-lg font-medium transition duration-200 group hover:bg-opacity-10 hover:bg-transparent"
+	class={customClass || "relative text-green-500 font-mono text-center tracking-widest -ml-px inline-flex items-center justify-center rounded-md text-lg font-medium transition duration-200 group hover:bg-opacity-10 hover:bg-transparent"}
 	style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 >
 	{#if icon}

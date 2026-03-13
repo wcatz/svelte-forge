@@ -14,13 +14,13 @@
 	});
 </script>
 
-<div class="hidden lg:block">
+<nav aria-label="Main navigation" class="hidden lg:block">
 	<div class="absolute inset-x-10 top-1/4 flex items-center">
-		<ul class="menu menu-compact p-2 w-48 z-50 mb-1">
+		<ul class="menu p-2 w-48 z-50 mb-1">
 			<li class:active={page.url.pathname === '/'}>
 				<a
 					href="/"
-					class="text-green-500 text-bold font-mono text-lg flex items-center relative group hover:bg-transparent"
+					class="text-green-500 font-bold font-mono text-lg flex items-center relative group hover:bg-transparent"
 					style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal"
 				>
 					<svg
@@ -63,7 +63,7 @@
 							d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
 						/>
 					</svg>
-					<p class="pl-3">Metrics</p>
+					<span class="pl-3">Metrics</span>
 
 					<span
 						class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
@@ -131,68 +131,65 @@
 			</li>
 		</ul>
 	</div>
-</div>
-<div class="btm-nav visible lg:hidden z-50">
-	<button class="border-accent" class:active={page.url.pathname === '/'}>
-		<a href="/">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="#FBBF24"
-				class="w-6 h-6"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-				/>
-			</svg>
-		</a>
-	</button>
-	<button class="border-accent" class:active={page.url.pathname === '/gallery'}>
-		<a href="/gallery">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="#FBBF24"
-				class="w-6 h-6"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-				/>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-				/>
-			</svg>
-		</a>
-	</button>
-	<button class="border-accent" class:active={page.url.pathname === '/about'}>
-		<a href="/about">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="#FBBF24"
-				class="w-6 h-6"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
-				/>
-			</svg>
-		</a>
-	</button>
-</div>
+</nav>
+<nav aria-label="Mobile navigation" class="btm-nav visible lg:hidden z-50">
+	<a href="/" class="border-accent" class:active={page.url.pathname === '/'} aria-label="Home">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="#FBBF24"
+			class="w-6 h-6"
+			aria-hidden="true"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+			/>
+		</svg>
+	</a>
+	<a href="/gallery" class="border-accent" class:active={page.url.pathname === '/gallery'} aria-label="Gallery">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="#FBBF24"
+			class="w-6 h-6"
+			aria-hidden="true"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+			/>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+			/>
+		</svg>
+	</a>
+	<a href="/about" class="border-accent" class:active={page.url.pathname === '/about'} aria-label="About">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke-width="1.5"
+			stroke="#FBBF24"
+			class="w-6 h-6"
+			aria-hidden="true"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+			/>
+		</svg>
+	</a>
+</nav>
 
 {@render children()}
 
@@ -210,10 +207,10 @@
 				d="M22.672 15.226l-2.432.811.841 2.515c.33 1.019-.209 2.127-1.23 2.456-1.15.325-2.148-.321-2.463-1.226l-.84-2.518-5.013 1.677.84 2.517c.391 1.203-.434 2.542-1.831 2.542-.88 0-1.601-.564-1.86-1.314l-.842-2.516-2.431.809c-1.135.328-2.145-.317-2.463-1.229-.329-1.018.211-2.127 1.231-2.456l2.432-.809-1.621-4.823-2.432.808c-1.355.384-2.558-.59-2.558-1.839 0-.817.509-1.582 1.327-1.846l2.433-.809-.842-2.515c-.33-1.02.211-2.129 1.232-2.458 1.02-.329 2.13.209 2.461 1.229l.842 2.515 5.011-1.677-.839-2.517c-.403-1.238.484-2.553 1.843-2.553.819 0 1.585.509 1.85 1.326l.841 2.517 2.431-.81c1.02-.33 2.131.211 2.461 1.229.332 1.018-.21 2.126-1.23 2.456l-2.433.809 1.622 4.823 2.433-.809c1.242-.401 2.557.484 2.557 1.838 0 .819-.51 1.583-1.328 1.847m-8.992-6.428l-5.01 1.675 1.619 4.828 5.011-1.674-1.62-4.829z"
 			/></svg
 		>
-		<p>Copyright &copy; {year} - All right reserved</p>
+		<p>Copyright &copy; {year} - All rights reserved</p>
 	</div>
 	<div class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-		<a class="pt-1" href="https://twitter.com/Star_Forge_Pool"
+		<a class="pt-1" href="https://twitter.com/Star_Forge_Pool" aria-label="Twitter"
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -225,7 +222,7 @@
 				/></svg
 			></a
 		>
-		<a class="pt-1" href="https://github.com/wcatz"
+		<a class="pt-1" href="https://github.com/wcatz" aria-label="GitHub"
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -237,7 +234,7 @@
 				/></svg
 			></a
 		>
-		<a class="pt-1" href="https://t.me/StarForgeCardano"
+		<a class="pt-1" href="https://t.me/StarForgeCardano" aria-label="Telegram"
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="24"
@@ -249,7 +246,7 @@
 				/></svg
 			></a
 		>
-		<a class="pt-1" href="https://discord.gg/jTcTKUYj64"
+		<a class="pt-1" href="https://discord.gg/jTcTKUYj64" aria-label="Discord"
 			><svg
 				width="24"
 				height="24"

@@ -10,10 +10,7 @@
 	/>
 </svelte:head>
 
-<div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-	<!-- Static sidebar for desktop -->
-</div>
-<div class="flex flex-1 flex-col md:pl-64 texture">
+<div class="flex flex-1 flex-col texture">
 	<!-- Main content -->
 	<div class="flex flex-1 items-stretch overflow-hidden">
 		<main class="flex-1 overflow-y-auto">
@@ -182,7 +179,7 @@
 							>
 								<img
 									src="{base}/assets/images/cardano-stake-pool.webp"
-									alt="Efficient yeild farming. Best Cardano stake pool"
+									alt="Efficient yield farming. Best Cardano stake pool"
 									class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
 								/>
 							</div>

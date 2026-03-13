@@ -48,7 +48,7 @@ const config = {
 					primary: '#1F2937',
 					secondary: '#1F2937',
 					accent: '#1F2937',
-					neutral: '#ffff',
+					neutral: '#ffffff',
 					'base-100': '#6b7280',
 					info: '#357CED',
 					success: '#487423',

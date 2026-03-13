@@ -120,7 +120,7 @@
 	/>
 </svelte:head>
 
-<div class="texture">
+<main class="texture">
 	<div>
 		<div
 			class="starscreen drop-shadow-lg lg:mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
@@ -135,7 +135,7 @@
 					onended={handleVideoEnded}
 					style="opacity: 1;"
 				>
-					<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
+					<source src="{base}/assets/videos/star-hero.mp4" type="video/mp4" />
 					Your browser does not support the video tag.
 				</video>
 			{:else}
@@ -278,12 +278,9 @@
 				<span
 					class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 				>
-					<button
-						onclick={() => location.href = 'https://tosidrop.me/claims'}
+					<a
 						rel="nofollow"
 						href="https://tosidrop.me/claims"
-						tabIndex="0"
-						type="button"
 						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
 						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 					>
@@ -291,12 +288,10 @@
 						<span
 							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 						/>
-					</button>
+					</a>
 
-					<button
-						onclick={() => location.href = "https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"}
+					<a
 						rel="nofollow"
-						type="button"
 						href="https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
 						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
 						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
@@ -305,13 +300,11 @@
 						<span
 							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 						/>
-					</button>
+					</a>
 
-					<button
-						onclick={() => location.href = "https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"}
+					<a
 						rel="nofollow"
 						href="https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
-						type="button"
 						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
 						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 					>
@@ -319,13 +312,11 @@
 						<span
 							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 						/>
-					</button>
+					</a>
 
-					<button
-						onclick={() => location.href = "https://twitter.com/Star_Forge_Pool"}
+					<a
 						rel="nofollow"
 						href="https://twitter.com/Star_Forge_Pool"
-						type="button"
 						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
 						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 					>
@@ -345,13 +336,11 @@
 						<span
 							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 						/>
-					</button>
+					</a>
 
-					<button
-						onclick={() => location.href = "https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"}
+					<a
 						rel="nofollow"
 						href="https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"
-						type="button"
 						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
 						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
 					>
@@ -359,7 +348,7 @@
 						<span
 							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
 						/>
-					</button>
+					</a>
 				</span>
 			</div>
 		</div>
@@ -491,17 +480,13 @@
 							</thead>
 							<tbody>
 								{#await getPoolHistory}
-									<div class="flex justify-center items-center mb-10">
-										<div
-											class="
-										  animate-spin
-										  rounded-full
-										  h-10
-										  w-10
-										  border-t-2 border-b-2 cyan-500
-										  "
-										/>
-									</div>
+									<tr>
+										<td colspan="7" class="text-center py-10">
+											<div
+												class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-cyan-500"
+											/>
+										</td>
+									</tr>
 								{:then data}
 									{#each data.slice(1) as val}
 										<tr class="hover">
@@ -791,7 +776,7 @@
 			</div>
 		</div>
 	</div>
-</div>
+</main>
 
 <style>
 	.starscreen {

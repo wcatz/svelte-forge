@@ -61,7 +61,7 @@
       <div onclick={(e) => e.stopPropagation()} class="relative transform overflow-hidden rounded-lg bg-gray-700 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
         <div class="bg-gray-700 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div class="mt-3 text-center sm:mt-0 sm:text-left">
-            <h2 class="text-base font-semibold leading-6 text-gray-400" id="modal-title">{@render title?.()}</h2>
+            <h2 class="text-base font-semibold leading-6 text-gray-400">{@render title?.()}</h2>
             <div class="mt-2">
               {@render body?.()}
             </div>
