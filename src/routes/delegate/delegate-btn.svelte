@@ -1,12 +1,7 @@
 <script>
+  import { onMount } from 'svelte';
   import ActionBtn from "../../lib/component/action-button.svelte";
   import Delegate from "./delegate.js";
-  //import NamiIcon from "../../lib/icons/nami.svelte";
-  import EternlIcon from "../../lib/icons/eternl.svelte";
-  import FlintIcon from "../../lib/icons/flint.svelte";
-  import YoroiIcon from "../../lib/icons/yoroi.svelte";
-  import LaceIcon from "../../lib/icons/lace.svelte";
-  import GeroIcon from "../../lib/icons/gero.svelte";
   import Modal from "../../lib/component/modal.svelte";
 
   const poolId = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
@@ -15,17 +10,44 @@
   let wait = $state(false);
   let status = $state('Please wait...');
   let txHash = $state('');
+  let wallets = $state([]);
 
   // Modals
   let errorModal = $state();
-  let connectorErrorModal = $state();
+  let noWalletsModal = $state();
   let networkErrorModal = $state();
   let alreadyDelegatedErrorModal = $state();
   let txSentModal = $state();
   let insufficientFundsModal = $state();
   let successModal = $state();
 
+  onMount(() => {
+    detectWallets();
+  });
+
+  function detectWallets() {
+    if (typeof window === 'undefined' || !window.cardano) {
+      wallets = [];
+      return;
+    }
+    wallets = Object.keys(window.cardano)
+      .filter(key => {
+        const w = window.cardano[key];
+        return w && typeof w === 'object' && typeof w.enable === 'function' && typeof w.icon === 'string';
+      })
+      .map(key => ({
+        id: key,
+        name: window.cardano[key].name || key,
+        icon: window.cardano[key].icon
+      }));
+  }
+
   function toggleShow() {
+    detectWallets();
+    if (wallets.length === 0) {
+      noWalletsModal.open();
+      return;
+    }
     show = !show;
   }
 
@@ -41,73 +63,60 @@
   async function delegate(walletId) {
     show = false;
     wait = true;
-    if (cardano && cardano[walletId]) {
-      const connector = cardano[walletId];
-      // Attempt to fetch connector API
-      let wallet;
-      try {
-        wallet = await connector.enable();
-      } catch (e) {
-        console.error(e);
+
+    const connector = window.cardano?.[walletId];
+    if (!connector) {
+      noWalletsModal.open();
+      return null;
+    }
+
+    let wallet;
+    try {
+      wallet = await connector.enable();
+    } catch (e) {
+      console.error(e);
+      stopWait();
+      return null;
+    }
+
+    if ((await wallet.getNetworkId()) !== 1) {
+      networkErrorModal.open();
+      return null;
+    }
+
+    const del = new Delegate(wallet);
+
+    try {
+      const currentPoolId = await del.checkDelegation();
+
+      if (currentPoolId === poolId) {
+        alreadyDelegatedErrorModal.open();
+        return null;
+      }
+
+      status = 'Submitting...'
+      txHash = await del.delegate(poolId);
+      txSentModal.open();
+    } catch (e) {
+      if (e.code && e.code === 2) {
         stopWait();
         return null;
-      }
-
-      // Flint workaround
-      if(!(await connector.isEnabled())) {
-        wallet = await connector.enable();
-        if(!(await connector.isEnabled())) {
-          stopWait();
-          return null;
-        }
-      }
-
-      if ((await wallet.getNetworkId()) !== 1) {
-        networkErrorModal.open();
+      } else if (e === 'Insufficient input in transaction') {
+        console.error(e);
+        insufficientFundsModal.open();
         return null;
       }
-
-      const del = new Delegate(wallet);
-
-      // Handle Delegation
-      try {
-        const currentPoolId = await del.checkDelegation();
-
-        // Notice user if already delegated
-        if (currentPoolId === poolId) {
-          alreadyDelegatedErrorModal.open();
-          return null;
-        }
-
-        status = 'Submitting...'
-        txHash = await del.delegate(poolId);
-        txSentModal.open();
-      } catch (e) {
-        if (e.code && e.code === 2) {
-          // User declined to sign the transaction.
-          stopWait();
-          return null;
-        } else if (e === 'Insufficient input in transaction') {
-          console.error(e);
-          insufficientFundsModal.open();
-          return null;
-        }
-        console.error(e);
-        errorModal.open();
-        return;
-      }
-
-      // Open success modal once the transaction is confirmed
-      status = 'Waiting confirmation...'
-      del.awaitTx().then((success) => {
-        if (success) {
-          successModal.open();
-        }
-      }).catch(console.error);
-
-    } else {
-      connectorErrorModal.open();
+      console.error(e);
+      errorModal.open();
+      return;
     }
+
+    status = 'Waiting confirmation...'
+    del.awaitTx().then((success) => {
+      if (success) {
+        successModal.open();
+      }
+    }).catch(console.error);
   }
 </script>
 
@@ -119,57 +128,19 @@
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div onclick={(e) => e.stopPropagation()} class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
-      <div class="p-4 flex flex-row">
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div onclick={(e) => { e.stopPropagation(); delegate('eternl'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <EternlIcon/>
+      <div class="p-4 flex flex-row flex-wrap gap-1">
+        {#each wallets as w}
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
+          <div onclick={(e) => { e.stopPropagation(); delegate(w.id); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+            <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
+              <img src={w.icon} alt={w.name} class="h-8 w-8" />
+            </div>
+            <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
+              {w.name}
+            </div>
           </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Eternl
-          </div>
-        </div>
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div onclick={(e) => { e.stopPropagation(); delegate('flint'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <FlintIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Flint
-          </div>
-        </div>
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div onclick={(e) => { e.stopPropagation(); delegate('yoroi'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <YoroiIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Yoroi
-          </div>
-        </div>
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div onclick={(e) => { e.stopPropagation(); delegate('gerowallet'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <GeroIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Gero
-          </div>
-        </div>
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div onclick={(e) => { e.stopPropagation(); delegate('lace'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <LaceIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Lace
-          </div>
-        </div>
+        {/each}
       </div>
     </div>
   </div>
@@ -183,10 +154,10 @@
   </p>{/snippet}
 </Modal>
 
-<Modal bind:this={connectorErrorModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-error">Wallet extension not found!</span>{/snippet}
+<Modal bind:this={noWalletsModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-error">No Cardano wallet found!</span>{/snippet}
   {#snippet body()}<p>
-    Make sure the selected wallet extension is installed.
+    Install a CIP-30 compatible Cardano wallet extension (Eternl, Lace, Yoroi, etc.) to delegate.
   </p>{/snippet}
 </Modal>
 
