@@ -4,7 +4,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import DelegateBtn from './delegate/delegate-btn.svelte';
 
-	const fullBlockSize = 87.97;
 	const EpochDurationInDays = 5;
 	const SecondsInDay = 24 * 60 * 60;
 	const ShelleyEpochStart = '2020-07-29T21:44:51Z';
@@ -20,8 +19,6 @@
 	const epochProgress = (elapsedTimeInCurrentEpoch / epochDurationInSeconds) * 100;
 	const progressPercentage = Math.min(epochProgress, 100).toFixed(0);
 	const numberFormatter = Intl.NumberFormat('en-US');
-
-	function handleClick() {}
 
 	const endState = { text: 'deleted' };
 
@@ -47,7 +44,7 @@
 		return jsonData;
 	})();
 
-	let blockCount = 0;
+	let blockCount = $state(0);
 
 	// Fetch block count for the current epoch
 	let getBlockCount = async () => {
@@ -68,19 +65,18 @@
 			}
 
 			const jsonData = await response.json();
-			blockCount = jsonData.length; // Update the outer blockCount variable
-			console.log(`Number of blocks in epoch ${currentEpoch}: ${blockCount}`);
+			blockCount = jsonData.length;
 		} catch (error) {
 			console.error('Error fetching pool blocks:', error);
 			blockCount = 0;
 		}
 	};
 
-	// Call getBlockCount on component mount
 	onMount(() => {
 		getBlockCount();
 	});
-	let video;
+
+	let video = $state();
 	let observer;
 	const options = {
 		root: null,
@@ -91,10 +87,8 @@
 	function handleIntersection(entries) {
 		entries.forEach((entry) => {
 			if (entry.isIntersecting) {
-				// Video is in view, start playing
 				video.play();
 			} else {
-				// Video is out of view, pause it
 				video.pause();
 			}
 		});
@@ -111,7 +105,7 @@
 		}
 	});
 
-	let showTexture = false;
+	let showTexture = $state(false);
 
 	function handleVideoEnded() {
 		showTexture = true;
@@ -138,7 +132,7 @@
 					muted
 					playsinline
 					class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-					on:ended={handleVideoEnded}
+					onended={handleVideoEnded}
 					style="opacity: 1;"
 				>
 					<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
@@ -285,7 +279,7 @@
 					class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
 				>
 					<button
-						on:click={() => handleClick((location.href = 'https://tosidrop.me/claims'))}
+						onclick={() => location.href = 'https://tosidrop.me/claims'}
 						rel="nofollow"
 						href="https://tosidrop.me/claims"
 						tabIndex="0"
@@ -300,11 +294,7 @@
 					</button>
 
 					<button
-						on:click={() =>
-							handleClick(
-								(location.href =
-									'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
-							)}
+						onclick={() => location.href = "https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"}
 						rel="nofollow"
 						type="button"
 						href="https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
@@ -318,11 +308,7 @@
 					</button>
 
 					<button
-						on:click={() =>
-							handleClick(
-								(location.href =
-									'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
-							)}
+						onclick={() => location.href = "https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"}
 						rel="nofollow"
 						href="https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
 						type="button"
@@ -336,7 +322,7 @@
 					</button>
 
 					<button
-						on:click={() => handleClick((location.href = 'https://twitter.com/Star_Forge_Pool'))}
+						onclick={() => location.href = "https://twitter.com/Star_Forge_Pool"}
 						rel="nofollow"
 						href="https://twitter.com/Star_Forge_Pool"
 						type="button"
@@ -362,11 +348,7 @@
 					</button>
 
 					<button
-						on:click={() =>
-							handleClick(
-								(location.href =
-									'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c')
-							)}
+						onclick={() => location.href = "https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"}
 						rel="nofollow"
 						href="https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"
 						type="button"

@@ -11,19 +11,19 @@
 
   const poolId = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
 
-  let show = false;
-  let wait = false;
-  let status = 'Please wait...';
-  let txHash = '';
+  let show = $state(false);
+  let wait = $state(false);
+  let status = $state('Please wait...');
+  let txHash = $state('');
 
   // Modals
-  let errorModal;
-  let connectorErrorModal;
-  let networkErrorModal;
-  let alreadyDelegatedErrorModal;
-  let txSentModal;
-  let insufficientFundsModal;
-  let successModal;
+  let errorModal = $state();
+  let connectorErrorModal = $state();
+  let networkErrorModal = $state();
+  let alreadyDelegatedErrorModal = $state();
+  let txSentModal = $state();
+  let insufficientFundsModal = $state();
+  let successModal = $state();
 
   function toggleShow() {
     show = !show;
@@ -67,11 +67,11 @@
         return null;
       }
 
-      const delegate = new Delegate(wallet);
+      const del = new Delegate(wallet);
 
       // Handle Delegation
       try {
-        const currentPoolId = await delegate.checkDelegation();
+        const currentPoolId = await del.checkDelegation();
 
         // Notice user if already delegated
         if (currentPoolId === poolId) {
@@ -80,7 +80,7 @@
         }
 
         status = 'Submitting...'
-        txHash = await delegate.delegate(poolId);
+        txHash = await del.delegate(poolId);
         txSentModal.open();
       } catch (e) {
         if (e.code && e.code === 2) {
@@ -99,7 +99,7 @@
 
       // Open success modal once the transaction is confirmed
       status = 'Waiting confirmation...'
-      delegate.awaitTx().then((success) => {
+      del.awaitTx().then((success) => {
         if (success) {
           successModal.open();
         }
@@ -111,14 +111,18 @@
   }
 </script>
 
-<svelte:window on:click|stopPropagation="{handleOutClick}" />
+<svelte:window onclick={handleOutClick} />
 
 <div class="relative">
-  <ActionBtn action={toggleShow} type="button" text="Delegate" wait="{wait}" status="{status}" />
+  <ActionBtn action={toggleShow} type="button" text="Delegate" wait={wait} status={status} />
   <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
-    <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div onclick={(e) => e.stopPropagation()} class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
       <div class="p-4 flex flex-row">
-        <div on:click|stopPropagation={() => delegate('eternl')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={(e) => { e.stopPropagation(); delegate('eternl'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <EternlIcon/>
           </div>
@@ -126,7 +130,9 @@
             Eternl
           </div>
         </div>
-        <div on:click|stopPropagation={() => delegate('flint')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={(e) => { e.stopPropagation(); delegate('flint'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <FlintIcon/>
           </div>
@@ -134,7 +140,9 @@
             Flint
           </div>
         </div>
-        <div on:click|stopPropagation={() => delegate('yoroi')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={(e) => { e.stopPropagation(); delegate('yoroi'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <YoroiIcon/>
           </div>
@@ -142,7 +150,9 @@
             Yoroi
           </div>
         </div>
-        <div on:click|stopPropagation={() => delegate('gerowallet')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={(e) => { e.stopPropagation(); delegate('gerowallet'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <GeroIcon/>
           </div>
@@ -150,7 +160,9 @@
             Gero
           </div>
         </div>
-        <div on:click|stopPropagation={() => delegate('lace')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={(e) => { e.stopPropagation(); delegate('lace'); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
           <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
             <LaceIcon/>
           </div>
@@ -164,55 +176,54 @@
 </div>
 
 
-<Modal bind:this="{errorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Error</span></svelte:fragment>
-  <p slot="body">
+<Modal bind:this={errorModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-error">Error</span>{/snippet}
+  {#snippet body()}<p>
     Oops, something unexpected happened. Please try again later or contact support.
-  </p>
+  </p>{/snippet}
 </Modal>
 
-<Modal bind:this="{connectorErrorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Wallet extension not found!</span></svelte:fragment>
-  <p slot="body">
+<Modal bind:this={connectorErrorModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-error">Wallet extension not found!</span>{/snippet}
+  {#snippet body()}<p>
     Make sure the selected wallet extension is installed.
-  </p>
+  </p>{/snippet}
 </Modal>
 
-<Modal bind:this="{networkErrorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Wrong network!</span></svelte:fragment>
-  <p slot="body">
+<Modal bind:this={networkErrorModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-error">Wrong network!</span>{/snippet}
+  {#snippet body()}<p>
     Make sure the selected wallet is set to mainnet.
-  </p>
+  </p>{/snippet}
 </Modal>
 
-<Modal bind:this="{insufficientFundsModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Insufficient funds!</span></svelte:fragment>
-  <p slot="body">
+<Modal bind:this={insufficientFundsModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-error">Insufficient funds!</span>{/snippet}
+  {#snippet body()}<p>
     Make sure the selected account have sufficient funds.
-  </p>
+  </p>{/snippet}
 </Modal>
 
-<Modal bind:this="{alreadyDelegatedErrorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-success">Account already delegated to OTG!</span></svelte:fragment>
-  <p slot="body">
+<Modal bind:this={alreadyDelegatedErrorModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-success">Account already delegated to OTG!</span>{/snippet}
+  {#snippet body()}<p>
     The selected wallet account is already delegated to Star Forge [OTG].
-  </p>
+  </p>{/snippet}
 </Modal>
 
-<Modal bind:this="{txSentModal}" hideAction="{true}" outClick="{false}">
-  <svelte:fragment slot="title"><span class="text-success">Delegation transaction sent!</span></svelte:fragment>
-  <div slot="body">
+<Modal bind:this={txSentModal} hideAction={true} outClick={false}>
+  {#snippet title()}<span class="text-success">Delegation transaction sent!</span>{/snippet}
+  {#snippet body()}<div>
     <p>The delegation transaction has been sent, it should be confirmed shortly.</p>
     <p class="mt-4">Transaction ID:</p>
     <p class="break-words text-sm text-gray-400" style="max-width: 420px">{txHash}</p>
-  </div>
+  </div>{/snippet}
 </Modal>
 
-<Modal bind:this="{successModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-success">Delegation Active!</span></svelte:fragment>
-  <div slot="body">
+<Modal bind:this={successModal} hideAction={true} outClick={true} callback={stopWait}>
+  {#snippet title()}<span class="text-success">Delegation Active!</span>{/snippet}
+  {#snippet body()}<div>
     <p class="text-center mb-4">Your delegation to <strong>OTG</strong> is now active!</p>
     <p class="text-center">Thank you for supporting Star Forge!</p>
-  </div>
+  </div>{/snippet}
 </Modal>
-

@@ -1,23 +1,21 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import wasm from 'vite-plugin-wasm';
-import topLevelAwait from 'vite-plugin-top-level-await';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
+/** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [sveltekit(), topLevelAwait(), wasm()],
+	plugins: [sveltekit(), wasm(), nodePolyfills()],
 	resolve: {
 		alias: {
-			'node-fetch': 'node-fetch-polyfill',
-		},
+			'node-fetch': '/src/lib/fetch-shim.js'
+		}
 	},
 	optimizeDeps: {
-		esbuildOptions: {
-			target: 'es2020',
-		},
-		exclude: ['lucid-cardano'],
+		exclude: ['lucid-cardano']
 	},
 	build: {
-		target: 'es2020',
-	},
+		target: 'esnext'
+	}
 };
 
 export default config;
