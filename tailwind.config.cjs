@@ -15,12 +15,17 @@ const config = {
 		},
 		extend: {
 			animation: {
-				'fade-in': 'fadeIn 1s ease-in-out'
+				'fade-in': 'fadeIn 1s ease-in-out',
+				'pulse-glow': 'pulseGlow 2s ease-in-out infinite'
 			},
 			keyframes: {
 				fadeIn: {
 					'0%': { opacity: '0' },
 					'100%': { opacity: '1' }
+				},
+				pulseGlow: {
+					'0%, 100%': { opacity: '1', boxShadow: '0 0 4px rgba(34,197,94,0.4)' },
+					'50%': { opacity: '0.7', boxShadow: '0 0 8px rgba(34,197,94,0.6)' }
 				}
 			}
 		}
@@ -36,6 +41,7 @@ const config = {
 		themes: [
 			{
 				luxury: {
+					...require('daisyui/src/theming/themes')['luxury'],
 					accent: '#D1D5DB',
 					neutral: '#9ca3af',
 					'base-content': '#e5e7eb',

@@ -1,264 +1,258 @@
 <svelte:head>
-	<title>Cardano Stake Pool Star Forge - About</title>
-	<meta name="description" content="Stake ada on the most efficient blockchain. Cardano is the future and Star Forge stake pool is here to stay"/>
-	
+	<title>About Star Forge [OTG] | Off-Grid Cardano Stake Pool</title>
+	<meta name="description" content="Star Forge [OTG] is a solar-powered, ARM64, Starlink-connected Cardano stake pool. Founding member of Armada Alliance, operating since epoch 208." />
+	<link rel="canonical" href="https://adamantium.online/about" />
 </svelte:head>
-
 
 <script>
 	import { base } from '$app/paths';
+	import HudPanel from '$lib/component/hud-panel.svelte';
+	import ScanLines from '$lib/component/scan-lines.svelte';
+
+	let videoEl = $state();
+	let videoPlaying = $state(false);
+
+	function toggleVideo() {
+		if (!videoEl) return;
+		if (videoEl.paused) {
+			videoEl.play();
+			videoPlaying = true;
+		} else {
+			videoEl.pause();
+			videoPlaying = false;
+		}
+	}
 </script>
 
-<div class="flex flex-1 flex-col texture">
-	<!-- Main content -->
-	<div class="flex flex-1 items-stretch overflow-hidden">
-		<main class="flex-1 overflow-y-auto">
-			<div class="relative overflow-hidden py-16">
-				<div class="hidden lg:absolute lg:inset-y-0 lg:block lg:h-full lg:w-full">
-					<div class="relative mx-auto h-full max-w-prose text-lg" aria-hidden="true">
-						<svg
-							class="absolute top-72 left-full translate-x-32 transform"
-							width="404"
-							height="384"
-							fill="none"
-							viewBox="0 0 404 384"
-						>
-							<defs>
-								<pattern
-									id="74b3fd99-0a6f-4271-bef2-e80eeafdf357"
-									x="0"
-									y="0"
-									width="20"
-									height="20"
-									patternUnits="userSpaceOnUse"
-								>
-									<rect x="0" y="0" width="4" height="4" class="text-accent" fill="currentColor" />
-								</pattern>
-							</defs>
-							<rect width="404" height="384" fill="url(#74b3fd99-0a6f-4271-bef2-e80eeafdf357)" />
-						</svg>
+<div class="flex flex-col min-h-screen texture relative">
+	<ScanLines opacity={0.015} />
 
-						<svg
-							class="absolute bottom-12 left-full translate-x-32 transform"
-							width="404"
-							height="384"
-							fill="none"
-							viewBox="0 0 404 384"
-						>
-							<defs>
-								<pattern
-									id="d3eb07ae-5182-43e6-857d-35c643af9034"
-									x="0"
-									y="0"
-									width="20"
-									height="20"
-									patternUnits="userSpaceOnUse"
-								>
-									<rect x="0" y="0" width="4" height="4" class="text-accent" fill="currentColor" />
-								</pattern>
-							</defs>
-							<rect width="404" height="384" fill="url(#d3eb07ae-5182-43e6-857d-35c643af9034)" />
-						</svg>
-					</div>
+	<!-- Hero -->
+	<div class="relative z-20 border-b border-green-500/20 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-4xl mx-auto text-center">
+			<img
+				class="h-20 w-20 mx-auto mb-6 drop-shadow-[0_0_12px_rgba(251,191,36,0.3)]"
+				src="{base}/assets/images/Star-Forge-Sun.webp"
+				alt="Star Forge"
+			/>
+			<h1 class="text-4xl sm:text-5xl font-mono font-bold tracking-[0.15em] bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-transparent">
+				STAR FORGE
+			</h1>
+			<p class="mt-2 text-sm font-mono text-green-500/60 tracking-[0.3em]">OFF THE GRID SINCE EPOCH 208</p>
+			<p class="mt-6 text-lg sm:text-xl font-mono text-base-content/80 max-w-2xl mx-auto leading-relaxed">
+				A mobile, solar-powered Cardano stake pool running ARM64 processors on Starlink satellite internet. 110 watts. No data center. No compromise.
+			</p>
+		</div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-20 flex-1 px-4 sm:px-6 lg:px-8 py-8">
+		<div class="max-w-5xl mx-auto space-y-8">
+
+			<!-- Video -->
+			<HudPanel title="Star Forge Overview">
+				<div class="relative aspect-video rounded overflow-hidden bg-black/50 cursor-pointer group" role="button" tabindex="0" onclick={toggleVideo} onkeydown={(e) => e.key === 'Enter' && toggleVideo()}>
+					<video
+						bind:this={videoEl}
+						class="w-full h-full object-cover"
+						poster="{base}/assets/images/vid-cover.jpg"
+						onended={() => videoPlaying = false}
+						preload="metadata"
+					>
+						<source src="{base}/assets/videos/star-2.mp4" type="video/mp4" />
+						<track kind="captions" />
+					</video>
+					{#if !videoPlaying}
+						<div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors">
+							<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-amber-500/80 bg-black/50 flex items-center justify-center group-hover:border-amber-400 group-hover:scale-110 transition-all">
+								<svg class="w-6 h-6 sm:w-8 sm:h-8 text-amber-500 ml-1" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M8 5v14l11-7z"/>
+								</svg>
+							</div>
+						</div>
+					{/if}
 				</div>
-				<div class="relative px-4 sm:px-6 lg:px-8">
-					<div class="mx-auto max-w-prose text-lg">
-						<h1>
-							<span class="block text-center text-lg font-semibold">About</span>
-							<span
-								class="pb-4 mt-2 block text-center text-5xl font-bold leading-8 tracking-tight sm:text-5xl bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text"
-								>The Star Forge</span
-							>
-							<span class="block text-center text-lg font-semibold text-accent"
-								>Fortune favors the prepared mind</span
-							>
-							<span class="block text-center text-3xl pt-4">🕊️ 🐭 🦆 🍓 🦣</span>
-						</h1>
+			</HudPanel>
 
-						<p class="mt-8 text-xl leading-8 text-center">
-							The efficient 110 Watt Off-The-Grid, fully ARM'ed, solar powered, Starlink connected
-							Cardano Stake Pool
+			<!-- The Story -->
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				<HudPanel title="The Mission">
+					<div class="space-y-4 text-sm font-mono text-base-content/70 leading-relaxed">
+						<p>
+							Star Forge started in the BERRY pool group back when running Cardano on a Raspberry Pi was the cutting edge of decentralization. Most operators eventually moved to cloud servers. I went the other direction.
+						</p>
+						<p>
+							The idea was simple: if Cardano is supposed to be decentralized, why run it in the same data centers as everything else? So I built a stake pool that runs entirely off-grid — solar panels, LiFePO4 batteries, and Starlink for connectivity.
+						</p>
+						<p>
+							Today Star Forge operates from two locations with redundant power and internet at each. The mobile forge can produce blocks while driving down the highway. Both block producers connect through Wireguard VPN with automatic failover.
 						</p>
 					</div>
-					<div class="prose prose-lg prose-indigo mx-auto mt-6 base-content">
-						<h2 class=" bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500">
-							Overview
-						</h2>
-						<p>
-							The
-							<a
-								class="underline"
-								href="https://cardanoscan.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
-							>
-								Star Forge
-							</a>
-							is solar powered with 2 weeks of LiFePo4 battery storage and connected to the internet
-							through Starlink with failover onto cable internet provider. The pool consumes just 110
-							watts of power.
-						</p>
-						<p>
-							Totally off the grid stakepool using solar panels, LiFePo4 batteries Apple Silicon
-							and Starlink. I am a founding member of the
-							<a class="underline" href="https://armada-alliance.com"> Armada Alliance </a>
-							& on the core dev team for
-							<a rel="nofollow" href="https://tosidrop.io/" class="underline"> Tosidrop </a>
-							. I spend most of my time helping single stake pool operators run on efficient arm based
-							computers.
-						</p>
-						<p>
-							I provide support to other Stake Pool operators, writing guides and providing a
-							image you can flash to quickly spin up and
-							<a
-								href="https://armada-alliance.com/docs/"
-							>
-								sync a node within an hour on a Raspberry Pi.
-							</a>
-						</p>
+				</HudPanel>
 
-						<h2 class=" bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500">
-							Security & Privacy
-						</h2>
+				<HudPanel title="Why It Matters">
+					<div class="space-y-4 text-sm font-mono text-base-content/70 leading-relaxed">
 						<p>
-							The block producer is isolated on a separate vlan with it's own 1
-							Gbps interface connected directly to Starlink's power brick.
-						  </p>
-						  <blockquote>
-							<p>
-							  All communication to the Core is through a Wireguard UDP VPN.
-							  Essentially the pool looks like a couple encrypted webcam feeds
-							  on the wire. Network failover to broadband ISP with DDNS
-							  updating DNS records.
-							</p>
-						  </blockquote>
-						<ul class="text-accent">
-							<li>
-								<a
-									class="underline"
-									rel="nofollow"
-									href="https://www.ionos.com/digitalguide/server/security/dns-over-tls"
-								>
-									DNS over TLS (DoT)
-								</a>
-							</li>
-							<li>
-								<a
-									class="underline"
-									rel="nofollow"
-									href="https://www.ionos.com/digitalguide/server/know-how/dnssec-internet-standards-for-authenticated-name-resolution"
-								>
-									DNSSEC
-								</a>
-							</li>
-							<li>
-								<a class="underline" rel="nofollow" href="https://tools.ietf.org/html/bcp38">
-									Source Address Spoofing Protection (BCP38)
-								</a>
-							</li>
-						</ul>
-						<h2 class=" bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500">
-							Hardware
-						</h2>
-						<p>
-							True decentralization of the Cardano blockchain provides
-							security to everyone's investment. Staking to a bare metal single
-							pool operator is extremely important and it is up to you to
-							stake responsibly. The Star Forge is doing it's part by
-							providing an extremely efficient and secure option. Please
-							support my work by delegating to my pool. Thank you!
-						  </p>
-						<ul class="">
-							<li>
-								<a
-									href="https://www.apple.com/shop/buy-mac/mac-mini/apple-m1-chip-with-8-core-cpu-and-8-core-gpu-512gb"
-								>
-									Mac M1 Mini
-								</a>
-								x3 <a href="https://asahilinux.org">Asahi Arch Linux</a>
-							</li>
-							<li>
-								<a href="https://www.turris.com/en/omnia/overview/"> Turris Omnia </a>
-								open source router
-							</li>
-							<li>
-								<a href="https://www.starlink.com/">Starlink</a> internet service provider
-							</li>
-							<li>
-								<a href="https://www.victronenergy.com/">Victron Solar</a>
-								MPPT charge controller and inverter
-							</li>
-						</ul>
-						<figure>
-							<img
-								class="w-full rounded-lg"
-								src="{base}/assets/images/m3-star-forge.webp"
-								alt="Best return on ADA Cardano Stake Pool"
-								width="1310"
-								height="873"
-							/>
-							<figcaption>Mac M1 Mini Asahi Arch Linux</figcaption>
-						</figure>
-						<h2 class=" bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500">
-							Original Pi-Pool (Deprecated)
-						</h2>
-
-						<p>
-							It all started in the BERRY pool group. Before the BERRY telegram group was over run with NFT collectors
-							there where many pool operators running on Raspi's. As time went on more and more upgraded to more
-							powerfull servers.
+							Every pool running in AWS or Hetzner is a single point of failure for the network. A policy change, a billing dispute, or a regional outage can take hundreds of pools offline simultaneously.
 						</p>
-						<p />
 						<p>
-							The Raspberry Pi is still viable as of this writing on mainnet as a node. That is very impressive when 
-							compared to other chains.
+							Bare metal pools operated by individuals are the backbone of real decentralization. Star Forge proves you can run production infrastructure on 110 watts of solar power without sacrificing reliability or performance.
 						</p>
-						<figure>
-							<img
-								class="w-full rounded-lg"
-								src="{base}/assets/images/pool-on-stool.webp"
-								alt="Raspberry Pi Cardano stake pool"
-								width="1310"
-								height="873"
-							/>
-							<figcaption>Original Star Forge</figcaption>
-						</figure>
-						<h2 class=" bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500">
-							Powerwall Specs (Deprecated)
-						</h2>
-
 						<p>
-							Originally I had built a Tesla style Powerwall with lithium ion cells reclaimed from
-							old laptop batteries. it was capable of running 3 raspberry Pi's on two solar panels.
-							The power requirements for Starlink sealed the handmade batteries fate. I hope to use
-							it soon with another project.
+							As a founding member of the <a href="https://armada-alliance.com/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">Armada Alliance</a> and spokesman for the <a href="https://singlepoolalliance.net/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">Cardano Single Pool Alliance</a>, I work to help other operators run efficient, independent nodes.
 						</p>
-						<p />
-						<p>
-							Building this battery took hundreds of hours and I do not recommend it. Each cell has
-							to be obtained, taken apart and fully charged. Then discharged while measuring it's
-							capacity and charged back up to a storage charge until all the rest are processed.
-							Then the banks need to be balanced, assembled and then soldered with 5 amp fast blow
-							glass fuses on both sides. The soldering itself took over 50 hours.
-						</p>
-						<figure>
-							<img
-								class="w-full rounded-lg"
-								src="{base}/assets/images/completed-packs.webp"
-								alt="Stake ADA passive income Cardano stake pool delegate."
-								width="1310"
-								height="873"
-							/>
-							<figcaption>3.8 kWh capacity</figcaption>
-						</figure>
 					</div>
-				</div>
+				</HudPanel>
 			</div>
-		</main>
+
+			<!-- Current Infrastructure -->
+			<HudPanel title="Current Infrastructure">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+					<figure class="space-y-2">
+						<img
+							class="w-full rounded border border-green-500/10"
+							src="{base}/assets/images/current-bare-metal.jpg"
+							alt="Current bare metal server rack with Mac M1 Minis running Cardano nodes"
+							width="800" height="600"
+							loading="lazy"
+						/>
+						<figcaption class="text-xs font-mono text-base-content/40">Home base — Mac M1 Mini cluster on Asahi Linux</figcaption>
+					</figure>
+					<figure class="space-y-2">
+						<img
+							class="w-full rounded border border-green-500/10"
+							src="{base}/assets/images/fleet-sunset.jpg"
+							alt="Mobile stake pool RV at sunset"
+							width="800" height="600"
+							loading="lazy"
+						/>
+						<figcaption class="text-xs font-mono text-base-content/40">Mobile forge — block production on the move</figcaption>
+					</figure>
+				</div>
+
+				<div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
+					<div class="border border-green-500/10 rounded bg-black/20 p-3 text-center">
+						<span class="block text-lg font-mono font-bold text-cyan-400">3x</span>
+						<span class="text-[10px] font-mono text-base-content/50 tracking-wider">MAC M1 MINI</span>
+					</div>
+					<div class="border border-green-500/10 rounded bg-black/20 p-3 text-center">
+						<span class="block text-lg font-mono font-bold text-cyan-400">900 Ah</span>
+						<span class="text-[10px] font-mono text-base-content/50 tracking-wider">LiFePO4 STORAGE</span>
+					</div>
+					<div class="border border-green-500/10 rounded bg-black/20 p-3 text-center">
+						<span class="block text-lg font-mono font-bold text-cyan-400">110W</span>
+						<span class="text-[10px] font-mono text-base-content/50 tracking-wider">TOTAL DRAW</span>
+					</div>
+					<div class="border border-green-500/10 rounded bg-black/20 p-3 text-center">
+						<span class="block text-lg font-mono font-bold text-cyan-400">2</span>
+						<span class="text-[10px] font-mono text-base-content/50 tracking-wider">STARLINK UPLINKS</span>
+					</div>
+				</div>
+
+				<div class="mt-6 space-y-2 text-sm font-mono text-base-content/60 leading-relaxed">
+					<p>
+						The home base runs a K3s Kubernetes cluster across three Mac M1 Minis with Asahi Linux. GitOps managed with Helmfile, encrypted secrets via SOPS + Age, full observability through Prometheus and Grafana.
+					</p>
+					<p>
+						Power comes from solar panels charging LiFePO4 batteries through Victron MPPT controllers and inverters. The mobile forge charges from both solar and vehicle alternator while driving.
+					</p>
+				</div>
+			</HudPanel>
+
+			<!-- Mobile Forge Detail -->
+			<HudPanel title="Mobile Forge">
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+					<figure class="space-y-2">
+						<img
+							class="w-full rounded border border-green-500/10"
+							src="{base}/assets/images/mobile-lifepo4-bank.jpg"
+							alt="LiFePO4 battery bank in the mobile forge"
+							width="800" height="600"
+							loading="lazy"
+						/>
+						<figcaption class="text-xs font-mono text-base-content/40">LiFePO4 battery bank</figcaption>
+					</figure>
+					<figure class="space-y-2">
+						<img
+							class="w-full rounded border border-green-500/10"
+							src="{base}/assets/images/mobile-victron-multiplus.jpg"
+							alt="Victron MultiPlus inverter/charger installation"
+							width="800" height="600"
+							loading="lazy"
+						/>
+						<figcaption class="text-xs font-mono text-base-content/40">Victron MultiPlus inverter</figcaption>
+					</figure>
+					<figure class="space-y-2">
+						<img
+							class="w-full rounded border border-green-500/10"
+							src="{base}/assets/images/victron-install.jpg"
+							alt="Victron solar charge controller and wiring"
+							width="800" height="600"
+							loading="lazy"
+						/>
+						<figcaption class="text-xs font-mono text-base-content/40">Charge controller install</figcaption>
+					</figure>
+				</div>
+				<p class="mt-4 text-sm font-mono text-base-content/60 leading-relaxed">
+					The mobile forge produces blocks while in transit. Starlink's high-performance antenna maintains connectivity on the move, and the Wireguard VPN auto-reconnects across network changes. Sub-second block propagation delay — verified in production.
+				</p>
+			</HudPanel>
+
+			<!-- Community -->
+			<HudPanel title="Community Work">
+				<div class="space-y-4 text-sm font-mono text-base-content/70 leading-relaxed">
+					<p>
+						Beyond running the pool, I contribute to several Cardano community projects. Core developer for <a href="https://vm.adaseal.eu/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">Vending Machine</a> and <a href="https://app.tosidrop.io/cardano/claim" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">TosiDrop</a>. Star Forge delegators bypass premium token claiming fees on TosiDrop.
+					</p>
+					<p>
+						Maintainer of Armada Alliance documentation and tooling. I write guides and maintain disk images so new operators can get a node synced on ARM hardware within an hour.
+					</p>
+					</div>
+			</HudPanel>
+
+			<!-- Origin Story -->
+			<HudPanel title="Where It Started">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+					<div class="space-y-4 text-sm font-mono text-base-content/60 leading-relaxed">
+						<p>
+							The original Star Forge was a cluster of Raspberry Pis powered by a handmade 3.8 kWh battery built from reclaimed 18650 laptop cells. Each cell had to be individually tested, capacity-matched, and soldered with fuses on both sides. The build took hundreds of hours.
+						</p>
+						<p>
+							When Starlink's power requirements outgrew the homemade battery, I upgraded to commercial LiFePO4 and Apple Silicon. The Pi cluster is retired but Raspberry Pi remains viable for running a Cardano node on mainnet — a testament to the protocol's efficiency.
+						</p>
+					</div>
+					<div class="space-y-4">
+						<figure class="space-y-2">
+							<img
+								class="w-full rounded border border-green-500/10"
+								src="{base}/assets/images/original-pipool-cabinet.jpg"
+								alt="Original Raspberry Pi stake pool cluster in cabinet"
+								width="800" height="600"
+								loading="lazy"
+							/>
+							<figcaption class="text-xs font-mono text-base-content/40">Original Pi-Pool cluster</figcaption>
+						</figure>
+						<figure class="space-y-2">
+							<img
+								class="w-full rounded border border-green-500/10"
+								src="{base}/assets/images/original-18650-victron.jpg"
+								alt="Original 18650 battery pack with Victron charge controller"
+								width="800" height="600"
+								loading="lazy"
+							/>
+							<figcaption class="text-xs font-mono text-base-content/40">Handmade 18650 powerwall + Victron</figcaption>
+						</figure>
+					</div>
+				</div>
+			</HudPanel>
+
+		</div>
 	</div>
 </div>
 
 <style>
 	.texture {
-		background-image: url('https://adamantium.online/assets/cubes.png');
+		background-image: url('/assets/cubes.png');
 		background-size: auto;
 	}
 </style>

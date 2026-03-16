@@ -4,6 +4,17 @@ export async function handle({ event, resolve }) {
 
     const path = event.url.pathname;
 
+    // Security headers on all responses
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    // CSP — permissive script-src needed for CIP-30 wallet browser extensions
+    response.headers.set(
+        'Content-Security-Policy',
+        "default-src 'self'; img-src 'self' data: https://adamantium.online; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self'; font-src 'self'; media-src 'self'"
+    );
+
     // Immutable assets (fingerprinted by SvelteKit) - cache forever
     if (path.startsWith('/_app/immutable/')) {
         response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
@@ -16,9 +27,13 @@ export async function handle({ event, resolve }) {
         return response;
     }
 
-    // API routes - short cache, stale-while-revalidate for pool data
+    // API routes - cache GET requests, no-store for POST/mutating
     if (path.startsWith('/api/')) {
-        response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
+        if (event.request.method === 'GET') {
+            response.headers.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
+        } else {
+            response.headers.set('Cache-Control', 'no-store');
+        }
         return response;
     }
 

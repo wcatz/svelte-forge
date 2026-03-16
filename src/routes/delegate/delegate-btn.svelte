@@ -1,28 +1,16 @@
 <script>
   import { onMount } from 'svelte';
-  import ActionBtn from "../../lib/component/action-button.svelte";
-  import Delegate from "./delegate.js";
-  import Modal from "../../lib/component/modal.svelte";
 
   const poolId = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
 
   let show = $state(false);
-  let wait = $state(false);
-  let status = $state('Please wait...');
-  let txHash = $state('');
+  let status = $state('');
+  let statusType = $state('info'); // info | success | error
   let wallets = $state([]);
-
-  // Modals
-  let errorModal = $state();
-  let noWalletsModal = $state();
-  let networkErrorModal = $state();
-  let alreadyDelegatedErrorModal = $state();
-  let txSentModal = $state();
-  let insufficientFundsModal = $state();
-  let successModal = $state();
 
   onMount(() => {
     detectWallets();
+    setTimeout(detectWallets, 500);
   });
 
   function detectWallets() {
@@ -45,156 +33,111 @@
   function toggleShow() {
     detectWallets();
     if (wallets.length === 0) {
-      noWalletsModal.open();
+      setStatus('Install a CIP-30 wallet (Eternl, Lace, Yoroi)', 'error');
       return;
     }
     show = !show;
   }
 
-  function stopWait() {
-    wait = false;
-    status = 'Please wait...';
-  }
-
-  function handleOutClick() {
-    show = false;
+  function setStatus(msg, type = 'info', timeout = 0) {
+    status = msg;
+    statusType = type;
+    if (timeout > 0) setTimeout(() => { status = ''; }, timeout);
   }
 
   async function delegate(walletId) {
     show = false;
-    wait = true;
 
     const connector = window.cardano?.[walletId];
     if (!connector) {
-      noWalletsModal.open();
-      return null;
-    }
-
-    let wallet;
-    try {
-      wallet = await connector.enable();
-    } catch (e) {
-      console.error(e);
-      stopWait();
-      return null;
-    }
-
-    if ((await wallet.getNetworkId()) !== 1) {
-      networkErrorModal.open();
-      return null;
-    }
-
-    const del = new Delegate(wallet);
-
-    try {
-      const currentPoolId = await del.checkDelegation();
-
-      if (currentPoolId === poolId) {
-        alreadyDelegatedErrorModal.open();
-        return null;
-      }
-
-      status = 'Submitting...'
-      txHash = await del.delegate(poolId);
-      txSentModal.open();
-    } catch (e) {
-      if (e.code && e.code === 2) {
-        stopWait();
-        return null;
-      } else if (e === 'Insufficient input in transaction') {
-        console.error(e);
-        insufficientFundsModal.open();
-        return null;
-      }
-      console.error(e);
-      errorModal.open();
+      setStatus('Wallet not found', 'error', 4000);
       return;
     }
 
-    status = 'Waiting confirmation...'
-    del.awaitTx().then((success) => {
-      if (success) {
-        successModal.open();
+    setStatus('Connecting...');
+    let wallet;
+    try {
+      wallet = await connector.enable();
+    } catch {
+      status = '';
+      return;
+    }
+
+    if ((await wallet.getNetworkId()) !== 1) {
+      setStatus('Switch wallet to mainnet', 'error', 5000);
+      return;
+    }
+
+    const { default: Delegate } = await import('./delegate.js');
+    const del = new Delegate(wallet);
+
+    try {
+      setStatus('Checking delegation...');
+      const currentPoolId = await del.checkDelegation();
+
+      if (currentPoolId === poolId) {
+        setStatus('Already delegated to Star Forge!', 'success', 5000);
+        return;
       }
-    }).catch(console.error);
+
+      setStatus('Sign in your wallet...');
+      await del.delegate(poolId);
+      setStatus('Delegation submitted!', 'success');
+
+      del.awaitTx().then((success) => {
+        if (success) {
+          setStatus('Delegation confirmed!', 'success', 8000);
+        }
+      }).catch(() => {});
+
+    } catch (e) {
+      if (e?.code === 2) {
+        status = '';
+      } else if (String(e).includes('Insufficient')) {
+        setStatus('Need ~2.5 ADA for delegation deposit + fees', 'error', 8000);
+      } else {
+        setStatus(e?.message || 'Something went wrong', 'error', 5000);
+      }
+    }
   }
 </script>
 
-<svelte:window onclick={handleOutClick} />
+<svelte:window onclick={() => { show = false; }} />
 
-<div class="relative">
-  <ActionBtn action={toggleShow} type="button" text="Delegate" wait={wait} status={status} />
-  <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
+<div class="relative inline-block">
+  {#if status}
+    <span class="text-xs font-mono tracking-wider"
+      class:text-green-400={statusType === 'info'}
+      class:text-emerald-400={statusType === 'success'}
+      class:text-red-400={statusType === 'error'}
+      class:animate-pulse={statusType === 'info'}
+    >
+      {status}
+    </span>
+  {:else}
+    <button
+      onclick={(e) => { e.stopPropagation(); toggleShow(); }}
+      class="relative text-green-500 font-mono text-center tracking-widest inline-flex items-center justify-center rounded-md text-lg font-medium transition duration-200 hover:bg-opacity-10 hover:bg-transparent"
+      style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);"
+    >
+      Delegate
+    </button>
+  {/if}
+
+  {#if show}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div onclick={(e) => e.stopPropagation()} class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
-      <div class="p-4 flex flex-row flex-wrap gap-1">
-        {#each wallets as w}
-          <!-- svelte-ignore a11y_click_events_have_key_events -->
-          <!-- svelte-ignore a11y_no_static_element_interactions -->
-          <div onclick={(e) => { e.stopPropagation(); delegate(w.id); }} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-            <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-              <img src={w.icon} alt={w.name} class="h-8 w-8" />
-            </div>
-            <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-              {w.name}
-            </div>
-          </div>
-        {/each}
-      </div>
+    <div onclick={(e) => e.stopPropagation()}
+      class="absolute right-0 z-50 mt-2 rounded-lg bg-black/95 border border-green-500/30 p-3 min-w-[200px]">
+      {#each wallets as w}
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={() => delegate(w.id)}
+          class="flex items-center gap-3 p-2 rounded hover:bg-green-500/10 cursor-pointer transition-colors">
+          <img src={w.icon} alt={w.name} class="h-8 w-8 rounded" />
+          <span class="font-mono text-sm text-green-400 font-bold">{w.name}</span>
+        </div>
+      {/each}
     </div>
-  </div>
+  {/if}
 </div>
-
-
-<Modal bind:this={errorModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-error">Error</span>{/snippet}
-  {#snippet body()}<p>
-    Oops, something unexpected happened. Please try again later or contact support.
-  </p>{/snippet}
-</Modal>
-
-<Modal bind:this={noWalletsModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-error">No Cardano wallet found!</span>{/snippet}
-  {#snippet body()}<p>
-    Install a CIP-30 compatible Cardano wallet extension (Eternl, Lace, Yoroi, etc.) to delegate.
-  </p>{/snippet}
-</Modal>
-
-<Modal bind:this={networkErrorModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-error">Wrong network!</span>{/snippet}
-  {#snippet body()}<p>
-    Make sure the selected wallet is set to mainnet.
-  </p>{/snippet}
-</Modal>
-
-<Modal bind:this={insufficientFundsModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-error">Insufficient funds!</span>{/snippet}
-  {#snippet body()}<p>
-    Make sure the selected account have sufficient funds.
-  </p>{/snippet}
-</Modal>
-
-<Modal bind:this={alreadyDelegatedErrorModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-success">Account already delegated to OTG!</span>{/snippet}
-  {#snippet body()}<p>
-    The selected wallet account is already delegated to Star Forge [OTG].
-  </p>{/snippet}
-</Modal>
-
-<Modal bind:this={txSentModal} hideAction={true} outClick={false}>
-  {#snippet title()}<span class="text-success">Delegation transaction sent!</span>{/snippet}
-  {#snippet body()}<div>
-    <p>The delegation transaction has been sent, it should be confirmed shortly.</p>
-    <p class="mt-4">Transaction ID:</p>
-    <p class="break-words text-sm text-gray-400" style="max-width: 420px">{txHash}</p>
-  </div>{/snippet}
-</Modal>
-
-<Modal bind:this={successModal} hideAction={true} outClick={true} callback={stopWait}>
-  {#snippet title()}<span class="text-success">Delegation Active!</span>{/snippet}
-  {#snippet body()}<div>
-    <p class="text-center mb-4">Your delegation to <strong>OTG</strong> is now active!</p>
-    <p class="text-center">Thank you for supporting Star Forge!</p>
-  </div>{/snippet}
-</Modal>

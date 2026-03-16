@@ -1,0 +1,61 @@
+<script>
+	import GameWrapper from '$lib/component/game-wrapper.svelte';
+	import HudPanel from '$lib/component/hud-panel.svelte';
+	import ScanLines from '$lib/component/scan-lines.svelte';
+</script>
+
+<svelte:head>
+	<title>Midnight Rider Arcade | Star Forge Cardano Stake Pool</title>
+	<meta name="description" content="Midnight Rider — an arcade game inspired by Star Forge's mobile block production. Drive a solar-powered RV, dodge obstacles, and forge Cardano blocks on the move." />
+	<link rel="canonical" href="https://adamantium.online/game" />
+</svelte:head>
+
+<div class="flex flex-col min-h-screen texture relative">
+	<ScanLines opacity={0.015} />
+
+	<div class="relative z-20 px-4 sm:px-6 lg:px-8 py-6">
+		<div class="max-w-2xl mx-auto space-y-4">
+
+			<div class="text-center">
+				<h1 class="text-xl font-mono font-bold tracking-[0.2em] bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-transparent">
+					MIDNIGHT RIDER
+				</h1>
+				<p class="text-[10px] font-mono text-green-500/50 tracking-wider mt-1">
+					MOBILE STAKE POOL ARCADE — FORGE BLOCKS ON THE RUN
+				</p>
+			</div>
+
+			<HudPanel title="Game">
+				<GameWrapper />
+			</HudPanel>
+
+			<div class="grid grid-cols-2 gap-4">
+				<HudPanel title="Controls">
+					<div class="space-y-1.5 text-xs font-mono text-green-500/70">
+						<p><span class="text-amber-500">WASD/ARROWS</span> — Move</p>
+						<p><span class="text-amber-500">SPACE</span> — EM Shield (toggle)</p>
+						<p><span class="text-amber-500">E</span> — EMP Blast</p>
+						<p><span class="text-amber-500">Q</span> — Dump Black Tank (hold)</p>
+						<p><span class="text-amber-500">F</span> — Forge Block</p>
+					</div>
+				</HudPanel>
+				<HudPanel title="Intel">
+					<div class="space-y-1.5 text-xs font-mono text-green-500/70">
+						<p><span class="text-cyan-400">BATTERY</span> — Manage your energy</p>
+						<p><span class="text-amber-400">SOLAR</span> — Passive recharge</p>
+						<p><span class="text-green-400">FORGE</span> — Press F when ready!</p>
+						<p><span class="text-amber-500">NIGHT</span> — Tokens per block</p>
+					</div>
+				</HudPanel>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<style>
+	.texture {
+		background-image: url('/assets/cubes.png');
+		background-size: auto;
+	}
+</style>

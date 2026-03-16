@@ -1,6 +1,12 @@
 import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
 
+const ALLOWED_PREFIXES = ['pools/', 'epochs/', 'blocks/'];
+
+function isAllowed(path) {
+	return ALLOWED_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
 function getConfig() {
 	const url = env.BLOCKFROST_URL || 'https://cardano-mainnet.blockfrost.io/api/v0';
 	const projectId = env.BLOCKFROST_PROJECT_ID || '';
@@ -8,6 +14,10 @@ function getConfig() {
 }
 
 async function proxy(path, request) {
+	if (!isAllowed(path)) {
+		return json({ error: 'Not found' }, { status: 404 });
+	}
+
 	const { url: baseUrl, projectId } = getConfig();
 	const search = new URL(request.url).search;
 	const targetUrl = `${baseUrl}/${path}${search}`;
@@ -38,7 +48,7 @@ async function proxy(path, request) {
 			}
 		});
 	} catch (err) {
-		console.error('Blockfrost proxy error:', err);
+		console.error('Blockfrost proxy error:', err.message);
 		return json({ error: 'Upstream request failed' }, { status: 502 });
 	}
 }

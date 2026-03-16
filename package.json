@@ -7,7 +7,8 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"postinstall": "cp node_modules/libsodium-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs 2>/dev/null || true"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^5.0.0",
@@ -25,8 +26,9 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@lucid-evolution/lucid": "^0.4.29",
+		"better-sqlite3": "^12.8.0",
 		"daisyui": "^4.0.0",
-		"lucid-cardano": "^0.9.4",
 		"svelte-typewriter": "^3.0.4",
 		"theme-change": "^2.2.0",
 		"vite-plugin-node-polyfills": "^0.25.0",
