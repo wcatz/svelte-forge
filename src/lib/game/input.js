@@ -1,4 +1,4 @@
-import { ROAD_LEFT, ROAD_RIGHT, CANVAS_H } from './constants.js';
+import { ROAD_LEFT, ROAD_RIGHT, CANVAS_W, CANVAS_H } from './constants.js';
 
 export function createInput() {
 	return {
@@ -27,8 +27,8 @@ export function handleKeyup(input, e) {
 export function handleTouchStart(input, canvas, e) {
 	e.preventDefault();
 	const rect = canvas.getBoundingClientRect();
-	const scaleX = canvas.width / rect.width;
-	const scaleY = canvas.height / rect.height;
+	const scaleX = CANVAS_W / rect.width;
+	const scaleY = CANVAS_H / rect.height;
 
 	// Process all active touches
 	for (const touch of e.changedTouches) {
@@ -72,7 +72,7 @@ export function handleTouchMove(input, e) {
 		const rect = e.currentTarget.getBoundingClientRect();
 		for (const touch of e.touches) {
 			const x = touch.clientX - rect.left;
-			const canvasX = x * (e.currentTarget.width / rect.width);
+			const canvasX = x * (CANVAS_W / rect.width);
 			if (canvasX >= ROAD_LEFT && canvasX <= ROAD_RIGHT) {
 				input.touchCurrentX = x;
 				break;
@@ -87,7 +87,7 @@ export function handleTouchEnd(input, e) {
 	let hasRoadTouch = false;
 	const rect = e.currentTarget.getBoundingClientRect();
 	for (const touch of e.touches) {
-		const canvasX = (touch.clientX - rect.left) * (e.currentTarget.width / rect.width);
+		const canvasX = (touch.clientX - rect.left) * (CANVAS_W / rect.width);
 		if (canvasX >= ROAD_LEFT && canvasX <= ROAD_RIGHT) {
 			hasRoadTouch = true;
 			break;
@@ -99,8 +99,8 @@ export function handleTouchEnd(input, e) {
 	}
 
 	// Check if released touches were buttons
-	const scaleX = e.currentTarget.width / rect.width;
-	const scaleY = e.currentTarget.height / rect.height;
+	const scaleX = CANVAS_W / rect.width;
+	const scaleY = CANVAS_H / rect.height;
 	for (const touch of e.changedTouches) {
 		const canvasX = (touch.clientX - rect.left) * scaleX;
 		const canvasY = (touch.clientY - rect.top) * scaleY;
