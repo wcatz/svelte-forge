@@ -1,25 +1,49 @@
 import { env } from '$env/dynamic/private';
+import { dev } from '$app/environment';
 import { json } from '@sveltejs/kit';
 import { createSessionToken } from '$lib/server/session.js';
+import { verifyCip8Signature } from '$lib/server/cip8.js';
+import { consumeNonce } from '$lib/server/nonce-store.js';
 
 const POOL_ID = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
 const HANDLE_POLICY = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a';
 const STAKE_ADDR_RE = /^stake1[a-z0-9]{50,60}$/;
+const HEX_RE = /^[0-9a-fA-F]+$/;
 
 function getKoiosUrl() {
 	return env.KOIOS_API_URL || 'https://koios.tosidrop.me/api/v1';
 }
 
 export async function POST({ request }) {
-	const { stakeAddress, turnstileToken } = await request.json();
+	const { stakeAddress, turnstileToken, signature, key, nonce, stakeAddressHex } = await request.json();
 
 	if (!stakeAddress || !STAKE_ADDR_RE.test(stakeAddress)) {
 		return json({ error: 'Invalid stake address' }, { status: 400 });
 	}
 
-	// Cloudflare Turnstile bot check (skip if not configured)
+	// ── CIP-8 wallet ownership proof ──────────────────────────────────
+	if (!signature || !key || !nonce || !stakeAddressHex) {
+		return json({ error: 'Missing CIP-8 signature fields' }, { status: 400 });
+	}
+	if (!HEX_RE.test(signature) || !HEX_RE.test(key) || !HEX_RE.test(nonce) || !HEX_RE.test(stakeAddressHex)) {
+		return json({ error: 'Invalid hex in CIP-8 fields' }, { status: 400 });
+	}
+
+	// Consume the nonce (single-use, expires after 5 min)
+	const validNonce = consumeNonce(stakeAddress, nonce);
+	if (!validNonce) {
+		return json({ error: 'Invalid or expired nonce — reconnect wallet' }, { status: 403 });
+	}
+
+	// Verify the CIP-8 signature proves ownership of the stake address
+	const cip8Result = verifyCip8Signature(signature, key, nonce, stakeAddressHex);
+	if (!cip8Result.valid) {
+		return json({ error: cip8Result.error || 'CIP-8 signature verification failed' }, { status: 403 });
+	}
+
+	// Cloudflare Turnstile bot check (skip in dev or if not configured)
 	const turnstileSecret = env.TURNSTILE_SECRET_KEY;
-	if (turnstileSecret) {
+	if (turnstileSecret && !dev) {
 		if (!turnstileToken) {
 			return json({ error: 'Complete verification first' }, { status: 403 });
 		}
@@ -38,7 +62,7 @@ export async function POST({ request }) {
 				return json({ error: 'Bot check failed' }, { status: 403 });
 			}
 		} catch {
-			// If Cloudflare is unreachable, allow through (fail open for availability)
+			return json({ error: 'Verification unavailable, try again' }, { status: 503 });
 		}
 	}
 

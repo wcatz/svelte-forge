@@ -3,7 +3,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 // Server-side secret — regenerated on restart (invalidates old sessions, which is fine)
 const SECRET = randomBytes(32).toString('hex');
 
-const MAX_AGE_MS = 4 * 60 * 60 * 1000; // 4 hours
+const MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
 
 /**
  * Create a session token for an authenticated wallet.

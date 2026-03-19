@@ -22,6 +22,11 @@ export function drain(battery, amount) {
 	return true;
 }
 
+/** Force drain — always takes energy, clamps to 0. For penalties. */
+export function forceDrain(battery, amount) {
+	battery.level = Math.max(0, battery.level - amount);
+}
+
 export function isDead(battery) {
 	return battery.level <= 0;
 }

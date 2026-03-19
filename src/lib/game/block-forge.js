@@ -1,9 +1,10 @@
 import {
 	BLOCK_INTERVAL_BASE, BLOCK_INTERVAL_MIN, BLOCK_INTERVAL_DECAY,
 	BLOCK_FORGE_DRAIN, BLOCK_FORGE_WINDOW, BLOCK_REWARD_POINTS,
-	BLOCK_REWARD_GROWTH, NIGHT_PER_BLOCK, COLOR, CANVAS_W,
+	BLOCK_REWARD_GROWTH, NIGHT_PER_BLOCK, FORGE_MISFIRE_DRAIN,
+	FORGE_MISFIRE_COOLDOWN, COLOR, CANVAS_W,
 } from './constants.js';
-import { drain } from './battery.js';
+import { drain, forceDrain } from './battery.js';
 
 export function createBlockForge() {
 	return {
@@ -18,6 +19,9 @@ export function createBlockForge() {
 		missed: false,         // true briefly after a missed forge
 		missedAt: 0,
 		lastNightReward: 0,    // NIGHT earned on last forge (for HUD display)
+		lastForgePress: 0,     // timestamp of last F press (misfire cooldown)
+		outOfSync: false,      // true briefly after pressing F outside window
+		outOfSyncAt: 0,
 	};
 }
 
@@ -25,9 +29,10 @@ export function createBlockForge() {
  * @param {number} delegatorBonus — 0..1 multiplier that speeds up countdown
  */
 export function updateBlockForge(forge, now, dt, delegatorBonus = 0) {
-	// Clear celebration/miss state after 2s
+	// Clear celebration/miss/outOfSync state after timeout
 	if (forge.forged && now - forge.forgedAt > 2000) forge.forged = false;
 	if (forge.missed && now - forge.missedAt > 1500) forge.missed = false;
+	if (forge.outOfSync && now - forge.outOfSyncAt > 1500) forge.outOfSync = false;
 
 	if (forge.forgeWindow) {
 		// Window is open — check if it expired
@@ -79,6 +84,16 @@ export function attemptForge(forge, battery, now, nightMultiplier = 1) {
 	return points;
 }
 
+/** Player pressed F outside forge window. Returns true if penalty applied. */
+export function forgeMisfire(forge, battery, now) {
+	if (now - forge.lastForgePress < FORGE_MISFIRE_COOLDOWN) return false;
+	forge.lastForgePress = now;
+	forceDrain(battery, FORGE_MISFIRE_DRAIN);
+	forge.outOfSync = true;
+	forge.outOfSyncAt = now;
+	return true;
+}
+
 function resetCountdown(forge) {
 	// Decay interval (faster blocks as you forge more)
 	const decayed = BLOCK_INTERVAL_BASE * 1000 * Math.pow(BLOCK_INTERVAL_DECAY, forge.blocksForged);
@@ -90,23 +105,23 @@ export function drawForgeHUD(ctx, forge, now) {
 	const cx = CANVAS_W / 2;
 
 	if (forge.forgeWindow) {
-		// FORGE NOW! flashing
+		// FORGE NOW! flashing — below top bar
 		const flash = Math.sin(now / 80) > 0;
 		if (flash) {
 			ctx.fillStyle = COLOR.forgeFlash;
 			ctx.font = 'bold 18px monospace';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
-			ctx.fillText('⚡ FORGE NOW! [F] ⚡', cx, 30);
+			ctx.fillText('⚡ FORGE NOW! [F] ⚡', cx, 80);
 		}
 
 		// Window countdown bar
 		const elapsed = now - forge.windowStart;
 		const remaining = 1 - elapsed / BLOCK_FORGE_WINDOW;
 		ctx.fillStyle = '#00000066';
-		ctx.fillRect(cx - 60, 42, 120, 4);
+		ctx.fillRect(cx - 60, 92, 120, 4);
 		ctx.fillStyle = COLOR.forgeFlash;
-		ctx.fillRect(cx - 60, 42, 120 * remaining, 4);
+		ctx.fillRect(cx - 60, 92, 120 * remaining, 4);
 	} else {
 		// Countdown display
 		const secs = (forge.countdown / 1000).toFixed(1);
@@ -125,10 +140,10 @@ export function drawForgeHUD(ctx, forge, now) {
 		ctx.fillStyle = COLOR.forgeFlash;
 		ctx.font = 'bold 22px monospace';
 		ctx.textAlign = 'center';
-		ctx.fillText('BLOCK FORGED!', cx, 100 - age * 30);
+		ctx.fillText('BLOCK FORGED!', cx, 160 - age * 30);
 		ctx.font = '12px monospace';
 		ctx.fillStyle = COLOR.amber;
-		ctx.fillText(`+${BLOCK_REWARD_POINTS + (forge.blocksForged - 1) * BLOCK_REWARD_GROWTH} PTS  +${forge.lastNightReward || NIGHT_PER_BLOCK} NIGHT`, cx, 125 - age * 30);
+		ctx.fillText(`+${BLOCK_REWARD_POINTS + (forge.blocksForged - 1) * BLOCK_REWARD_GROWTH} PTS  +${forge.lastNightReward || NIGHT_PER_BLOCK} NIGHT`, cx, 185 - age * 30);
 		ctx.globalAlpha = 1;
 	}
 
@@ -139,7 +154,21 @@ export function drawForgeHUD(ctx, forge, now) {
 		ctx.fillStyle = COLOR.red;
 		ctx.font = 'bold 14px monospace';
 		ctx.textAlign = 'center';
-		ctx.fillText('BLOCK MISSED', cx, 100 - age * 20);
+		ctx.fillText('BLOCK MISSED', cx, 160 - age * 20);
+		ctx.globalAlpha = 1;
+	}
+
+	// BP out of sync warning (forge spam penalty)
+	if (forge.outOfSync) {
+		const age = (now - forge.outOfSyncAt) / 1500;
+		const flash = Math.sin(now / 60) > 0;
+		ctx.globalAlpha = (1 - age) * (flash ? 1 : 0.6);
+		ctx.fillStyle = COLOR.red;
+		ctx.font = 'bold 16px monospace';
+		ctx.textAlign = 'center';
+		ctx.fillText('BP OUT OF SYNC', cx, 120);
+		ctx.font = '11px monospace';
+		ctx.fillText(`-${FORGE_MISFIRE_DRAIN}⚡`, cx, 138);
 		ctx.globalAlpha = 1;
 	}
 }

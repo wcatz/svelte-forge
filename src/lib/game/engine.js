@@ -5,17 +5,17 @@ import {
 import { createBattery, updateBattery, isDead, getPercent } from './battery.js';
 import { createPlayer, updatePlayer, drawRV } from './player.js';
 import { createEnemyState, spawnEnemy, updateEnemies, startSpinOut, drawEnemy, drawEnemyBullets } from './enemies.js';
-import { createWeaponsState, toggleShield, updateShield, updateWeapons, updateBlackTank, fireEmp, isInShieldRange, isInEmpRange, jamShield, drawShield, drawEmpBlast, drawTankSlicks } from './weapons.js';
-import { createBlockForge, updateBlockForge, attemptForge } from './block-forge.js';
+import { createWeaponsState, toggleShield, updateShield, updateWeapons, updateBlackTank, fireEmp, isInShieldRange, jamShield, drawShield, drawEmpBlast, drawTankSlicks } from './weapons.js';
+import { createBlockForge, updateBlockForge, attemptForge, forgeMisfire } from './block-forge.js';
 import { createPowerupState, maybeSpawnPowerup, updatePowerups, collectPowerups, drawPowerups } from './powerups.js';
 import { createDelegatorState, maybeSpawnDelegator, updateDelegators, collectDelegators, drawDelegators } from './delegators.js';
-import { createEffectsState, addExplosion, addShieldHit, addForgeParticles, addEmpFlash, updateEffects, drawEffects } from './effects.js';
+import { createEffectsState, addExplosion, addShieldHit, addForgeParticles, addEmpFlash, addEmpKillExplosion, updateEffects, drawEffects } from './effects.js';
 import { drawBackground, drawMobileButtons } from './renderer.js';
-import { drawHUD, drawTitleScreen, drawGameOver } from './hud.js';
+import { drawHUD, drawTitleScreen, drawGameOver, drawTutorialOverlay, titleHitRegions } from './hud.js';
 import { getMoveDirection, wantsEmp, wantsShield, wantsDump, wantsForge, wantsStart } from './input.js';
 import {
 	sfxShieldHit, sfxShieldOn, sfxShieldOff, sfxShieldJam, sfxEmp, sfxExplosion, sfxDelegator,
-	sfxForgeSuccess, sfxForgeMiss, sfxPlayerHit, sfxPowerup, sfxDump,
+	sfxForgeSuccess, sfxForgeMiss, sfxForgeMisfire, sfxPlayerHit, sfxPowerup, sfxDump,
 	sfxGameOver, sfxStart, startMusic, stopMusic,
 } from './audio.js';
 
@@ -39,9 +39,14 @@ export function createGame() {
 		lastTime: 0,
 		dyingUntil: 0,
 		dyingSpeed: 0,
+		deathCause: '', // 'collision' | 'battery'
 		playerName: null,
 		leaderboard: [],
 		nightMultiplier: 1, // 10 for delegators, 1 for others
+		guestMode: false, // true when playing without wallet — no NIGHT rewards
+		walletState: null, // { phase, wallets, error, leaderboard }
+		screenShake: 0, // remaining shake duration (ms)
+		screenShakeStart: 0,
 	};
 }
 
@@ -63,6 +68,7 @@ export function resetGame(game) {
 	game.state = 'playing';
 	game.dyingUntil = 0;
 	game.dyingSpeed = 0;
+	game.deathCause = '';
 }
 
 // Demo AI state — cycles through abilities on a timer
@@ -184,16 +190,14 @@ function demoAI(game, now) {
 		updateBlackTank(game.weapons, game.battery, game.player, now, true);
 	}
 
-	// EMP blast
+	// EMP blast — nuke everything in demo too
 	if (wantsEmpFire) {
 		if (fireEmp(game.weapons, game.battery, now)) {
 			addEmpFlash(game.effects, now);
 			for (let i = game.enemies.list.length - 1; i >= 0; i--) {
 				const e = game.enemies.list[i];
-				if (isInEmpRange(game.player, e)) {
-					addExplosion(game.effects, e.x + e.w / 2, e.y + e.h / 2);
-					game.enemies.list.splice(i, 1);
-				}
+				addEmpKillExplosion(game.effects, e.x + e.w / 2, e.y + e.h / 2);
+				game.enemies.list.splice(i, 1);
 			}
 		}
 	}
@@ -349,15 +353,20 @@ export function tick(game, input, now) {
 	const delegatorBonus = game.delegators.count * DELEGATOR_FORGE_BONUS;
 	updateBlockForge(game.forge, now, dt, delegatorBonus);
 
-	if (wantsForge(input) && game.forge.forgeWindow) {
-		const pts = attemptForge(game.forge, game.battery, now, game.nightMultiplier);
-		if (pts > 0) {
-			game.score += pts;
-			addForgeParticles(game.effects, game.player.x + game.player.w / 2, game.player.y + game.player.h / 2);
-			sfxForgeSuccess();
+	if (wantsForge(input)) {
+		if (game.forge.forgeWindow) {
+			const pts = attemptForge(game.forge, game.battery, now, game.nightMultiplier);
+			if (pts > 0) {
+				game.score += pts;
+				addForgeParticles(game.effects, game.player.x + game.player.w / 2, game.player.y + game.player.h / 2);
+				sfxForgeSuccess();
+			}
+		} else if (forgeMisfire(game.forge, game.battery, now)) {
+			sfxForgeMisfire();
 		}
 		input.keys['f'] = false;
 		input.keys['F'] = false;
+		input.isTouchForging = false;
 	}
 
 	// Missed forge → lose a delegator
@@ -410,16 +419,24 @@ export function tick(game, input, now) {
 		}
 	}
 
-	// EMP blast
+	// EMP blast — destroys ALL enemies on screen
 	if (game.weapons.empBlastActive) {
-		for (let j = game.enemies.list.length - 1; j >= 0; j--) {
-			const enemy = game.enemies.list[j];
-			if (enemy.spinning) continue;
-			if (isInEmpRange(game.player, enemy)) {
+		const empAge = now - game.weapons.empBlastStart;
+		if (empAge < 200) {
+			// Kill everything in a single devastating wave
+			for (let j = game.enemies.list.length - 1; j >= 0; j--) {
+				const enemy = game.enemies.list[j];
 				enemy.hp = 0;
-				addExplosion(game.effects, enemy.x + enemy.w / 2, enemy.y + enemy.h / 2);
+				addEmpKillExplosion(game.effects, enemy.x + enemy.w / 2, enemy.y + enemy.h / 2);
 				game.score += enemy.points;
 				game.enemies.list.splice(j, 1);
+			}
+			// Also vaporize all bullets
+			game.enemies.bullets.length = 0;
+			// Trigger screen shake on first frame
+			if (empAge < 20) {
+				game.screenShake = 800;
+				game.screenShakeStart = now;
 			}
 		}
 	}
@@ -470,6 +487,7 @@ export function tick(game, input, now) {
 				game.lives -= ENEMY_BULLET_DAMAGE;
 				sfxPlayerHit();
 				if (game.lives <= 0) {
+					game.deathCause = 'collision';
 					game.battery.level = 0;
 				}
 			}
@@ -510,6 +528,7 @@ export function tick(game, input, now) {
 				game.lives--;
 				sfxPlayerHit();
 				if (game.lives <= 0) {
+					game.deathCause = 'collision';
 					game.battery.level = 0;
 				}
 			}
@@ -531,22 +550,40 @@ export function tick(game, input, now) {
 }
 
 export function render(ctx, game, now) {
+	// Screen shake
+	let shaking = false;
+	if (game.screenShake > 0) {
+		const elapsed = now - game.screenShakeStart;
+		const remaining = game.screenShake - elapsed;
+		if (remaining > 0) {
+			shaking = true;
+			const intensity = (remaining / game.screenShake) * 10;
+			ctx.save();
+			ctx.translate((Math.random() - 0.5) * intensity * 2, (Math.random() - 0.5) * intensity * 2);
+		} else {
+			game.screenShake = 0;
+		}
+	}
+
 	drawBackground(ctx, game.stripeOffset);
 
 	if (game.state === 'title') {
 		drawGameEntities(ctx, game, now);
-		drawTitleScreen(ctx, now, game.playerName);
+		drawTitleScreen(ctx, now, game.playerName, game.walletState);
+		if (shaking) ctx.restore();
 		return;
 	}
 
 	if (game.state === 'gameover') {
 		drawGameEntities(ctx, game, now);
 		drawGameOver(ctx, game, now);
+		if (shaking) ctx.restore();
 		return;
 	}
 
 	drawGameEntities(ctx, game, now);
 	drawHUD(ctx, game, now);
+	drawTutorialOverlay(ctx, now);
 
 	if (game.state === 'dying') {
 		const alpha = Math.sin(now / 50) * 0.15 + 0.15;
@@ -557,8 +594,10 @@ export function render(ctx, game, now) {
 		ctx.font = 'bold 18px monospace';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
-		ctx.fillText('POWER FAILURE', CANVAS_W / 2, CANVAS_H / 2);
+		ctx.fillText(game.deathCause === 'collision' ? 'LITHIUM FIRE' : 'POWER FAILURE', CANVAS_W / 2, CANVAS_H / 2);
 	}
+
+	if (shaking) ctx.restore();
 }
 
 function drawGameEntities(ctx, game, now) {

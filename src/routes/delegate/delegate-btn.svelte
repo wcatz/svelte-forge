@@ -18,8 +18,10 @@
       wallets = [];
       return;
     }
+    const BLOCKED = new Set(['brave']);
     wallets = Object.keys(window.cardano)
       .filter(key => {
+        if (BLOCKED.has(key.toLowerCase())) return false;
         const w = window.cardano[key];
         return w && typeof w === 'object' && typeof w.enable === 'function' && typeof w.icon === 'string';
       })
@@ -120,7 +122,7 @@
       class="relative text-green-500 font-mono text-center tracking-widest inline-flex items-center justify-center rounded-md text-lg font-medium transition duration-200 hover:bg-opacity-10 hover:bg-transparent"
       style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);"
     >
-      Delegate
+      <span class="point-finger">👉</span> Delegate
     </button>
   {/if}
 
@@ -141,3 +143,16 @@
     </div>
   {/if}
 </div>
+
+<style>
+  .point-finger {
+    display: inline-block;
+    animation: nudge 0.8s ease-in-out infinite;
+    margin-right: 10px;
+  }
+
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+  }
+</style>

@@ -240,22 +240,141 @@ export function drawEmpBlast(ctx, player, weapons, now) {
 	const cx = player.x + player.w / 2;
 	const cy = player.y + player.h / 2;
 	const age = (now - weapons.empBlastStart) / EMP_FLASH_DURATION;
-	const radius = EMP_RADIUS * (0.3 + age * 0.7);
+	const maxR = Math.max(CANVAS_H, 600);
 
-	// Expanding ring
-	ctx.globalAlpha = 1 - age;
-	ctx.strokeStyle = COLOR.empFlash;
-	ctx.lineWidth = 4 * (1 - age);
-	ctx.beginPath();
-	ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-	ctx.stroke();
+	// === Phase 1: Blinding white flash (0-15%) ===
+	if (age < 0.15) {
+		const flashIntensity = age < 0.05 ? age / 0.05 : 1 - (age - 0.05) / 0.1;
+		ctx.globalAlpha = flashIntensity * 0.9;
+		ctx.fillStyle = '#ffffff';
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	}
 
-	// Fill flash
-	ctx.globalAlpha = (1 - age) * 0.2;
-	ctx.fillStyle = COLOR.empFlash;
-	ctx.beginPath();
-	ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-	ctx.fill();
+	// === Phase 2: Multiple shockwave rings ===
+	const ringCount = 3;
+	for (let i = 0; i < ringCount; i++) {
+		const ringDelay = i * 0.12;
+		const ringAge = Math.max(0, age - ringDelay);
+		if (ringAge <= 0 || ringAge > 0.9) continue;
+
+		const r = maxR * (0.05 + ringAge * 0.95);
+		const fade = ringAge < 0.3 ? 1 : 1 - (ringAge - 0.3) / 0.6;
+
+		// Outer glow ring
+		ctx.globalAlpha = fade * 0.6;
+		ctx.strokeStyle = i === 0 ? '#ffffff' : COLOR.empFlash;
+		ctx.lineWidth = (12 - i * 3) * (1 - ringAge * 0.5);
+		ctx.beginPath();
+		ctx.arc(cx, cy, r, 0, Math.PI * 2);
+		ctx.stroke();
+
+		// Inner bright ring
+		ctx.globalAlpha = fade * 0.3;
+		ctx.strokeStyle = '#e879f9';
+		ctx.lineWidth = (6 - i * 1.5) * (1 - ringAge * 0.5);
+		ctx.beginPath();
+		ctx.arc(cx, cy, r * 0.97, 0, Math.PI * 2);
+		ctx.stroke();
+
+		// Fill with radial gradient
+		if (i === 0 && ringAge < 0.5) {
+			const grad = ctx.createRadialGradient(cx, cy, r * 0.3, cx, cy, r);
+			grad.addColorStop(0, `rgba(168, 85, 247, ${fade * 0.15})`);
+			grad.addColorStop(0.7, `rgba(168, 85, 247, ${fade * 0.05})`);
+			grad.addColorStop(1, 'transparent');
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = grad;
+			ctx.beginPath();
+			ctx.arc(cx, cy, r, 0, Math.PI * 2);
+			ctx.fill();
+		}
+	}
+
+	// === Phase 3: Lightning bolts radiating outward ===
+	if (age < 0.7) {
+		const boltFade = age < 0.2 ? 1 : 1 - (age - 0.2) / 0.5;
+		const boltCount = 12;
+		ctx.globalAlpha = boltFade * 0.8;
+		ctx.lineWidth = 2;
+
+		for (let i = 0; i < boltCount; i++) {
+			const baseAngle = (Math.PI * 2 * i) / boltCount + (now * 0.002);
+			const boltLen = maxR * 0.6 * (0.3 + age);
+
+			ctx.strokeStyle = i % 3 === 0 ? '#ffffff' : i % 3 === 1 ? '#e879f9' : COLOR.empFlash;
+			ctx.beginPath();
+			ctx.moveTo(cx, cy);
+
+			// Jagged bolt segments
+			const segments = 6 + Math.floor(Math.random() * 3);
+			let bx = cx, by = cy;
+			for (let s = 1; s <= segments; s++) {
+				const t = s / segments;
+				const jitter = (1 - t) * 25; // more jitter near center
+				const tx = cx + Math.cos(baseAngle) * boltLen * t + (Math.random() - 0.5) * jitter;
+				const ty = cy + Math.sin(baseAngle) * boltLen * t + (Math.random() - 0.5) * jitter;
+				ctx.lineTo(tx, ty);
+				bx = tx; by = ty;
+			}
+			ctx.stroke();
+
+			// Fork branches on some bolts
+			if (i % 2 === 0 && age < 0.4) {
+				const forkAngle = baseAngle + (Math.random() - 0.5) * 0.8;
+				const forkStart = 0.4 + Math.random() * 0.3;
+				const fx = cx + Math.cos(baseAngle) * boltLen * forkStart;
+				const fy = cy + Math.sin(baseAngle) * boltLen * forkStart;
+				ctx.beginPath();
+				ctx.moveTo(fx, fy);
+				for (let s = 1; s <= 3; s++) {
+					const t = s / 3;
+					ctx.lineTo(
+						fx + Math.cos(forkAngle) * boltLen * 0.3 * t + (Math.random() - 0.5) * 12,
+						fy + Math.sin(forkAngle) * boltLen * 0.3 * t + (Math.random() - 0.5) * 12
+					);
+				}
+				ctx.stroke();
+			}
+		}
+	}
+
+	// === Phase 4: Central plasma orb ===
+	if (age < 0.5) {
+		const orbAge = age / 0.5;
+		const orbR = 30 + orbAge * 60;
+		const orbFade = orbAge < 0.3 ? 1 : 1 - (orbAge - 0.3) / 0.7;
+
+		const orbGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbR);
+		orbGrad.addColorStop(0, `rgba(255, 255, 255, ${orbFade * 0.9})`);
+		orbGrad.addColorStop(0.3, `rgba(232, 121, 249, ${orbFade * 0.7})`);
+		orbGrad.addColorStop(0.6, `rgba(168, 85, 247, ${orbFade * 0.4})`);
+		orbGrad.addColorStop(1, 'transparent');
+		ctx.globalAlpha = 1;
+		ctx.fillStyle = orbGrad;
+		ctx.beginPath();
+		ctx.arc(cx, cy, orbR, 0, Math.PI * 2);
+		ctx.fill();
+	}
+
+	// === Phase 5: Purple haze / afterglow ===
+	if (age > 0.4 && age < 1) {
+		const hazeAlpha = (1 - (age - 0.4) / 0.6) * 0.08;
+		ctx.globalAlpha = hazeAlpha;
+		ctx.fillStyle = '#a855f7';
+		ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	}
+
+	// === Scanline distortion effect ===
+	if (age < 0.3) {
+		const scanAlpha = (1 - age / 0.3) * 0.15;
+		ctx.globalAlpha = scanAlpha;
+		ctx.fillStyle = '#ffffff';
+		for (let y = 0; y < ctx.canvas.height; y += 4) {
+			if ((y + Math.floor(now / 20)) % 8 < 2) {
+				ctx.fillRect(0, y, ctx.canvas.width, 1);
+			}
+		}
+	}
 
 	ctx.globalAlpha = 1;
 }

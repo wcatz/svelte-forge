@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
-import db, { getSessionRewards, logSessionReward, getIpRewards, logIpReward, getGameSession, recordForge } from '$lib/server/db.js';
+import db, { getSessionRewards, logSessionReward, getIpRewards, logIpReward, getGameSession, recordForgeAtomic } from '$lib/server/db.js';
 import { validateSessionToken } from '$lib/server/session.js';
 
 const logReward = db.prepare(
@@ -13,33 +13,45 @@ const recentCount = db.prepare(
 const RATE_LIMIT_WINDOW_MS = 30_000; // 30s
 const RATE_LIMIT_MAX = 3; // max 3 deliveries per 30s per address
 
-// Per-session cumulative reward cap: 50 NIGHT per 4-hour window per stakeAddress
+// Per-address cumulative reward cap: 50 NIGHT per hour
 const SESSION_CAP = 50;
-const SESSION_WINDOW_MS = 4 * 60 * 60 * 1000; // 4 hours
+const SESSION_WINDOW_MS = 60 * 60 * 1000;
 
-// IP-based cap: 100 NIGHT per 4-hour window per IP (limits multi-wallet farming)
+// IP-based cap: 100 NIGHT per hour per IP (limits multi-wallet farming)
 const IP_CAP = 100;
-const IP_WINDOW_MS = 4 * 60 * 60 * 1000;
+const IP_WINDOW_MS = 60 * 60 * 1000;
 
 // Minimum time between game start and first forge (seconds)
 const MIN_FIRST_FORGE_SECS = 30;
-// Minimum interval between forges (seconds) — BLOCK_INTERVAL_MIN is 15s
-const MIN_FORGE_INTERVAL_SECS = 12;
+// Minimum interval between forges (seconds) — matches BLOCK_INTERVAL_MIN
+const MIN_FORGE_INTERVAL_SECS = 14;
 
 // Night per block — server decides, not client
 const NIGHT_PER_BLOCK_BASE = 1;
 const NIGHT_PER_BLOCK_DELEGATED = 10;
 
-function getClientIp(request) {
-	// Check standard proxy headers
-	const forwarded = request.headers.get('x-forwarded-for');
-	if (forwarded) return forwarded.split(',')[0].trim();
-	const real = request.headers.get('x-real-ip');
-	if (real) return real.trim();
-	return 'unknown';
+// Per-address mutex to prevent concurrent reward delivery races (V1/V2)
+const addressLocks = new Map();
+
+function acquireLock(addr) {
+	if (addressLocks.has(addr)) return false;
+	addressLocks.set(addr, Date.now());
+	return true;
 }
 
-export async function POST({ request }) {
+function releaseLock(addr) {
+	addressLocks.delete(addr);
+}
+
+// Cleanup stale locks (safety net — locks held > 30s are abandoned)
+setInterval(() => {
+	const cutoff = Date.now() - 30_000;
+	for (const [addr, ts] of addressLocks) {
+		if (ts < cutoff) addressLocks.delete(addr);
+	}
+}, 10_000);
+
+export async function POST({ request, getClientAddress }) {
 	const body = await request.json();
 	const { sessionToken, gameSessionId } = body;
 
@@ -55,58 +67,82 @@ export async function POST({ request }) {
 		return json({ error: 'Missing game session' }, { status: 400 });
 	}
 
+	// V4 fix: reject if IP cannot be determined (don't fall back to shared 'unknown' bucket)
+	let clientIp;
+	try { clientIp = getClientAddress(); } catch {
+		return json({ error: 'Unable to verify client' }, { status: 400 });
+	}
+
+	// V1/V2 fix: per-address mutex prevents concurrent requests from racing
+	if (!acquireLock(stakeAddress)) {
+		return json({ error: 'Request in progress' }, { status: 429 });
+	}
+
+	try {
+		return await processForge(stakeAddress, isDelegated, gameSessionId, clientIp);
+	} finally {
+		releaseLock(stakeAddress);
+	}
+}
+
+async function processForge(stakeAddress, isDelegated, gameSessionId, clientIp) {
 	const gameSess = getGameSession(gameSessionId, stakeAddress);
 	if (!gameSess) {
 		return json({ error: 'Invalid game session' }, { status: 403 });
 	}
 
-	// Timing validation: first forge must be at least MIN_FIRST_FORGE_SECS after game start
 	const now = Date.now();
 	const elapsed = (now - gameSess.started_at) / 1000;
+
+	// Game session max age: 30 minutes
+	if (elapsed > 1800) {
+		return json({ error: 'Game session expired', delivered: false }, { status: 400 });
+	}
+
+	// Timing validation: first forge must be at least MIN_FIRST_FORGE_SECS after game start
 	if (gameSess.blocks_forged === 0 && elapsed < MIN_FIRST_FORGE_SECS) {
 		return json({ error: 'Too fast', delivered: false }, { status: 400 });
 	}
 
-	// Timing validation: subsequent forges must have minimum interval
-	if (gameSess.blocks_forged > 0 && gameSess.last_forge_at > 0) {
-		const sinceLast = (now - gameSess.last_forge_at) / 1000;
-		if (sinceLast < MIN_FORGE_INTERVAL_SECS) {
-			return json({ error: 'Too fast', delivered: false }, { status: 400 });
-		}
+	// V2 fix: atomic forge with timing + block cap enforced in SQL
+	const forged = recordForgeAtomic(gameSessionId, now, MIN_FORGE_INTERVAL_SECS);
+	if (!forged) {
+		return json({ error: 'Forge rejected', delivered: false }, { status: 429 });
 	}
 
 	// Server determines the reward amount — client cannot influence this
 	const amount = isDelegated ? NIGHT_PER_BLOCK_DELEGATED : NIGHT_PER_BLOCK_BASE;
 
-	// Per-session cumulative cap
+	// Per-address rate limit (short window)
+	const windowStart = now - RATE_LIMIT_WINDOW_MS;
+	const { cnt } = recentCount.get(stakeAddress, windowStart);
+	if (cnt >= RATE_LIMIT_MAX) {
+		return json({ error: 'Rate limited', delivered: false }, { status: 429 });
+	}
+
+	// Per-address cumulative cap
 	const currentTotal = getSessionRewards(stakeAddress, SESSION_WINDOW_MS);
 	if (currentTotal + amount > SESSION_CAP) {
-		return json({ error: 'Session reward cap exceeded', delivered: false }, { status: 429 });
+		return json({ error: 'Reward cap exceeded', delivered: false }, { status: 429 });
 	}
 
 	// IP-based cap
-	const clientIp = getClientIp(request);
 	const ipTotal = getIpRewards(clientIp, IP_WINDOW_MS);
 	if (ipTotal + amount > IP_CAP) {
 		return json({ error: 'Rate limited', delivered: false }, { status: 429 });
 	}
 
-	// Per-address rate limit
-	const windowStart = Date.now() - RATE_LIMIT_WINDOW_MS;
-	const { cnt } = recentCount.get(stakeAddress, windowStart);
-	if (cnt >= RATE_LIMIT_MAX) {
-		return json({ error: 'Rate limited', delivered: false });
-	}
-
-	// Record the forge in the game session
-	recordForge(gameSessionId);
+	// V5 fix: pre-reserve the reward slot BEFORE calling VM
+	// If VM fails, we eat the slot (conservative — prevents cap bypass)
+	logSessionReward(stakeAddress, amount);
+	logIpReward(clientIp, amount);
 
 	const vmUrl = env.VENDING_MACHINE_URL;
 	const vmKey = env.VENDING_MACHINE_API_KEY;
 	const nightPolicy = env.NIGHT_POLICY_ID;
 
 	if (!vmUrl || !vmKey || !nightPolicy) {
-		logReward.run(stakeAddress, amount, 'no_config', null, Date.now());
+		logReward.run(stakeAddress, amount, 'no_config', null, now);
 		return json({ delivered: false, reason: 'Rewards not configured' });
 	}
 
@@ -130,16 +166,11 @@ export async function POST({ request }) {
 
 		const data = await res.json();
 		const status = data.success ? 'delivered' : 'failed';
-		logReward.run(stakeAddress, amount, status, JSON.stringify(data), Date.now());
-
-		if (data.success) {
-			logSessionReward(stakeAddress, amount);
-			logIpReward(clientIp, amount);
-		}
+		logReward.run(stakeAddress, amount, status, JSON.stringify(data), now);
 
 		return json({ delivered: !!data.success, amount });
 	} catch (e) {
-		logReward.run(stakeAddress, amount, 'error', e.message, Date.now());
+		logReward.run(stakeAddress, amount, 'error', e.message, now);
 		return json({ delivered: false, error: 'Service unavailable' });
 	}
 }

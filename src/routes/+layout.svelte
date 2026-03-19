@@ -75,7 +75,8 @@
 	</div>
 </nav>
 
-<!-- Mobile Bottom Nav — cockpit control strip -->
+<!-- Mobile Bottom Nav — cockpit control strip (hidden on /game to avoid canvas overlap) -->
+{#if page.url.pathname !== '/game'}
 <nav aria-label="Mobile navigation" class="btm-nav visible lg:hidden z-50 border-t border-green-500/20 bg-black/90 backdrop-blur-sm">
 	{#each navItems as item}
 		{@const active = page.url.pathname === item.href}
@@ -111,6 +112,7 @@
 		</a>
 	{/each}
 </nav>
+{/if}
 
 <!-- Main content area — offset for desktop side rail -->
 <main class="lg:ml-44">

@@ -226,27 +226,78 @@ export function sfxShieldJam() {
 
 export function sfxEmp() {
 	if (!ctx) return;
-	// Heavy zap with bass thud
-	playNoise(0.35, 0.35);
-	playTone(40, 0.15, 'sine', 0.25); // sub-bass thump
-	const osc = ctx.createOscillator();
-	const osc2 = ctx.createOscillator();
-	const g = ctx.createGain();
-	osc.type = 'sawtooth';
-	osc2.type = 'square';
-	osc.frequency.setValueAtTime(900, ctx.currentTime);
-	osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.35);
-	osc2.frequency.setValueAtTime(450, ctx.currentTime);
-	osc2.frequency.exponentialRampToValueAtTime(25, ctx.currentTime + 0.35);
-	g.gain.value = 0.25;
-	g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-	osc.connect(g);
-	osc2.connect(g);
-	g.connect(sfxGain);
-	osc.start(ctx.currentTime);
-	osc.stop(ctx.currentTime + 0.4);
-	osc2.start(ctx.currentTime);
-	osc2.stop(ctx.currentTime + 0.4);
+	const t = ctx.currentTime;
+
+	// Layer 1: Massive initial CRACK — bright noise burst
+	playNoise(0.15, 0.5);
+
+	// Layer 2: Sub-bass earthquake thump (30 Hz, long decay)
+	const sub = ctx.createOscillator();
+	const subG = ctx.createGain();
+	sub.type = 'sine';
+	sub.frequency.setValueAtTime(35, t);
+	sub.frequency.exponentialRampToValueAtTime(18, t + 0.8);
+	subG.gain.setValueAtTime(0.35, t);
+	subG.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+	sub.connect(subG);
+	subG.connect(sfxGain);
+	sub.start(t);
+	sub.stop(t + 0.9);
+
+	// Layer 3: Descending sawtooth screech (the "pulse" sweep)
+	const sweep = ctx.createOscillator();
+	const sweepG = ctx.createGain();
+	sweep.type = 'sawtooth';
+	sweep.frequency.setValueAtTime(2400, t);
+	sweep.frequency.exponentialRampToValueAtTime(30, t + 0.7);
+	sweepG.gain.setValueAtTime(0.2, t);
+	sweepG.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+	sweep.connect(sweepG);
+	sweepG.connect(sfxGain);
+	sweep.start(t);
+	sweep.stop(t + 0.7);
+
+	// Layer 4: Square wave mid-range punch
+	const punch = ctx.createOscillator();
+	const punchG = ctx.createGain();
+	punch.type = 'square';
+	punch.frequency.setValueAtTime(600, t);
+	punch.frequency.exponentialRampToValueAtTime(40, t + 0.5);
+	punchG.gain.setValueAtTime(0.18, t);
+	punchG.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+	punch.connect(punchG);
+	punchG.connect(sfxGain);
+	punch.start(t);
+	punch.stop(t + 0.5);
+
+	// Layer 5: High-frequency crackle tail (delayed)
+	setTimeout(() => {
+		if (!ctx) return;
+		playNoise(0.2, 0.15);
+		playNoise(0.12, 0.08);
+	}, 150);
+
+	// Layer 6: Resonant "power down" hum tail
+	setTimeout(() => {
+		if (!ctx) return;
+		const hum = ctx.createOscillator();
+		const humG = ctx.createGain();
+		hum.type = 'triangle';
+		hum.frequency.setValueAtTime(120, ctx.currentTime);
+		hum.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.6);
+		humG.gain.setValueAtTime(0.12, ctx.currentTime);
+		humG.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+		hum.connect(humG);
+		humG.connect(sfxGain);
+		hum.start(ctx.currentTime);
+		hum.stop(ctx.currentTime + 0.6);
+	}, 300);
+
+	// Layer 7: Secondary crackle at 400ms
+	setTimeout(() => {
+		if (!ctx) return;
+		playNoise(0.08, 0.06);
+	}, 400);
 }
 
 export function sfxExplosion() {
@@ -270,35 +321,147 @@ export function sfxDelegator() {
 
 export function sfxForgeSuccess() {
 	if (!ctx) return;
-	// Triumphant chord into KABOOM + earthquake rumble
-	playTone(NOTE.D4, 0.3, 'square', 0.14);
-	playTone(NOTE['F#4'], 0.3, 'square', 0.14);
-	playTone(NOTE.A4, 0.3, 'square', 0.14);
-	// Kaboom — heavy noise burst + sub-bass
-	setTimeout(() => {
-		playNoise(0.4, 0.4);
-		playTone(30, 0.5, 'sine', 0.35); // sub-bass thud
-		playTone(55, 0.4, 'square', 0.2); // bass crunch
-	}, 150);
-	// Earthquake rumble — low oscillation
+	const t = ctx.currentTime;
+
+	// === HAMMER ON STEEL — sharp metallic anvil strike ===
+
+	// Layer 1: Impact noise burst (hammer contact)
+	playNoise(0.08, 0.45);
+
+	// Layer 2: High metallic ring (steel resonance)
+	const ring = ctx.createOscillator();
+	const ringG = ctx.createGain();
+	ring.type = 'sine';
+	ring.frequency.setValueAtTime(1800, t);
+	ring.frequency.exponentialRampToValueAtTime(900, t + 0.6);
+	ringG.gain.setValueAtTime(0.3, t);
+	ringG.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+	ring.connect(ringG);
+	ringG.connect(sfxGain);
+	ring.start(t);
+	ring.stop(t + 0.7);
+
+	// Layer 3: Second harmonic ring (overtone)
+	const ring2 = ctx.createOscillator();
+	const ring2G = ctx.createGain();
+	ring2.type = 'sine';
+	ring2.frequency.setValueAtTime(3200, t);
+	ring2.frequency.exponentialRampToValueAtTime(1600, t + 0.4);
+	ring2G.gain.setValueAtTime(0.12, t);
+	ring2G.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+	ring2.connect(ring2G);
+	ring2G.connect(sfxGain);
+	ring2.start(t);
+	ring2.stop(t + 0.5);
+
+	// Layer 4: Heavy anvil thud (weight of the strike)
+	const anvil = ctx.createOscillator();
+	const anvilG = ctx.createGain();
+	anvil.type = 'square';
+	anvil.frequency.setValueAtTime(120, t);
+	anvil.frequency.exponentialRampToValueAtTime(40, t + 0.25);
+	anvilG.gain.setValueAtTime(0.25, t);
+	anvilG.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+	anvil.connect(anvilG);
+	anvilG.connect(sfxGain);
+	anvil.start(t);
+	anvil.stop(t + 0.3);
+
+	// Layer 5: Metallic shimmer tail (ringing steel fading)
 	setTimeout(() => {
 		if (!ctx) return;
-		const osc = ctx.createOscillator();
-		const g = ctx.createGain();
-		osc.type = 'sine';
-		osc.frequency.setValueAtTime(25, ctx.currentTime);
-		osc.frequency.linearRampToValueAtTime(15, ctx.currentTime + 0.6);
-		g.gain.value = 0.3;
-		g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
-		osc.connect(g);
-		g.connect(sfxGain);
-		osc.start(ctx.currentTime);
-		osc.stop(ctx.currentTime + 0.7);
-		// Crumble debris
-		playNoise(0.25, 0.15);
-	}, 300);
-	// Aftershock
-	setTimeout(() => playTone(20, 0.3, 'sine', 0.12), 600);
+		const shimmer = ctx.createOscillator();
+		const sg = ctx.createGain();
+		shimmer.type = 'sine';
+		shimmer.frequency.setValueAtTime(2400, ctx.currentTime);
+		shimmer.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.5);
+		sg.gain.setValueAtTime(0.08, ctx.currentTime);
+		sg.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+		shimmer.connect(sg);
+		sg.connect(sfxGain);
+		shimmer.start(ctx.currentTime);
+		shimmer.stop(ctx.currentTime + 0.6);
+	}, 100);
+
+	// === HEAVENLY CHOIR — stacked sine "ahhh" with vibrato ===
+	setTimeout(() => {
+		if (!ctx) return;
+		const now = ctx.currentTime;
+		const choirDuration = 2.5;
+		const fadeIn = 0.3;
+
+		// Choir voices — D major chord spread across octaves with slight detune
+		const voices = [
+			{ freq: NOTE.D4, detune: -3, gain: 0.08 },   // root
+			{ freq: NOTE['F#4'], detune: 2, gain: 0.07 }, // major third
+			{ freq: NOTE.A4, detune: -2, gain: 0.07 },    // fifth
+			{ freq: NOTE.D5, detune: 3, gain: 0.06 },     // octave
+			{ freq: NOTE['F#5'], detune: -4, gain: 0.05 }, // high third
+			{ freq: NOTE.A3, detune: 1, gain: 0.06 },     // low fifth (depth)
+		];
+
+		for (const v of voices) {
+			// Main voice
+			const osc = ctx.createOscillator();
+			const g = ctx.createGain();
+			osc.type = 'sine';
+			osc.frequency.value = v.freq + v.detune;
+			// Slow vibrato for human quality
+			const lfo = ctx.createOscillator();
+			const lfoG = ctx.createGain();
+			lfo.type = 'sine';
+			lfo.frequency.value = 4.5 + Math.random() * 1.5; // 4.5-6 Hz vibrato
+			lfoG.gain.value = 3; // subtle pitch wobble
+			lfo.connect(lfoG);
+			lfoG.connect(osc.frequency);
+			// Fade in, sustain, fade out
+			g.gain.setValueAtTime(0, now);
+			g.gain.linearRampToValueAtTime(v.gain, now + fadeIn);
+			g.gain.setValueAtTime(v.gain, now + choirDuration - 0.8);
+			g.gain.exponentialRampToValueAtTime(0.001, now + choirDuration);
+			osc.connect(g);
+			g.connect(sfxGain);
+			osc.start(now);
+			osc.stop(now + choirDuration);
+			lfo.start(now);
+			lfo.stop(now + choirDuration);
+
+			// Breathy layer — triangle wave at same freq for warmth
+			const breath = ctx.createOscillator();
+			const bg = ctx.createGain();
+			breath.type = 'triangle';
+			breath.frequency.value = v.freq + v.detune + 1;
+			bg.gain.setValueAtTime(0, now);
+			bg.gain.linearRampToValueAtTime(v.gain * 0.4, now + fadeIn);
+			bg.gain.setValueAtTime(v.gain * 0.4, now + choirDuration - 0.8);
+			bg.gain.exponentialRampToValueAtTime(0.001, now + choirDuration);
+			breath.connect(bg);
+			bg.connect(sfxGain);
+			breath.start(now);
+			breath.stop(now + choirDuration);
+		}
+	}, 400);
+}
+
+/** Forge misfire — harsh error buzz for pressing F outside window */
+export function sfxForgeMisfire() {
+	if (!ctx) return;
+	const t = ctx.currentTime;
+	// Harsh buzz — square wave at dissonant frequency
+	const buzz = ctx.createOscillator();
+	const bg = ctx.createGain();
+	buzz.type = 'square';
+	buzz.frequency.setValueAtTime(90, t);
+	buzz.frequency.setValueAtTime(85, t + 0.05);
+	buzz.frequency.setValueAtTime(90, t + 0.1);
+	bg.gain.setValueAtTime(0.25, t);
+	bg.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+	buzz.connect(bg);
+	bg.connect(sfxGain);
+	buzz.start(t);
+	buzz.stop(t + 0.2);
+	// Static crackle
+	playNoise(0.1, 0.15);
 }
 
 export function sfxForgeMiss() {
@@ -405,12 +568,20 @@ function createMusicEl(src) {
 }
 
 export function startMusic() {
-	if (musicPlaying) return;
+	if (!ctx) return;
+	if (musicPlaying && musicEl && !musicEl.paused) return;
 	musicPlaying = true;
-	trackIndex = 0;
-	musicEl = createMusicEl(TRACKS[trackIndex]);
-	musicEl.currentTime = 0;
-	musicEl.play().catch(() => {});
+	if (!musicEl) {
+		trackIndex = 0;
+		musicEl = createMusicEl(TRACKS[trackIndex]);
+	}
+	if (ctx.state === 'suspended') {
+		ctx.resume().then(() => {
+			musicEl.play().catch(() => {});
+		});
+	} else {
+		musicEl.play().catch(() => {});
+	}
 }
 
 export function stopMusic() {

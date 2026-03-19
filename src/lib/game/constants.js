@@ -29,11 +29,11 @@ export const SHIELD_DRAIN_PER_FRAME = 0.7; // ~42/sec
 export const SHIELD_CUTOFF = 30; // auto-off below this
 export const SHIELD_RADIUS = 48; // snug around the RV body
 
-// EMP Blast (secondary weapon) — 3-lane area pulse
+// EMP Blast (secondary weapon) — full-screen nuke
 export const EMP_DRAIN = 150; // heavy single-use cost
 export const EMP_COOLDOWN = 4000; // ms
-export const EMP_RADIUS = LANE_W * 1.5; // ~3 lane coverage
-export const EMP_FLASH_DURATION = 400; // ms
+export const EMP_RADIUS = 900; // full screen kill radius
+export const EMP_FLASH_DURATION = 1200; // ms — long dramatic effect
 
 // Black tank
 export const BLACK_TANK_DRAIN_PER_FRAME = 0.6; // ~36/sec while holding
@@ -45,8 +45,10 @@ export const BLACK_TANK_W = LANE_W; // one lane wide, sweep to cover more
 export const BLOCK_INTERVAL_BASE = 45; // seconds
 export const BLOCK_INTERVAL_MIN = 15; // seconds
 export const BLOCK_INTERVAL_DECAY = 0.92; // multiplier per block
-export const BLOCK_FORGE_DRAIN = 15;
+export const BLOCK_FORGE_DRAIN = 100;
 export const BLOCK_FORGE_WINDOW = 1000; // ms — time to press F
+export const FORGE_MISFIRE_DRAIN = 75; // battery cost for pressing F outside window
+export const FORGE_MISFIRE_COOLDOWN = 400; // ms between misfire penalties
 export const BLOCK_REWARD_POINTS = 500;
 export const BLOCK_REWARD_GROWTH = 100; // +per consecutive block
 export const NIGHT_PER_BLOCK = 1;

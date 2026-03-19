@@ -1,9 +1,15 @@
-const POOL_ID = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
+/** Truncate a bech32 stake address to `stake1xxxx...yyyy` */
+export function truncateStakeAddr(addr) {
+	if (!addr || addr.length < 14) return addr || '???';
+	return addr.slice(0, 10) + '...' + addr.slice(-4);
+}
 
 export function detectWallets() {
 	if (typeof window === 'undefined' || !window.cardano) return [];
+	const BLOCKED_WALLETS = new Set(['brave']);
 	return Object.keys(window.cardano)
 		.filter(key => {
+			if (BLOCKED_WALLETS.has(key.toLowerCase())) return false;
 			const w = window.cardano[key];
 			return w && typeof w === 'object' && typeof w.enable === 'function' && typeof w.icon === 'string';
 		})
@@ -28,18 +34,55 @@ export async function connectWallet(walletId, turnstileToken = '') {
 	if (!rewardAddresses || rewardAddresses.length === 0) {
 		throw new Error('No staking address found');
 	}
-	const stakeAddress = hexToBech32(rewardAddresses[0], 'stake');
-	// stake address logged only in dev — removed for security
+	const stakeAddressHex = rewardAddresses[0];
+	const stakeAddress = hexToBech32(stakeAddressHex, 'stake');
 
-	// Check delegation + handle via server-side Koios call
+	// ── CIP-8 message signing: prove wallet ownership ─────────────
+	// 1. Request a nonce from the server
+	const nonceRes = await fetch('/api/game/auth-nonce', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ stakeAddress }),
+	});
+	if (!nonceRes.ok) {
+		const err = await nonceRes.json().catch(() => ({}));
+		throw new Error(err.error || 'Failed to get auth nonce');
+	}
+	const { nonce } = await nonceRes.json();
+
+	// 2. Sign the nonce with the wallet (triggers signing popup)
+	// Encode a human-readable message as hex so the wallet displays it as text
+	const message = `Star Forger OTG CIP8 nonce: ${nonce}`;
+	let payloadHex = '';
+	for (let i = 0; i < message.length; i++) {
+		payloadHex += message.charCodeAt(i).toString(16).padStart(2, '0');
+	}
+	let signResult;
+	try {
+		signResult = await api.signData(stakeAddressHex, payloadHex);
+	} catch (e) {
+		// User declined the signing request (code 2) or other wallet error
+		if (e?.code === 2) throw new Error('Signing declined');
+		throw new Error(e?.message || 'Wallet signing failed');
+	}
+
+	// 3. Send signature + key + nonce to check-wallet for verification
 	const res = await fetch('/api/game/check-wallet', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ stakeAddress, turnstileToken }),
+		body: JSON.stringify({
+			stakeAddress,
+			stakeAddressHex,
+			turnstileToken,
+			signature: signResult.signature,
+			key: signResult.key,
+			nonce,
+		}),
 	});
 
 	if (!res.ok) {
-		throw new Error('Wallet check failed');
+		const errBody = await res.json().catch(() => ({}));
+		throw new Error(errBody.error || 'Wallet check failed');
 	}
 
 	const check = await res.json();

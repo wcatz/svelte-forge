@@ -98,13 +98,23 @@ const _getGameSession = db.prepare(
 	'SELECT * FROM game_sessions WHERE id = ? AND stake_address = ? AND ended = 0'
 );
 const _forgeBlock = db.prepare(
-	'UPDATE game_sessions SET blocks_forged = blocks_forged + 1, last_forge_at = ? WHERE id = ?'
+	`UPDATE game_sessions SET blocks_forged = blocks_forged + 1, last_forge_at = ?
+	 WHERE id = ? AND blocks_forged < 20`
+);
+// V2 fix: atomic forge with timing enforcement in SQL
+const _forgeBlockAtomic = db.prepare(
+	`UPDATE game_sessions SET blocks_forged = blocks_forged + 1, last_forge_at = ?
+	 WHERE id = ? AND blocks_forged < 20
+	 AND (blocks_forged = 0 OR last_forge_at < ?)`
 );
 const _endGameSession = db.prepare(
 	'UPDATE game_sessions SET ended = 1 WHERE id = ?'
 );
+const _endActiveSessions = db.prepare(
+	'UPDATE game_sessions SET ended = 1 WHERE stake_address = ? AND ended = 0'
+);
 const _activeSessionCount = db.prepare(
-	'SELECT COUNT(*) as cnt FROM game_sessions WHERE stake_address = ? AND ended = 0 AND started_at > ?'
+	'SELECT COUNT(*) as cnt FROM game_sessions WHERE stake_address = ? AND started_at > ?'
 );
 
 export function createGameSession(id, stakeAddress) {
@@ -116,11 +126,22 @@ export function getGameSession(id, stakeAddress) {
 }
 
 export function recordForge(sessionId) {
-	_forgeBlock.run(Date.now(), sessionId);
+	const result = _forgeBlock.run(Date.now(), sessionId);
+	return result.changes > 0;
+}
+
+export function recordForgeAtomic(sessionId, now, minIntervalSecs) {
+	const timingCutoff = now - (minIntervalSecs * 1000);
+	const result = _forgeBlockAtomic.run(now, sessionId, timingCutoff);
+	return result.changes > 0;
 }
 
 export function endGameSession(sessionId) {
 	_endGameSession.run(sessionId);
+}
+
+export function endActiveSessions(stakeAddress) {
+	_endActiveSessions.run(stakeAddress);
 }
 
 export function activeSessionCount(stakeAddress, windowMs) {

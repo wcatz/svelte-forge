@@ -40,7 +40,7 @@
 			</h1>
 			<p class="mt-2 text-sm font-mono text-green-500/60 tracking-[0.3em]">OFF THE GRID SINCE EPOCH 208</p>
 			<p class="mt-6 text-lg sm:text-xl font-mono text-base-content/80 max-w-2xl mx-auto leading-relaxed">
-				A mobile, solar-powered Cardano stake pool running ARM64 processors on Starlink satellite internet. 110 watts. No data center. No compromise.
+				A mobile, solar-powered Cardano stake pool running ARM64 processors on Starlink satellite internet. 110 watts. No compromise.
 			</p>
 		</div>
 	</div>
@@ -202,7 +202,7 @@
 			<HudPanel title="Community Work">
 				<div class="space-y-4 text-sm font-mono text-base-content/70 leading-relaxed">
 					<p>
-						Beyond running the pool, I contribute to several Cardano community projects. Core developer for <a href="https://vm.adaseal.eu/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">Vending Machine</a> and <a href="https://app.tosidrop.io/cardano/claim" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">TosiDrop</a>. Star Forge delegators bypass premium token claiming fees on TosiDrop.
+						Beyond running the pool, I contribute to several Cardano community projects. Core developer for <a href="https://vm.adaseal.eu/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">Vending Machine</a> and <a href="https://tosidrop.me/claims" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 transition-colors">TosiDrop</a>. Star Forge delegators bypass premium token claiming fees on TosiDrop.
 					</p>
 					<p>
 						Maintainer of Armada Alliance documentation and tooling. I write guides and maintain disk images so new operators can get a node synced on ARM hardware within an hour.

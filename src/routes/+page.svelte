@@ -112,7 +112,7 @@
 			desc: 'Core dev for Vending Machine and TosiDrop. Star Forge delegators bypass premium token claiming fees. Maintainer of Armada Alliance documentation.',
 			links: [
 				{ text: 'Vending Machine', href: 'https://vm.adaseal.eu/' },
-				{ text: 'TosiDrop', href: 'https://app.tosidrop.io/cardano/claim' }
+				{ text: 'TosiDrop', href: 'https://tosidrop.me/claims' }
 			]
 		},
 		{

@@ -2,9 +2,11 @@
 	import { onMount } from 'svelte';
 	import { CANVAS_W, CANVAS_H } from '$lib/game/constants.js';
 	import { createGame, resetGame, tick, render } from '$lib/game/engine.js';
+	import { titleHitRegions, gameOverHitRegions } from '$lib/game/hud.js';
+	// titleHitRegions is a mutable array updated each frame by drawTitleScreen
 	import { createInput, handleKeydown, handleKeyup, handleTouchStart, handleTouchMove, handleTouchEnd } from '$lib/game/input.js';
 	import { initAudio, resumeAudio, toggleMute, isMuted, startMusic, stopMusic, sfxStart } from '$lib/game/audio.js';
-	import { detectWallets, connectWallet, submitScore, fetchLeaderboard } from '$lib/game/wallet.js';
+	import { detectWallets, connectWallet, submitScore, fetchLeaderboard, truncateStakeAddr } from '$lib/game/wallet.js';
 	const POOL_ID = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
 
 	let muted = $state(false);
@@ -36,6 +38,7 @@
 	let selectedWalletId = '';
 	let delegateStatus = $state('');
 	let nightMultiplier = $state(1); // 10x for delegators, 1x for others
+	let guestMode = $state(false); // true when playing without wallet
 	let gameSessionId = null;
 	let turnstileToken = $state('');
 	let turnstileRequired = $state(false);
@@ -43,6 +46,15 @@
 
 	function gameLoop(timestamp) {
 		const now = timestamp || performance.now();
+
+		// Sync wallet state into game for canvas rendering
+		game.walletState = {
+			phase: walletPhase,
+			wallets,
+			error: walletError,
+			leaderboard,
+		};
+		game.guestMode = guestMode;
 
 		tick(game, input, now);
 		render(ctx, game, now);
@@ -53,7 +65,8 @@
 		nightEarned = game.forge.nightEarned;
 
 		// Deliver NIGHT tokens on block forge — server determines amount based on delegation
-		if (game.forge.blocksForged > lastBlocksForged && wallet?.sessionToken && gameSessionId) {
+		// Skip reward delivery entirely for guest mode
+		if (!guestMode && game.forge.blocksForged > lastBlocksForged && wallet?.sessionToken && gameSessionId) {
 			lastBlocksForged = game.forge.blocksForged;
 			fetch('/api/game/deliver-reward', {
 				method: 'POST',
@@ -62,10 +75,10 @@
 			}).catch(() => {});
 		}
 
-		// Submit score on game over transition
-		if (gameState === 'gameover' && prevGameState !== 'gameover' && wallet && !scoreSubmitted) {
+		// Submit score on game over transition (skip for guest mode — no wallet)
+		if (gameState === 'gameover' && prevGameState !== 'gameover' && !guestMode && wallet && !scoreSubmitted) {
 			scoreSubmitted = true;
-			const displayName = wallet.adaHandle || wallet.stakeAddress.slice(0, 15) + '...';
+			const displayName = wallet.adaHandle || truncateStakeAddr(wallet.stakeAddress);
 			submitScore(wallet.sessionToken, displayName, game.score, game.forge.blocksForged, game.forge.nightEarned)
 				.then(res => { if (res?.entries) { leaderboard = res.entries; game.leaderboard = res.entries; } });
 			fetchLeaderboard().then(entries => { if (entries?.length) { leaderboard = entries; game.leaderboard = entries; } });
@@ -73,8 +86,8 @@
 		if (gameState === 'playing' && prevGameState !== 'playing') {
 			scoreSubmitted = false;
 			lastBlocksForged = 0;
-			// Start a server-side game session for anti-cheat tracking
-			if (wallet?.sessionToken) {
+			// Start a server-side game session for anti-cheat tracking (skip for guests)
+			if (!guestMode && wallet?.sessionToken) {
 				fetch('/api/game/start-session', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -93,13 +106,13 @@
 	const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'w', 'W', 'a', 'A', 's', 'S', 'd', 'D']);
 
 	function onKeydown(e) {
+		// Start music on any keypress (browser requires user gesture)
+		initAudio(); resumeAudio(); startMusic();
 		if (walletPhase !== 'ready') return;
 		// Prevent page scroll while playing
 		if (SCROLL_KEYS.has(e.key)) {
 			e.preventDefault();
 		}
-		initAudio();
-		resumeAudio();
 		if (e.key === 'm' || e.key === 'M') {
 			muted = toggleMute();
 		}
@@ -109,6 +122,44 @@
 	function onKeyup(e) {
 		if (walletPhase !== 'ready') return;
 		handleKeyup(input, e);
+	}
+
+	function onCanvasClick(e) {
+		// Start music on first interaction (browsers require user gesture)
+		initAudio(); resumeAudio(); startMusic();
+
+		const rect = canvas.getBoundingClientRect();
+		const scaleX = CANVAS_W / rect.width;
+		const scaleY = CANVAS_H / rect.height;
+		const x = (e.clientX - rect.left) * scaleX;
+		const y = (e.clientY - rect.top) * scaleY;
+
+		// Game over screen — Tosidrop claim button
+		if (game.state === 'gameover') {
+			for (const region of gameOverHitRegions) {
+				if (x >= region.x && x <= region.x + region.w &&
+					y >= region.y && y <= region.y + region.h) {
+					if (region.action === 'tosidrop') {
+						window.open('https://tosidrop.me/cardano/claim', '_blank');
+					}
+					return; // don't restart game on button click
+				}
+			}
+		}
+
+		if (walletPhase === 'ready') return; // only handle clicks on wallet connect screen
+
+		for (const region of titleHitRegions) {
+			if (x >= region.x && x <= region.x + region.w &&
+				y >= region.y && y <= region.y + region.h) {
+				if (region.action === 'wallet') {
+					onWalletSelect(region.walletId);
+				} else if (region.action === 'guest') {
+					onGuestStart();
+				}
+				break;
+			}
+		}
 	}
 
 	function onTouchStart(e) {
@@ -156,7 +207,7 @@
 			nightMultiplier = wallet.isDelegated ? 10 : 1;
 			game.nightMultiplier = nightMultiplier;
 			walletPhase = 'ready';
-			game.playerName = wallet.adaHandle || `...${wallet.stakeAddress.slice(-4)}`;
+			game.playerName = wallet.adaHandle || truncateStakeAddr(wallet.stakeAddress);
 			document.body.style.overflow = 'hidden';
 			containerEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			initAudio(); resumeAudio(); startMusic();
@@ -165,6 +216,19 @@
 			walletError = e.message || 'Connection failed';
 			walletPhase = 'connect';
 		}
+	}
+
+	function onGuestStart() {
+		guestMode = true;
+		walletPhase = 'ready';
+		nightMultiplier = 0;
+		game.nightMultiplier = 0;
+		game.guestMode = true;
+		game.playerName = 'GUEST';
+		document.body.style.overflow = 'hidden';
+		containerEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		initAudio(); resumeAudio(); startMusic();
+		fetchLeaderboard().then(entries => { if (entries?.length) { leaderboard = entries; game.leaderboard = entries; } });
 	}
 
 	function refreshWallets() {
@@ -186,7 +250,7 @@
 			nightMultiplier = wallet.isDelegated ? 10 : 1;
 			game.nightMultiplier = nightMultiplier;
 			walletPhase = 'ready';
-			game.playerName = wallet.adaHandle || `...${wallet.stakeAddress.slice(-4)}`;
+			game.playerName = wallet.adaHandle || truncateStakeAddr(wallet.stakeAddress);
 			delegateStatus = '';
 			fetchLeaderboard().then(entries => { if (entries?.length) { leaderboard = entries; game.leaderboard = entries; } });
 		} catch (e) {
@@ -264,97 +328,34 @@
 <svelte:window onkeydown={onKeydown} onkeyup={onKeyup} />
 
 <div class="game-container" bind:this={containerEl}>
+	{#if walletPhase === 'ready' && wallet && !wallet.isDelegated && gameState === 'title'}
+		<div class="boost-banner">
+			<div class="boost-text">
+				DELEGATE TO STAR FORGE FOR <span class="boost-highlight">10x NIGHT</span> REWARDS
+			</div>
+			{#if delegateStatus}
+				<div class="boost-status">{delegateStatus}</div>
+			{:else}
+				<div class="boost-btn-row">
+					<span class="point-right">👉</span>
+					<button class="boost-btn" onclick={delegateNow}>DELEGATE NOW</button>
+					<span class="point-left">👈</span>
+				</div>
+			{/if}
+		</div>
+	{/if}
 	<canvas
 		bind:this={canvas}
 		width={CANVAS_W}
 		height={CANVAS_H}
+		onclick={onCanvasClick}
 		ontouchstart={onTouchStart}
 		ontouchmove={onTouchMove}
 		ontouchend={onTouchEnd}
 	></canvas>
 
-	{#if walletPhase !== 'ready'}
-		<div class="wallet-overlay">
-			<div class="wallet-box">
-				<h2 class="wallet-title">CONNECT WALLET</h2>
-				<p class="wallet-sub">Delegate to Star Forge [OTG] for 10x NIGHT rewards</p>
-
-				{#if walletPhase === 'connecting'}
-					<div class="wallet-status">Connecting...</div>
-				{:else}
-					<div bind:this={turnstileEl} class="turnstile-widget"></div>
-					{#if walletError}
-						<div class="wallet-error">{walletError}</div>
-					{/if}
-					{#if !walletsReady}
-						<div class="wallet-status">Detecting wallets...</div>
-					{:else if wallets.length === 0}
-						<div class="wallet-empty">
-							No CIP-30 wallets detected.<br />
-							Install Eternl, Lace, or Yoroi.
-						</div>
-					{:else}
-						<div class="wallet-list">
-							{#each wallets as w}
-								<button class="wallet-item" onclick={() => onWalletSelect(w.id)}>
-									<img src={w.icon} alt={w.name} class="wallet-icon" />
-									<span>{w.name}</span>
-								</button>
-							{/each}
-						</div>
-					{/if}
-				{/if}
-			</div>
-
-				<div class="leaderboard-box">
-					<h3 class="lb-title">TOP 10</h3>
-					{#if leaderboard.length > 0}
-						<div class="lb-header">
-							<span class="lb-rank"></span>
-							<span class="lb-name">PLAYER</span>
-							<span class="lb-stat">SCORE</span>
-							<span class="lb-stat">NIGHT</span>
-						</div>
-						<div class="lb-list">
-							{#each leaderboard.slice(0, 10) as entry, i}
-								<div class="lb-row">
-									<span class="lb-rank">{i + 1}.</span>
-									<span class="lb-name">{entry.displayName}</span>
-									<span class="lb-stat">{entry.score?.toLocaleString()}</span>
-									<span class="lb-stat lb-night">{entry.nightEarned || 0}</span>
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<div class="lb-empty">No scores yet. Be the first!</div>
-					{/if}
-				</div>
-		</div>
-	{/if}
-
-	{#if walletPhase === 'ready' && wallet}
-		<div class="wallet-badge">
-			{wallet.adaHandle || `...${wallet.stakeAddress.slice(-4)}`}
-			{#if nightMultiplier > 1}
-				<span class="badge-mult">10x</span>
-			{/if}
-		</div>
-		{#if !wallet.isDelegated && gameState === 'title'}
-			<div class="boost-banner">
-				<div class="boost-text">
-					DELEGATE TO STAR FORGE FOR <span class="boost-highlight">10x NIGHT</span> REWARDS
-				</div>
-				{#if delegateStatus}
-					<div class="boost-status">{delegateStatus}</div>
-				{:else}
-					<button class="boost-btn" onclick={delegateNow}>DELEGATE NOW</button>
-				{/if}
-				<button class="boost-skip" onclick={() => { /* just play */ }}>
-					PLAY AT 1x
-				</button>
-			</div>
-		{/if}
-	{/if}
+	<!-- Turnstile (hidden widget, renders above canvas) -->
+	<div bind:this={turnstileEl} class="turnstile-widget"></div>
 
 	<button
 		class="control-btn mute-btn"
@@ -439,145 +440,29 @@
 		font-size: 14px;
 	}
 
-	/* === Wallet Overlay === */
-	.wallet-overlay {
-		position: absolute;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.92);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		z-index: 20;
-		gap: 20px;
-		padding: 20px;
-	}
-
-	.wallet-box {
-		text-align: center;
-		max-width: 340px;
-	}
-
-	.wallet-title {
-		font: bold 22px monospace;
-		color: #d4a574;
-		letter-spacing: 0.15em;
-		margin: 0 0 6px;
-	}
-
-	.wallet-sub {
-		font: 11px monospace;
-		color: rgba(34, 197, 94, 0.5);
-		margin: 0 0 20px;
-	}
-
 	.turnstile-widget {
-		display: flex;
-		justify-content: center;
-		margin-bottom: 12px;
+		position: absolute;
+		top: 36px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 25;
 		min-height: 0;
 	}
 
-	.wallet-status {
-		font: 13px monospace;
-		color: #22c55e;
-		animation: pulse-text 1s infinite;
-	}
 
-	@keyframes pulse-text {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.4; }
-	}
-
-	.wallet-error {
-		font: 11px monospace;
-		color: #ef4444;
-		margin-bottom: 12px;
-		padding: 6px 10px;
-		border: 1px solid rgba(239, 68, 68, 0.3);
-		border-radius: 4px;
-		background: rgba(239, 68, 68, 0.1);
-	}
-
-	.wallet-empty {
-		font: 11px monospace;
-		color: rgba(34, 197, 94, 0.5);
-		line-height: 1.6;
-	}
-
-	.wallet-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		justify-content: center;
-	}
-
-	.wallet-item {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 8px 14px;
-		background: rgba(34, 197, 94, 0.08);
-		border: 1px solid rgba(34, 197, 94, 0.25);
-		border-radius: 6px;
-		color: #4ade80;
-		font: bold 12px monospace;
-		cursor: pointer;
-		transition: all 0.15s;
-	}
-
-	.wallet-item:hover {
-		background: rgba(34, 197, 94, 0.18);
-		border-color: rgba(34, 197, 94, 0.5);
-		color: #86efac;
-	}
-
-	.wallet-icon {
-		width: 24px;
-		height: 24px;
-		border-radius: 4px;
-	}
-
-
-	/* === Wallet Badge (in-game) === */
-	.wallet-badge {
-		position: absolute;
-		top: 4px;
-		left: 4px;
-		background: rgba(0, 0, 0, 0.6);
-		border: 1px solid rgba(34, 197, 94, 0.2);
-		border-radius: 3px;
-		padding: 2px 8px;
-		font: bold 10px monospace;
-		color: #4ade80;
-		z-index: 10;
-		display: flex;
-		align-items: center;
-		gap: 6px;
-	}
-
-	.badge-mult {
-		background: rgba(251, 191, 36, 0.2);
-		border: 1px solid rgba(251, 191, 36, 0.4);
-		border-radius: 2px;
-		padding: 0 4px;
-		color: #fbbf24;
-		font: bold 9px monospace;
-	}
-
-	/* === Delegate boost banner === */
+	/* === Delegate boost banner — sits above the canvas === */
 	.boost-banner {
 		position: absolute;
-		bottom: 36px;
+		top: 50%;
 		left: 50%;
-		transform: translateX(-50%);
-		background: rgba(0, 0, 0, 0.85);
-		border: 1px solid rgba(251, 191, 36, 0.3);
-		border-radius: 6px;
-		padding: 10px 16px;
+		transform: translate(-50%, -50%);
+		z-index: 30;
+		background: rgba(0, 0, 0, 0.92);
+		border: 2px solid rgba(251, 191, 36, 0.4);
+		border-radius: 8px;
+		padding: 10px 20px;
 		text-align: center;
-		z-index: 15;
-		max-width: 320px;
+		max-width: 340px;
 	}
 
 	.boost-text {
@@ -614,6 +499,33 @@
 		border-color: #fbbf24;
 	}
 
+	.boost-btn-row {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 14px;
+	}
+
+	.point-right {
+		font-size: 20px;
+		animation: nudge-right 0.8s ease-in-out infinite;
+	}
+
+	.point-left {
+		font-size: 20px;
+		animation: nudge-left 0.8s ease-in-out infinite;
+	}
+
+	@keyframes nudge-right {
+		0%, 100% { transform: translateX(0); }
+		50% { transform: translateX(6px); }
+	}
+
+	@keyframes nudge-left {
+		0%, 100% { transform: translateX(0); }
+		50% { transform: translateX(-6px); }
+	}
+
 	.boost-skip {
 		display: block;
 		margin: 6px auto 0;
@@ -628,75 +540,5 @@
 		color: #a3a3a3;
 	}
 
-	/* === Leaderboard === */
-	.leaderboard-box {
-		max-width: 340px;
-		width: 100%;
-	}
-
-	.lb-title {
-		font: bold 13px monospace;
-		color: #d4a574;
-		letter-spacing: 0.15em;
-		text-align: center;
-		margin: 0 0 8px;
-	}
-
-	.lb-list {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-
-	.lb-row {
-		display: flex;
-		align-items: center;
-		padding: 3px 8px;
-		background: rgba(34, 197, 94, 0.04);
-		border-radius: 3px;
-		font: 11px monospace;
-	}
-
-	.lb-rank {
-		color: #d4a574;
-		width: 28px;
-		flex-shrink: 0;
-	}
-
-	.lb-name {
-		color: rgba(34, 197, 94, 0.7);
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.lb-header {
-		display: flex;
-		align-items: center;
-		padding: 0 8px 4px;
-		font: bold 9px monospace;
-		color: rgba(34, 197, 94, 0.4);
-		letter-spacing: 0.1em;
-	}
-
-	.lb-stat {
-		color: #4ade80;
-		font-weight: bold;
-		width: 60px;
-		text-align: right;
-		flex-shrink: 0;
-	}
-
-	.lb-night {
-		color: #d4a574;
-	}
-
-	.lb-empty {
-		font: 11px monospace;
-		color: rgba(34, 197, 94, 0.4);
-		text-align: center;
-		padding: 8px;
-	}
 
 </style>

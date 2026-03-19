@@ -1,7 +1,6 @@
 <script>
 	import GameWrapper from '$lib/component/game-wrapper.svelte';
 	import HudPanel from '$lib/component/hud-panel.svelte';
-	import ScanLines from '$lib/component/scan-lines.svelte';
 </script>
 
 <svelte:head>
@@ -11,30 +10,15 @@
 </svelte:head>
 
 <div class="flex flex-col min-h-screen texture relative">
-	<ScanLines opacity={0.015} />
-
 	<div class="relative z-20 px-4 sm:px-6 lg:px-8 py-6">
 		<div class="max-w-2xl mx-auto space-y-4">
 
-			<div class="text-center">
-				<h1 class="text-xl font-mono font-bold tracking-[0.2em] bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-transparent">
-					MIDNIGHT RIDER
-				</h1>
-				<p class="text-[10px] font-mono text-green-500/50 tracking-wider mt-1">
-					MOBILE STAKE POOL ARCADE — FORGE BLOCKS ON THE RUN
-				</p>
-			</div>
-
-			<HudPanel title="Game">
-				<GameWrapper />
-			</HudPanel>
-
-			<div class="grid grid-cols-2 gap-4">
+			<div class="hidden lg:grid grid-cols-2 gap-4">
 				<HudPanel title="Controls">
 					<div class="space-y-1.5 text-xs font-mono text-green-500/70">
 						<p><span class="text-amber-500">WASD/ARROWS</span> — Move</p>
 						<p><span class="text-amber-500">SPACE</span> — EM Shield (toggle)</p>
-						<p><span class="text-amber-500">E</span> — EMP Blast</p>
+						<p><span class="text-amber-500">E</span> — EM Pulse</p>
 						<p><span class="text-amber-500">Q</span> — Dump Black Tank (hold)</p>
 						<p><span class="text-amber-500">F</span> — Forge Block</p>
 					</div>
@@ -48,6 +32,10 @@
 					</div>
 				</HudPanel>
 			</div>
+
+			<HudPanel title="Game">
+				<GameWrapper />
+			</HudPanel>
 
 		</div>
 	</div>

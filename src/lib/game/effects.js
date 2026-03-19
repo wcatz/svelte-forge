@@ -3,7 +3,8 @@ import { COLOR } from './constants.js';
 export function createEffectsState() {
 	return {
 		particles: [],
-		screenFlash: null, // { color, until }
+		forgeRipples: [],   // expanding concentric rings from Starlink dish
+		screenFlash: null,  // { color, until }
 		batteryWarning: false,
 	};
 }
@@ -25,15 +26,33 @@ export function addExplosion(effects, x, y) {
 }
 
 export function addForgeParticles(effects, cx, cy) {
-	for (let i = 0; i < 16; i++) {
-		const angle = (Math.PI * 2 * i) / 16;
-		const speed = 2 + Math.random() * 2;
+	// Starlink dish is at top of RV (cy - half height + 19px offset)
+	const dishY = cy - 17; // approximate dish position from center
+
+	// Spawn staggered ripple rings from dish
+	for (let i = 0; i < 5; i++) {
+		effects.forgeRipples.push({
+			x: cx,
+			y: dishY,
+			radius: 4,
+			maxRadius: 80 + i * 30, // each ring travels further
+			life: 1.0,
+			speed: 220 + i * 40,    // px per second — fast expansion
+			delay: i * 60,          // stagger 60ms apart
+			born: performance.now(),
+		});
+	}
+
+	// Small sparks from the dish
+	for (let i = 0; i < 8; i++) {
+		const angle = (Math.PI * 2 * i) / 8;
+		const speed = 1.5 + Math.random() * 2;
 		effects.particles.push({
-			x: cx, y: cy,
+			x: cx, y: dishY,
 			vx: Math.cos(angle) * speed,
 			vy: Math.sin(angle) * speed,
 			life: 1.0,
-			size: 2 + Math.random() * 3,
+			size: 1.5 + Math.random() * 2,
 			color: COLOR.forgeFlash,
 			type: 'forge',
 		});
@@ -57,7 +76,23 @@ export function addShieldHit(effects, x, y) {
 }
 
 export function addEmpFlash(effects, now) {
-	effects.screenFlash = { color: '#ef444444', until: now + 300 };
+	effects.screenFlash = { color: 'rgba(168, 85, 247, 0.3)', until: now + 600 };
+}
+
+export function addEmpKillExplosion(effects, x, y) {
+	// Big purple/white burst per killed enemy
+	for (let i = 0; i < 18; i++) {
+		const angle = (Math.PI * 2 * i) / 18 + Math.random() * 0.3;
+		const speed = 3 + Math.random() * 6;
+		effects.particles.push({
+			x, y,
+			vx: Math.cos(angle) * speed,
+			vy: Math.sin(angle) * speed,
+			life: 1.0,
+			size: 4 + Math.random() * 7,
+			type: 'emp',
+		});
+	}
 }
 
 export function updateEffects(effects, now, batteryPercent) {
@@ -73,6 +108,16 @@ export function updateEffects(effects, now, batteryPercent) {
 		return p.life > 0;
 	});
 
+	// Update forge ripples
+	effects.forgeRipples = effects.forgeRipples.filter(r => {
+		const age = now - r.born;
+		if (age < r.delay) return true; // waiting to start
+		const active = age - r.delay;
+		r.radius = 4 + (r.speed * active) / 1000;
+		r.life = 1 - r.radius / r.maxRadius;
+		return r.life > 0;
+	});
+
 	// Clear expired screen flash
 	if (effects.screenFlash && now > effects.screenFlash.until) {
 		effects.screenFlash = null;
@@ -80,11 +125,25 @@ export function updateEffects(effects, now, batteryPercent) {
 }
 
 export function drawEffects(ctx, effects, now, canvasW, canvasH) {
+	// Forge ripple waves — concentric rings expanding from Starlink dish
+	for (const r of effects.forgeRipples) {
+		if (r.life <= 0 || now - r.born < r.delay) continue;
+		ctx.globalAlpha = r.life * 0.6;
+		ctx.strokeStyle = r.life > 0.5 ? '#4ade80' : '#22c55e';
+		ctx.lineWidth = 2 * r.life;
+		ctx.beginPath();
+		ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+		ctx.stroke();
+	}
+	ctx.globalAlpha = 1;
+
 	// Particles
 	for (const p of effects.particles) {
 		ctx.globalAlpha = p.life;
 		if (p.type === 'shield') {
 			ctx.fillStyle = p.life > 0.5 ? '#fff' : COLOR.cyan;
+		} else if (p.type === 'emp') {
+			ctx.fillStyle = p.life > 0.6 ? '#ffffff' : p.life > 0.3 ? '#e879f9' : '#a855f7';
 		} else if (p.type === 'forge') {
 			ctx.fillStyle = p.color;
 		} else {

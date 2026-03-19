@@ -91,7 +91,7 @@ export function drawBackground(ctx, stripeOffset) {
 
 /** True if the device supports touch input */
 let isTouchDevice = null;
-function checkTouch() {
+export function checkTouch() {
 	if (isTouchDevice === null) {
 		isTouchDevice = 'ontouchstart' in globalThis || navigator.maxTouchPoints > 0;
 	}
@@ -128,10 +128,7 @@ export function drawMobileButtons(ctx, shieldActive, forgeWindowActive, now) {
 	ctx.lineWidth = 1;
 	ctx.strokeRect(pad, dumpY, btnW, btnH);
 	ctx.fillStyle = COLOR.tankBubble;
-	ctx.fillText('DUMP', pad + btnW / 2, dumpY + btnH / 2 - 6);
-	ctx.font = '8px monospace';
-	ctx.fillStyle = COLOR.textDim;
-	ctx.fillText('[Q]', pad + btnW / 2, dumpY + btnH / 2 + 8);
+	ctx.fillText('DUMP', pad + btnW / 2, dumpY + btnH / 2);
 
 	// SHIELD button (bottom-left) — primary weapon
 	ctx.font = 'bold 10px monospace';
@@ -144,10 +141,7 @@ export function drawMobileButtons(ctx, shieldActive, forgeWindowActive, now) {
 	ctx.lineWidth = shieldActive ? 2 : 1;
 	ctx.strokeRect(pad, shieldY, btnW, btnH);
 	ctx.fillStyle = shieldColor;
-	ctx.fillText('SHIELD', pad + btnW / 2, shieldY + btnH / 2 - 6);
-	ctx.font = '8px monospace';
-	ctx.fillStyle = COLOR.textDim;
-	ctx.fillText('[SPC]', pad + btnW / 2, shieldY + btnH / 2 + 8);
+	ctx.fillText('SHIELD', pad + btnW / 2, shieldY + btnH / 2);
 
 	// === RIGHT SHOULDER ===
 
@@ -160,10 +154,7 @@ export function drawMobileButtons(ctx, shieldActive, forgeWindowActive, now) {
 	ctx.lineWidth = 1;
 	ctx.strokeRect(rightStart + pad, empY, btnW, btnH);
 	ctx.fillStyle = COLOR.empFlash;
-	ctx.fillText('EMP', rightStart + pad + btnW / 2, empY + btnH / 2 - 6);
-	ctx.font = '8px monospace';
-	ctx.fillStyle = COLOR.textDim;
-	ctx.fillText('[E]', rightStart + pad + btnW / 2, empY + btnH / 2 + 8);
+	ctx.fillText('EMP', rightStart + pad + btnW / 2, empY + btnH / 2);
 
 	// FORGE button (bottom-right) — pulses when forge window is active
 	ctx.font = 'bold 10px monospace';
@@ -185,8 +176,5 @@ export function drawMobileButtons(ctx, shieldActive, forgeWindowActive, now) {
 	ctx.lineWidth = forgeBorder;
 	ctx.strokeRect(rightStart + pad, forgeY, btnW, btnH);
 	ctx.fillStyle = forgeColor;
-	ctx.fillText('FORGE', rightStart + pad + btnW / 2, forgeY + btnH / 2 - 6);
-	ctx.font = '8px monospace';
-	ctx.fillStyle = forgeWindowActive ? COLOR.forgeFlash : COLOR.textDim;
-	ctx.fillText('[F]', rightStart + pad + btnW / 2, forgeY + btnH / 2 + 8);
+	ctx.fillText('FORGE', rightStart + pad + btnW / 2, forgeY + btnH / 2);
 }
