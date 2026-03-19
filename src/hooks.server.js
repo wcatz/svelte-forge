@@ -14,7 +14,7 @@ export async function handle({ event, resolve }) {
         'Content-Security-Policy',
         [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
             "style-src 'self' 'unsafe-inline'",
             "img-src 'self' data: https://adamantium.online",
             "font-src 'self'",

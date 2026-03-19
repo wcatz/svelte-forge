@@ -286,6 +286,11 @@
 			if (saved) game.highScore = parseInt(saved, 10) || 0;
 		} catch {}
 
+		// Touch events must be non-passive to allow preventDefault()
+		canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+		canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+		canvas.addEventListener('touchend', onTouchEnd, { passive: false });
+
 		document.addEventListener('fullscreenchange', onFullscreenChange);
 		gameLoop(performance.now());
 
@@ -310,6 +315,9 @@
 		}).catch(() => {});
 
 		return () => {
+			canvas.removeEventListener('touchstart', onTouchStart);
+			canvas.removeEventListener('touchmove', onTouchMove);
+			canvas.removeEventListener('touchend', onTouchEnd);
 			if (animFrameId) cancelAnimationFrame(animFrameId);
 			document.removeEventListener('fullscreenchange', onFullscreenChange);
 			document.body.style.overflow = '';
@@ -349,9 +357,6 @@
 		width={CANVAS_W}
 		height={CANVAS_H}
 		onclick={onCanvasClick}
-		ontouchstart={onTouchStart}
-		ontouchmove={onTouchMove}
-		ontouchend={onTouchEnd}
 	></canvas>
 
 	<!-- Turnstile (hidden widget, renders above canvas) -->
