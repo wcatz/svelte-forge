@@ -98,7 +98,7 @@ export async function getSessionRewards(stakeAddress, windowMs) {
 		'SELECT COALESCE(SUM(amount), 0) as total FROM reward_sessions WHERE stake_address = $1 AND timestamp > $2',
 		[stakeAddress, cutoff]
 	);
-	return rows[0]?.total ?? 0;
+	return Number(rows[0]?.total ?? 0);
 }
 
 export async function logSessionReward(stakeAddress, amount) {
@@ -116,7 +116,7 @@ export async function getIpRewards(ip, windowMs) {
 		'SELECT COALESCE(SUM(amount), 0) as total FROM ip_rewards WHERE ip = $1 AND timestamp > $2',
 		[ip, cutoff]
 	);
-	return rows[0]?.total ?? 0;
+	return Number(rows[0]?.total ?? 0);
 }
 
 export async function logIpReward(ip, amount) {
@@ -147,7 +147,7 @@ export async function recordForgeAtomic(sessionId, now, minIntervalSecs) {
 	const timingCutoff = now - (minIntervalSecs * 1000);
 	const result = await query(
 		`UPDATE game_sessions SET blocks_forged = blocks_forged + 1, last_forge_at = $1
-		 WHERE id = $2 AND blocks_forged < 20
+		 WHERE id = $2 AND ended = 0 AND blocks_forged < 20
 		 AND (blocks_forged = 0 OR last_forge_at < $3)`,
 		[now, sessionId, timingCutoff]
 	);
@@ -168,7 +168,7 @@ export async function endActiveSessions(stakeAddress) {
 export async function activeSessionCount(stakeAddress, windowMs) {
 	const cutoff = Date.now() - windowMs;
 	const { rows } = await query(
-		'SELECT COUNT(*) as cnt FROM game_sessions WHERE stake_address = $1 AND started_at > $2',
+		'SELECT COUNT(*) as cnt FROM game_sessions WHERE stake_address = $1 AND started_at > $2 AND ended = 0',
 		[stakeAddress, cutoff]
 	);
 	return parseInt(rows[0]?.cnt ?? 0);
@@ -209,7 +209,8 @@ export async function getServerStats(stakeAddress) {
 		FROM game_sessions WHERE stake_address = $1`,
 		[stakeAddress]
 	);
-	return rows[0] || { total_blocks: 0, max_session_blocks: 0 };
+	const row = rows[0] || { total_blocks: 0, max_session_blocks: 0 };
+	return { total_blocks: Number(row.total_blocks), max_session_blocks: Number(row.max_session_blocks) };
 }
 
 export async function getDeliveredNight(stakeAddress) {
@@ -217,7 +218,7 @@ export async function getDeliveredNight(stakeAddress) {
 		"SELECT COALESCE(SUM(amount), 0) as total FROM reward_log WHERE stake_address = $1 AND status = 'delivered'",
 		[stakeAddress]
 	);
-	return rows[0]?.total ?? 0;
+	return Number(rows[0]?.total ?? 0);
 }
 
 export async function upsertLeaderboard(stakeAddress, displayName, score, blocksForged, nightEarned, updatedAt) {

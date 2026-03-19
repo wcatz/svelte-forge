@@ -5,13 +5,15 @@ import { query } from '$lib/server/db.js';
  * Returns { entries, totalCount } where entries have row_number-based rank.
  */
 export async function getRankedLeaderboard(page = 1, perPage = 25) {
-	const offset = (page - 1) * perPage;
+	const safePage = Math.max(1, Number.isFinite(+page) ? Math.floor(+page) : 1);
+	const safePerPage = Math.min(100, Math.max(1, Number.isFinite(+perPage) ? Math.floor(+perPage) : 25));
+	const offset = (safePage - 1) * safePerPage;
 
 	const [ranked, countResult] = await Promise.all([
 		query(
-			`SELECT *, ROW_NUMBER() OVER (ORDER BY score DESC) as rank
-			FROM leaderboard ORDER BY score DESC LIMIT $1 OFFSET $2`,
-			[perPage, offset]
+			`SELECT *, ROW_NUMBER() OVER (ORDER BY score DESC, stake_address ASC) as rank
+			FROM leaderboard ORDER BY score DESC, stake_address ASC LIMIT $1 OFFSET $2`,
+			[safePerPage, offset]
 		),
 		query('SELECT COUNT(*) as total FROM leaderboard'),
 	]);
@@ -35,17 +37,17 @@ export async function getHallOfFame() {
 			FROM leaderboard l ORDER BY l.score DESC LIMIT 1`
 		),
 		query(
-			`SELECT l.display_name, g.blocks_forged
+			`SELECT COALESCE(l.display_name, g.stake_address) AS display_name, g.blocks_forged
 			FROM game_sessions g
-			JOIN leaderboard l ON l.stake_address = g.stake_address
-			ORDER BY g.blocks_forged DESC LIMIT 1`
+			LEFT JOIN leaderboard l ON l.stake_address = g.stake_address
+			ORDER BY g.blocks_forged DESC, g.stake_address ASC LIMIT 1`
 		),
 		query(
-			`SELECT l.display_name, COUNT(*) as games_played
+			`SELECT COALESCE(l.display_name, g.stake_address) AS display_name, COUNT(*)::int AS games_played
 			FROM game_sessions g
-			JOIN leaderboard l ON l.stake_address = g.stake_address
-			GROUP BY l.display_name
-			ORDER BY games_played DESC LIMIT 1`
+			LEFT JOIN leaderboard l ON l.stake_address = g.stake_address
+			GROUP BY g.stake_address, l.display_name
+			ORDER BY games_played DESC, g.stake_address ASC LIMIT 1`
 		),
 	]);
 

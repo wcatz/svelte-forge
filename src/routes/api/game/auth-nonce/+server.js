@@ -8,6 +8,9 @@ export async function POST({ request }) {
 	try { body = await request.json(); } catch {
 		return json({ error: 'Invalid JSON' }, { status: 400 });
 	}
+	if (!body || typeof body !== 'object' || Array.isArray(body)) {
+		return json({ error: 'Invalid JSON payload' }, { status: 400 });
+	}
 	const { stakeAddress } = body;
 
 	if (!stakeAddress || !STAKE_ADDR_RE.test(stakeAddress)) {
