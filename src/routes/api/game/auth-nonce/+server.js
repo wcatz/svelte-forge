@@ -17,7 +17,12 @@ export async function POST({ request }) {
 		return json({ error: 'Invalid stake address' }, { status: 400 });
 	}
 
-	const nonce = await createNonce(stakeAddress);
+	let nonce;
+	try {
+		nonce = await createNonce(stakeAddress);
+	} catch {
+		return json({ error: 'Service temporarily unavailable' }, { status: 503 });
+	}
 	if (!nonce) {
 		return json({ error: 'Too many pending requests, try again later' }, { status: 429 });
 	}
