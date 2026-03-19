@@ -12,7 +12,21 @@ export async function handle({ event, resolve }) {
     // CSP — permissive script-src needed for CIP-30 wallet browser extensions
     response.headers.set(
         'Content-Security-Policy',
-        "default-src 'self'; img-src 'self' data: https://adamantium.online; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self'; font-src 'self'; media-src 'self'"
+        [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: https://adamantium.online",
+            "font-src 'self'",
+            "media-src 'self'",
+            "connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com",
+            "frame-src https://challenges.cloudflare.com",
+            "frame-ancestors 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "object-src 'none'",
+            "upgrade-insecure-requests",
+        ].join('; ')
     );
 
     // Immutable assets (fingerprinted by SvelteKit) - cache forever
@@ -24,6 +38,11 @@ export async function handle({ event, resolve }) {
     // Static assets - cache for 1 day, Cloudflare edge for 1 week
     if (path.startsWith('/static/') || path.match(/\.(ico|png|jpg|jpeg|svg|webp|woff2?)$/)) {
         response.headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800');
+        return response;
+    }
+
+    // SSE stream — no caching
+    if (path === '/api/fleet-stream') {
         return response;
     }
 
