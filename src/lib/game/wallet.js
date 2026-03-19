@@ -52,7 +52,7 @@ export async function connectWallet(walletId, turnstileToken = '') {
 
 	// 2. Sign the nonce with the wallet (triggers signing popup)
 	// Encode a human-readable message as hex so the wallet displays it as text
-	const message = `Star Forger OTG CIP8 nonce: ${nonce}`;
+	const message = `Star Forger CIP8 Session Protection Nonce: ${nonce}`;
 	let payloadHex = '';
 	for (let i = 0; i < message.length; i++) {
 		payloadHex += message.charCodeAt(i).toString(16).padStart(2, '0');

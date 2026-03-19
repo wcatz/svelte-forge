@@ -4,7 +4,9 @@ export function createInput() {
 	return {
 		keys: {},
 		touchStartX: null,
+		touchStartY: null,
 		touchCurrentX: null,
+		touchCurrentY: null,
 		isTouchEmp: false,
 		isTouchDumping: false,
 		isTouchShielding: false,
@@ -61,7 +63,9 @@ export function handleTouchStart(input, canvas, e) {
 
 		// On the road — steering
 		input.touchStartX = x;
+		input.touchStartY = y;
 		input.touchCurrentX = x;
+		input.touchCurrentY = y;
 	}
 }
 
@@ -72,9 +76,11 @@ export function handleTouchMove(input, e) {
 		const rect = e.currentTarget.getBoundingClientRect();
 		for (const touch of e.touches) {
 			const x = touch.clientX - rect.left;
+			const y = touch.clientY - rect.top;
 			const canvasX = x * (CANVAS_W / rect.width);
 			if (canvasX >= ROAD_LEFT && canvasX <= ROAD_RIGHT) {
 				input.touchCurrentX = x;
+				input.touchCurrentY = y;
 				break;
 			}
 		}
@@ -95,7 +101,9 @@ export function handleTouchEnd(input, e) {
 	}
 	if (!hasRoadTouch) {
 		input.touchStartX = null;
+		input.touchStartY = null;
 		input.touchCurrentX = null;
+		input.touchCurrentY = null;
 	}
 
 	// Check if released touches were buttons
@@ -117,7 +125,9 @@ export function handleTouchEnd(input, e) {
 	// Safety: if no touches left, clear everything
 	if (e.touches.length === 0) {
 		input.touchStartX = null;
+		input.touchStartY = null;
 		input.touchCurrentX = null;
+		input.touchCurrentY = null;
 		input.isTouchEmp = false;
 		input.isTouchDumping = false;
 		input.isTouchShielding = false;
@@ -137,7 +147,11 @@ export function getMoveDirection(input) {
 	// Touch steering
 	if (input.touchCurrentX !== null && input.touchStartX !== null) {
 		const dx = input.touchCurrentX - input.touchStartX;
-		if (Math.abs(dx) > 10) moveX = dx > 0 ? 1 : -1;
+		if (Math.abs(dx) > 5) moveX = dx > 0 ? 1 : -1;
+	}
+	if (input.touchCurrentY !== null && input.touchStartY !== null) {
+		const dy = input.touchCurrentY - input.touchStartY;
+		if (Math.abs(dy) > 5) moveY = dy > 0 ? 1 : -1;
 	}
 
 	return { moveX, moveY };

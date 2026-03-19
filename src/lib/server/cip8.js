@@ -252,8 +252,8 @@ export function verifyCip8Signature(signatureHex, keyHex, nonce, stakeAddrHex) {
 		}
 
 		// 4. Verify the payload contains our nonce
-		// The payload is the signed message — "Star Forge OTG sign-in nonce: <hex>"
-		const expectedPayload = Buffer.from(`Star Forger OTG CIP8 nonce: ${nonce}`);
+		// The payload is the signed message — "Star Forger CIP8 Session Protection Nonce: <hex>"
+		const expectedPayload = Buffer.from(`Star Forger CIP8 Session Protection Nonce: ${nonce}`);
 		if (Buffer.isBuffer(payload)) {
 			if (!payload.equals(expectedPayload)) {
 				return { valid: false, error: 'Signed payload does not match nonce' };

@@ -1,6 +1,5 @@
 <script>
 	import { base } from '$app/paths';
-	import { onMount } from 'svelte';
 	import DelegateBtn from './delegate/delegate-btn.svelte';
 	import HudPanel from '$lib/component/hud-panel.svelte';
 	import HudReadout from '$lib/component/hud-readout.svelte';
@@ -25,62 +24,13 @@
 	const progressPercentage = Math.min(epochProgress, 100).toFixed(0);
 	const numberFormatter = Intl.NumberFormat('en-US');
 
-	let poolData = $state(null);
-	let poolError = $state(false);
-	let poolHistory = $state(null);
-	let historyError = $state(false);
-	let blockCount = $state(0);
-	let loading = $state(true);
-
-	async function fetchPoolData() {
-		try {
-			const res = await fetch('/api/pool_info', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					_pool_bech32_ids: ['pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c']
-				})
-			});
-			const data = await res.json();
-			poolData = data[0];
-		} catch {
-			poolError = true;
-		}
-	}
-
-	async function fetchPoolHistory() {
-		try {
-			const res = await fetch(
-				'/api/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
-			);
-			poolHistory = await res.json();
-		} catch {
-			historyError = true;
-		}
-	}
-
-	async function fetchBlockCount() {
-		try {
-			const response = await fetch('/api/block_count', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					_pool_bech32: 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c',
-					_epoch_no: currentEpoch
-				})
-			});
-			if (!response.ok) throw new Error('Failed');
-			const data = await response.json();
-			blockCount = data.length;
-		} catch {
-			blockCount = 0;
-		}
-	}
-
-	onMount(async () => {
-		await Promise.all([fetchPoolData(), fetchPoolHistory(), fetchBlockCount()]);
-		loading = false;
-	});
+	let { data } = $props();
+	let poolData = $state(data.poolData);
+	let poolError = $state(!data.poolData);
+	let poolHistory = $state(data.poolHistory);
+	let historyError = $state(!data.poolHistory);
+	let blockCount = $state(data.blockCount);
+	let loading = $state(false);
 
 	const SHIP_SPECS = [
 		{
@@ -92,8 +42,8 @@
 			]
 		},
 		{
-			title: 'Kubernetes Cluster',
-			desc: 'Distributed K3s cluster running cardano-node, relays, and monitoring. GitOps managed with Helmfile, encrypted secrets via SOPS + Age. Full observability with Prometheus and Grafana.'
+			title: 'K3S Distributed Cluster',
+			desc: 'K3s distributed hybrid cluster with pod CIDR routing inside Wireguard VPN. GitOps managed with Helmfile.'
 		},
 		{
 			title: 'Redundant Power Grid',

@@ -17,7 +17,7 @@
 				<HudPanel title="Controls">
 					<div class="space-y-1.5 text-xs font-mono text-green-500/70">
 						<p><span class="text-amber-500">WASD/ARROWS</span> — Move</p>
-						<p><span class="text-amber-500">SPACE</span> — EM Shield (toggle)</p>
+						<p><span class="text-amber-500">SPACE</span> — EM Shield (hold)</p>
 						<p><span class="text-amber-500">E</span> — EM Pulse</p>
 						<p><span class="text-amber-500">Q</span> — Dump Black Tank (hold)</p>
 						<p><span class="text-amber-500">F</span> — Forge Block</p>

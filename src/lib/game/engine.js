@@ -11,6 +11,7 @@ import { createPowerupState, maybeSpawnPowerup, updatePowerups, collectPowerups,
 import { createDelegatorState, maybeSpawnDelegator, updateDelegators, collectDelegators, drawDelegators } from './delegators.js';
 import { createEffectsState, addExplosion, addShieldHit, addForgeParticles, addEmpFlash, addEmpKillExplosion, updateEffects, drawEffects } from './effects.js';
 import { drawBackground, drawMobileButtons } from './renderer.js';
+import { createSceneryState, updateScenery, drawScenery } from './scenery.js';
 import { drawHUD, drawTitleScreen, drawGameOver, drawTutorialOverlay, titleHitRegions } from './hud.js';
 import { getMoveDirection, wantsEmp, wantsShield, wantsDump, wantsForge, wantsStart } from './input.js';
 import {
@@ -30,6 +31,7 @@ export function createGame() {
 		powerups: createPowerupState(),
 		delegators: createDelegatorState(),
 		effects: createEffectsState(),
+		scenery: createSceneryState(),
 		score: 0,
 		highScore: 0,
 		lives: 3,
@@ -59,6 +61,7 @@ export function resetGame(game) {
 	game.powerups = createPowerupState();
 	game.delegators = createDelegatorState();
 	game.effects = createEffectsState();
+	game.scenery = createSceneryState();
 	game.score = 0;
 	game.lives = 3;
 	game.roadSpeed = ROAD_SPEED;
@@ -239,6 +242,7 @@ export function tick(game, input, now) {
 			maybeSpawnDelegator(game.delegators, game.distance);
 		}
 		updateDelegators(game.delegators, game.roadSpeed);
+		updateScenery(game.scenery, game.roadSpeed);
 
 		// Effects
 		updateEffects(game.effects, now, 80);
@@ -300,6 +304,7 @@ export function tick(game, input, now) {
 	if (game.state === 'dying') {
 		game.dyingSpeed = Math.max(0, game.dyingSpeed - 0.05);
 		game.stripeOffset = (game.stripeOffset + game.dyingSpeed) % (STRIPE_H + STRIPE_GAP);
+		updateScenery(game.scenery, game.dyingSpeed);
 		updateEffects(game.effects, now, 0);
 
 		if (now > game.dyingUntil) {
@@ -396,6 +401,7 @@ export function tick(game, input, now) {
 		maybeSpawnPowerup(game.powerups, game.distance);
 	}
 	updatePowerups(game.powerups, game.roadSpeed);
+	updateScenery(game.scenery, game.roadSpeed);
 	const puBefore = game.powerups.list.length;
 	collectPowerups(game.powerups, game.player, game.battery, now);
 	if (game.powerups.list.length < puBefore) sfxPowerup();
@@ -601,6 +607,9 @@ export function render(ctx, game, now) {
 }
 
 function drawGameEntities(ctx, game, now) {
+	// Roadside scenery (behind everything, on grass shoulders)
+	drawScenery(ctx, game.scenery);
+
 	// Tank slicks (under everything)
 	drawTankSlicks(ctx, game.weapons.tankSegments, now);
 
