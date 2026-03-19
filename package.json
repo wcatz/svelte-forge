@@ -27,9 +27,9 @@
 	},
 	"dependencies": {
 		"@lucid-evolution/lucid": "^0.4.29",
-		"better-sqlite3": "^12.8.0",
 		"blakejs": "^1.2.1",
 		"daisyui": "^4.0.0",
+		"pg": "^8.20.0",
 		"svelte-typewriter": "^3.0.4",
 		"theme-change": "^2.2.0",
 		"vite-plugin-node-polyfills": "^0.25.0",

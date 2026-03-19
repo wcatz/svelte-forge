@@ -1,14 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
-import db, { getSessionRewards, logSessionReward, getIpRewards, logIpReward, getGameSession, recordForgeAtomic } from '$lib/server/db.js';
+import { getSessionRewards, logSessionReward, getIpRewards, logIpReward, getGameSession, recordForgeAtomic, logReward, recentRewardCount, pool } from '$lib/server/db.js';
 import { validateSessionToken } from '$lib/server/session.js';
-
-const logReward = db.prepare(
-	'INSERT INTO reward_log (stake_address, amount, status, vm_response, created_at) VALUES (?, ?, ?, ?, ?)'
-);
-const recentCount = db.prepare(
-	'SELECT COUNT(*) as cnt FROM reward_log WHERE stake_address = ? AND created_at > ?'
-);
 
 const RATE_LIMIT_WINDOW_MS = 30_000; // 30s
 const RATE_LIMIT_MAX = 3; // max 3 deliveries per 30s per address
@@ -30,29 +23,33 @@ const MIN_FORGE_INTERVAL_SECS = 14;
 const NIGHT_PER_BLOCK_BASE = 1;
 const NIGHT_PER_BLOCK_DELEGATED = 10;
 
-// Per-address mutex to prevent concurrent reward delivery races (V1/V2)
-const addressLocks = new Map();
-
-function acquireLock(addr) {
-	if (addressLocks.has(addr)) return false;
-	addressLocks.set(addr, Date.now());
-	return true;
-}
-
-function releaseLock(addr) {
-	addressLocks.delete(addr);
-}
-
-// Cleanup stale locks (safety net — locks held > 30s are abandoned)
-setInterval(() => {
-	const cutoff = Date.now() - 30_000;
-	for (const [addr, ts] of addressLocks) {
-		if (ts < cutoff) addressLocks.delete(addr);
+// Per-address mutex via PG advisory lock — works across replicas
+async function withAddressLock(stakeAddress, fn) {
+	const client = await pool.connect();
+	try {
+		// hashtext() gives a stable int4 for any text — used as advisory lock key
+		const { rows } = await client.query(
+			'SELECT pg_try_advisory_lock(hashtext($1)) as acquired',
+			[stakeAddress]
+		);
+		if (!rows[0].acquired) {
+			return null; // another request holds the lock
+		}
+		try {
+			return await fn();
+		} finally {
+			await client.query('SELECT pg_advisory_unlock(hashtext($1))', [stakeAddress]);
+		}
+	} finally {
+		client.release();
 	}
-}, 10_000);
+}
 
 export async function POST({ request, getClientAddress }) {
-	const body = await request.json();
+	let body;
+	try { body = await request.json(); } catch {
+		return json({ error: 'Invalid JSON' }, { status: 400 });
+	}
 	const { sessionToken, gameSessionId } = body;
 
 	// Validate session token (contains stakeAddress + isDelegated)
@@ -73,20 +70,18 @@ export async function POST({ request, getClientAddress }) {
 		return json({ error: 'Unable to verify client' }, { status: 400 });
 	}
 
-	// V1/V2 fix: per-address mutex prevents concurrent requests from racing
-	if (!acquireLock(stakeAddress)) {
+	// V1/V2 fix: per-address mutex prevents concurrent requests from racing (cluster-wide)
+	const result = await withAddressLock(stakeAddress, () =>
+		processForge(stakeAddress, isDelegated, gameSessionId, clientIp)
+	);
+	if (result === null) {
 		return json({ error: 'Request in progress' }, { status: 429 });
 	}
-
-	try {
-		return await processForge(stakeAddress, isDelegated, gameSessionId, clientIp);
-	} finally {
-		releaseLock(stakeAddress);
-	}
+	return result;
 }
 
 async function processForge(stakeAddress, isDelegated, gameSessionId, clientIp) {
-	const gameSess = getGameSession(gameSessionId, stakeAddress);
+	const gameSess = await getGameSession(gameSessionId, stakeAddress);
 	if (!gameSess) {
 		return json({ error: 'Invalid game session' }, { status: 403 });
 	}
@@ -105,7 +100,7 @@ async function processForge(stakeAddress, isDelegated, gameSessionId, clientIp) 
 	}
 
 	// V2 fix: atomic forge with timing + block cap enforced in SQL
-	const forged = recordForgeAtomic(gameSessionId, now, MIN_FORGE_INTERVAL_SECS);
+	const forged = await recordForgeAtomic(gameSessionId, now, MIN_FORGE_INTERVAL_SECS);
 	if (!forged) {
 		return json({ error: 'Forge rejected', delivered: false }, { status: 429 });
 	}
@@ -115,34 +110,34 @@ async function processForge(stakeAddress, isDelegated, gameSessionId, clientIp) 
 
 	// Per-address rate limit (short window)
 	const windowStart = now - RATE_LIMIT_WINDOW_MS;
-	const { cnt } = recentCount.get(stakeAddress, windowStart);
+	const cnt = await recentRewardCount(stakeAddress, windowStart);
 	if (cnt >= RATE_LIMIT_MAX) {
 		return json({ error: 'Rate limited', delivered: false }, { status: 429 });
 	}
 
 	// Per-address cumulative cap
-	const currentTotal = getSessionRewards(stakeAddress, SESSION_WINDOW_MS);
+	const currentTotal = await getSessionRewards(stakeAddress, SESSION_WINDOW_MS);
 	if (currentTotal + amount > SESSION_CAP) {
 		return json({ error: 'Reward cap exceeded', delivered: false }, { status: 429 });
 	}
 
 	// IP-based cap
-	const ipTotal = getIpRewards(clientIp, IP_WINDOW_MS);
+	const ipTotal = await getIpRewards(clientIp, IP_WINDOW_MS);
 	if (ipTotal + amount > IP_CAP) {
 		return json({ error: 'Rate limited', delivered: false }, { status: 429 });
 	}
 
 	// V5 fix: pre-reserve the reward slot BEFORE calling VM
 	// If VM fails, we eat the slot (conservative — prevents cap bypass)
-	logSessionReward(stakeAddress, amount);
-	logIpReward(clientIp, amount);
+	await logSessionReward(stakeAddress, amount);
+	await logIpReward(clientIp, amount);
 
 	const vmUrl = env.VENDING_MACHINE_URL;
 	const vmKey = env.VENDING_MACHINE_API_KEY;
 	const nightPolicy = env.NIGHT_POLICY_ID;
 
 	if (!vmUrl || !vmKey || !nightPolicy) {
-		logReward.run(stakeAddress, amount, 'no_config', null, now);
+		await logReward(stakeAddress, amount, 'no_config', null, now);
 		return json({ delivered: false, reason: 'Rewards not configured' });
 	}
 
@@ -166,11 +161,11 @@ async function processForge(stakeAddress, isDelegated, gameSessionId, clientIp) 
 
 		const data = await res.json();
 		const status = data.success ? 'delivered' : 'failed';
-		logReward.run(stakeAddress, amount, status, JSON.stringify(data), now);
+		await logReward(stakeAddress, amount, status, JSON.stringify(data), now);
 
 		return json({ delivered: !!data.success, amount });
 	} catch (e) {
-		logReward.run(stakeAddress, amount, 'error', e.message, now);
+		await logReward(stakeAddress, amount, 'error', e.message, now);
 		return json({ delivered: false, error: 'Service unavailable' });
 	}
 }

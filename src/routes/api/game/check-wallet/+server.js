@@ -15,7 +15,11 @@ function getKoiosUrl() {
 }
 
 export async function POST({ request }) {
-	const { stakeAddress, turnstileToken, signature, key, nonce, stakeAddressHex } = await request.json();
+	let body;
+	try { body = await request.json(); } catch {
+		return json({ error: 'Invalid JSON' }, { status: 400 });
+	}
+	const { stakeAddress, turnstileToken, signature, key, nonce, stakeAddressHex } = body;
 
 	if (!stakeAddress || !STAKE_ADDR_RE.test(stakeAddress)) {
 		return json({ error: 'Invalid stake address' }, { status: 400 });
@@ -30,7 +34,7 @@ export async function POST({ request }) {
 	}
 
 	// Consume the nonce (single-use, expires after 5 min)
-	const validNonce = consumeNonce(stakeAddress, nonce);
+	const validNonce = await consumeNonce(stakeAddress, nonce);
 	if (!validNonce) {
 		return json({ error: 'Invalid or expired nonce — reconnect wallet' }, { status: 403 });
 	}

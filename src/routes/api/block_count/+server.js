@@ -7,7 +7,10 @@ const TTL = 5 * 60 * 1000; // 5 minutes
 
 export async function POST({ request }) {
     const koiosUrl = env.KOIOS_API_URL || 'https://koios.tosidrop.me/api/v1';
-    const body = await request.json();
+    let body;
+    try { body = await request.json(); } catch {
+        return json({ error: 'Invalid JSON' }, { status: 400 });
+    }
     const epochNo = body._epoch_no;
     const cacheKey = `block_count_${epochNo ?? 'latest'}`;
 

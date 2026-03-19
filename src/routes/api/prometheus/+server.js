@@ -32,7 +32,7 @@ const PUBLIC_QUERIES = new Set([
 ]);
 
 function isQueryAllowed(query) {
-    return ALLOWED_METRIC_PATTERNS.some((pattern) => query.includes(pattern));
+    return ALLOWED_METRIC_PATTERNS.some((pattern) => query.startsWith(pattern));
 }
 
 export async function GET({ url, request }) {
