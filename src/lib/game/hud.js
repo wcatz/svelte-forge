@@ -411,10 +411,15 @@ export function drawTitleScreen(ctx, now, playerName, walletState) {
 				ctx.roundRect(cellX + 4, cellY, cellW - 8, cellH, 8);
 				ctx.stroke();
 
-				// Icon
+				// Icon (preserve aspect ratio)
 				const icon = getWalletIcon(w.icon);
 				if (icon.loaded) {
-					ctx.drawImage(icon.img, cellCx - iconSize / 2, cellY + 8, iconSize, iconSize);
+					const nw = icon.img.naturalWidth || iconSize;
+					const nh = icon.img.naturalHeight || iconSize;
+					const scale = Math.min(iconSize / nw, iconSize / nh);
+					const dw = nw * scale;
+					const dh = nh * scale;
+					ctx.drawImage(icon.img, cellCx - dw / 2, cellY + 8 + (iconSize - dh) / 2, dw, dh);
 				} else {
 					ctx.fillStyle = COLOR.textDim;
 					ctx.fillRect(cellCx - iconSize / 2, cellY + 8, iconSize, iconSize);
@@ -719,7 +724,7 @@ export function drawTitleScreen(ctx, now, playerName, walletState) {
 		ctx.font = '11px monospace';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
-		ctx.fillText('NO SCORES YET', cx, lbBoxY + 26);
+		ctx.fillText('NO SCORES YET', cx, lbBoxY + 30);
 	}
 
 	// Scanlines

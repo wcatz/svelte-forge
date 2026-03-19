@@ -81,7 +81,6 @@
 </nav>
 
 <!-- Mobile Scanner Drawer — slides up from bottom nav -->
-{#if page.url.pathname !== '/game'}
 {#if scanDrawerOpen}
 	<!-- Backdrop -->
 	<button
@@ -166,7 +165,6 @@
 		</button>
 	</div>
 </nav>
-{/if}
 
 <!-- Main content area — offset for desktop side rail -->
 <main class="lg:ml-44 pb-20 lg:pb-0">
