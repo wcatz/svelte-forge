@@ -7,3 +7,7 @@ node_modules
 .env.*
 !.env.example
 .idea
+*.webm
+*.mp4
+*.sqlite
+*.db

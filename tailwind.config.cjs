@@ -1,7 +1,4 @@
-const typography = require('@tailwindcss/typography');
-const forms = require('@tailwindcss/forms');
-const { secondary } = require('daisyui/src/colors');
-
+/** @type {import('tailwindcss').Config} */
 const config = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 
@@ -19,27 +16,36 @@ const config = {
 		extend: {
 			animation: {
 				'fade-in': 'fadeIn 1s ease-in-out',
+				'pulse-glow': 'pulseGlow 2s ease-in-out infinite'
 			},
 			keyframes: {
 				fadeIn: {
 					'0%': { opacity: '0' },
-					'100%': { opacity: '1' },
+					'100%': { opacity: '1' }
 				},
-			},
-		},
+				pulseGlow: {
+					'0%, 100%': { opacity: '1', boxShadow: '0 0 4px rgba(34,197,94,0.4)' },
+					'50%': { opacity: '0.7', boxShadow: '0 0 8px rgba(34,197,94,0.6)' }
+				}
+			}
+		}
 	},
 
-	plugins: [require('@tailwindcss/aspect-ratio'), require("@tailwindcss/typography"), require('daisyui'), forms, typography],
+	plugins: [
+		require('@tailwindcss/aspect-ratio'),
+		require('@tailwindcss/typography'),
+		require('@tailwindcss/forms'),
+		require('daisyui')
+	],
 	daisyui: {
 		themes: [
 			{
 				luxury: {
-					...require('daisyui/src/colors/themes')['[data-theme=luxury]'],
+					...require('daisyui/src/theming/themes')['luxury'],
 					accent: '#D1D5DB',
 					neutral: '#9ca3af',
 					'base-content': '#e5e7eb',
 					secondary: '#1F2937'
-					
 				}
 			},
 			{
@@ -48,13 +54,12 @@ const config = {
 					primary: '#1F2937',
 					secondary: '#1F2937',
 					accent: '#1F2937',
-					neutral: '#ffff',
+					neutral: '#ffffff',
 					'base-100': '#6b7280',
 					info: '#357CED',
 					success: '#487423',
 					warning: '#AF6204',
-					error: '#b91c1c',
-					yellow: '#06B6D4'
+					error: '#b91c1c'
 				}
 			}
 		],

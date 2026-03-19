@@ -1,10 +1,14 @@
 <script>
 	import { base } from '$app/paths';
-	import Typewriter from 'svelte-typewriter';
 	import { onMount, onDestroy } from 'svelte';
 	import DelegateBtn from './delegate/delegate-btn.svelte';
+	import HudPanel from '$lib/component/hud-panel.svelte';
+	import HudReadout from '$lib/component/hud-readout.svelte';
+	import HudProgressBar from '$lib/component/hud-progress-bar.svelte';
+	import HudStatusLight from '$lib/component/hud-status-light.svelte';
+	import HudGauge from '$lib/component/hud-gauge.svelte';
+	import ScanLines from '$lib/component/scan-lines.svelte';
 
-	const fullBlockSize = 87.97;
 	const EpochDurationInDays = 5;
 	const SecondsInDay = 24 * 60 * 60;
 	const ShelleyEpochStart = '2020-07-29T21:44:51Z';
@@ -21,814 +25,349 @@
 	const progressPercentage = Math.min(epochProgress, 100).toFixed(0);
 	const numberFormatter = Intl.NumberFormat('en-US');
 
-	function handleClick() {}
+	let { data } = $props();
+	let poolData = $state(data.poolData);
+	let poolError = $state(!data.poolData);
+	let poolHistory = $state(data.poolHistory);
+	let historyError = $state(!data.poolHistory);
+	let blockCount = $state(data.blockCount);
+	let loading = $state(false);
 
-	const endState = { text: 'deleted' };
+	// ── Fleet telemetry (SSE from server) ──────────────────────────
+	const NODES = [
+		{ alias: 'cn.m.bp.rv', hostname: 'rv', label: 'Core Mobile', role: 'BP' },
+		{ alias: 'cn.m.relay.mobile2', hostname: null, label: 'Relay Mobile', role: 'RELAY' },
+		{ alias: 'cn.m.relay.az1', hostname: null, label: 'Relay AZ1', role: 'RELAY' },
+		{ alias: 'cn.m.relay.az2', hostname: null, label: 'Relay AZ2', role: 'RELAY' },
+		{ alias: 'cn.m.bp.c2', hostname: 'c2', label: 'Core NH', role: 'BP' }
+	];
 
-	let getPoolInfo = (async () => {
-		const res = await fetch('/api/pool_info', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				_pool_bech32_ids: ['pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c']
-			})
-		});
-		const jsonData = await res.json();
-		return jsonData;
-	})();
+	let fleetOffline = $state(false);
+	let blocksForged = $state('--');
+	let forgingEnabled = $state(false);
+	let kesRemaining = $state(0);
+	let nodeStatus = $state({});
+	let peerCounts = $state({});
+	let blockDelay = $state({});
+	let cdfFive = $state({});
+	let mempool = $state({});
+	let txProcessed = $state({});
+	let connections = $state({});
+	let cpuUsage = $state({});
+	let memUsage = $state({});
+	let diskUsage = $state({});
+	let lastUpdate = $state(null);
 
-	let getPoolHistory = (async () => {
-		const res = await fetch(
-			'/api/pool_history?_pool_bech32=pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c&limit=6'
-		);
-		const jsonData = await res.json();
-		return jsonData;
-	})();
+	let eventSource;
 
-	let blockCount = 0;
+	function extractValue(results, alias) {
+		if (!results) return null;
+		const match = results.find((r) => r.metric?.alias === alias || r.metric?.hostname === alias);
+		return match ? parseFloat(match.value[1]) : null;
+	}
 
-	// Fetch block count for the current epoch
-	let getBlockCount = async () => {
-		try {
-			const response = await fetch('/api/block_count', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					_pool_bech32: 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c',
-					_epoch_no: currentEpoch
-				})
-			});
+	function applySnapshot(d) {
+		if (d.type === 'error') { fleetOffline = true; return; }
+		fleetOffline = false;
 
-			if (!response.ok) {
-				throw new Error('Failed to fetch pool blocks');
-			}
-
-			const jsonData = await response.json();
-			blockCount = jsonData.length; // Update the outer blockCount variable
-			console.log(`Number of blocks in epoch ${currentEpoch}: ${blockCount}`);
-		} catch (error) {
-			console.error('Error fetching pool blocks:', error);
-			blockCount = 0;
+		if (d.forged) {
+			blocksForged = d.forged.reduce((sum, r) => sum + parseFloat(r.value[1]), 0);
 		}
-	};
-
-	// Call getBlockCount on component mount
-	onMount(() => {
-		getBlockCount();
-	});
-	let video;
-	let observer;
-	const options = {
-		root: null,
-		rootMargin: '0px',
-		threshold: 0.5
-	};
-
-	function handleIntersection(entries) {
-		entries.forEach((entry) => {
-			if (entry.isIntersecting) {
-				// Video is in view, start playing
-				video.play();
-			} else {
-				// Video is out of view, pause it
-				video.pause();
+		if (d.forging) {
+			forgingEnabled = d.forging.some((r) => parseFloat(r.value[1]) === 1);
+		}
+		if (d.kes && d.kes.length > 0) {
+			kesRemaining = Math.min(...d.kes.map((r) => parseFloat(r.value[1])));
+		}
+		if (d.up) {
+			const status = {};
+			for (const node of NODES) {
+				const match = d.up.find((r) => r.metric?.alias === node.alias);
+				status[node.alias] = match ? parseFloat(match.value[1]) === 1 : false;
 			}
-		});
+			nodeStatus = status;
+		}
+
+		const newPeers = {}, newDelay = {}, newCdf = {};
+		const newMempool = {}, newTx = {}, newConns = {};
+		for (const node of NODES) {
+			newPeers[node.alias] = extractValue(d.peers, node.alias);
+			newDelay[node.alias] = extractValue(d.delay, node.alias);
+			newCdf[node.alias] = extractValue(d.cdf, node.alias);
+			newMempool[node.alias] = extractValue(d.mempool, node.alias);
+			newTx[node.alias] = extractValue(d.tx, node.alias);
+			const outVal = extractValue(d.outConns, node.alias) || 0;
+			const inVal = extractValue(d.inConns, node.alias) || 0;
+			newConns[node.alias] = { out: outVal, in: inVal };
+		}
+		peerCounts = newPeers;
+		blockDelay = newDelay;
+		cdfFive = newCdf;
+		mempool = newMempool;
+		txProcessed = newTx;
+		connections = newConns;
+
+		const newCpu = {}, newMem = {}, newDisk = {};
+		for (const node of NODES.filter((n) => n.role === 'BP')) {
+			newCpu[node.alias] = extractValue(d.cpu, node.alias);
+			const memAvail = extractValue(d.memAvail, node.alias);
+			const memTotal = extractValue(d.memTotal, node.alias);
+			if (memAvail !== null && memTotal !== null) {
+				newMem[node.alias] = (1 - memAvail / memTotal) * 100;
+			}
+			const diskAvail = extractValue(d.diskAvail, node.alias);
+			const diskTotal = extractValue(d.diskTotal, node.alias);
+			if (diskAvail !== null && diskTotal !== null) {
+				newDisk[node.alias] = (1 - diskAvail / diskTotal) * 100;
+			}
+		}
+		cpuUsage = newCpu;
+		memUsage = newMem;
+		diskUsage = newDisk;
+		lastUpdate = new Date();
+	}
+
+	function formatNum(val) {
+		if (val === null || val === undefined) return '--';
+		return typeof val === 'number' ? val.toLocaleString() : val;
 	}
 
 	onMount(() => {
-		observer = new IntersectionObserver(handleIntersection, options);
-		observer.observe(video);
+		eventSource = new EventSource('/api/fleet-stream');
+		eventSource.onmessage = (e) => {
+			try {
+				applySnapshot(JSON.parse(e.data));
+			} catch { /* ignore parse errors */ }
+		};
+		eventSource.onerror = () => { fleetOffline = true; };
 	});
 
 	onDestroy(() => {
-		if (video) {
-			observer.disconnect();
-		}
+		if (eventSource) eventSource.close();
 	});
 
-	let showTexture = false;
-
-	function handleVideoEnded() {
-		showTexture = true;
-	}
+	const NAV_LINKS = [
+		{ label: 'TosiDrop', href: 'https://tosidrop.me/claims' },
+		{ label: 'PoolPM', href: 'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae' },
+		{ label: 'PoolTool', href: 'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae' },
+		{ label: 'AdaStat', href: 'https://adastat.net/pools/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae' },
+		{ label: 'Twitter', href: 'https://twitter.com/Star_Forge_Pool' }
+	];
 </script>
 
 <svelte:head>
-	<title>Star Forge Cardano Stake Pool</title>
+	<title>Star Forge [OTG] — Solar-Powered Cardano Stake Pool</title>
 	<meta
 		name="description"
-		content="Best Cardano ADA Stake Pool to earn passive income and support a decentralized blockchain."
+		content="Star Forge runs Cardano on solar power, ARM64 processors, and Starlink satellite internet. Delegate ADA to a mobile, off-grid single stake pool operator since epoch 208."
 	/>
+	<link rel="canonical" href="https://adamantium.online/" />
 </svelte:head>
 
-<div class="texture">
-	<div>
-		<div
-			class="starscreen drop-shadow-lg lg:mx-10 mt-3 relative overflow-hidden rounded-b-[100px] border-b-4 border-accent bg-cover bg-center md:rounded-b-[200px] rounded-t-[100px] border-t-4 md:rounded-t-[200px]"
-		>
-			{#if !showTexture}
-				<!-- First video plays initially -->
-				<video
-					autoplay
-					muted
-					playsinline
-					class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-					on:ended={handleVideoEnded}
-					style="opacity: 1;"
-				>
-					<source src="../assets/videos/star-hero.mp4" type="video/mp4" />
-					Your browser does not support the video tag.
-				</video>
-			{:else}
-				<!-- Container to center the video -->
-				<div class="absolute inset-0 flex items-center justify-center opacity-80">
-					<!-- Second video plays after the first one ends -->
-					<video
-						autoplay
-						muted
-						loop
-						playsinline
-						class="w-3/5 object-cover transition-opacity duration-2000 ease-in-out rounded-t-full"
-						style="opacity: 1;"
-					>
-						<source
-							src="https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0171.mp4"
-							type="video/mp4"
-						/>
-						Your browser does not support the video tag.
-					</video>
+<div class="cockpit-wrapper flex flex-col min-h-screen texture relative">
+	<ScanLines opacity={0.015} />
+
+	<!-- ═══════════════════════════════════════════════════════════════
+	     COCKPIT HEADER — Ship identification strip
+	     ═══════════════════════════════════════════════════════════════ -->
+	<header class="relative z-20 border-b border-green-500/30">
+		<div class="cockpit-header-bg px-4 sm:px-6 lg:px-8 py-4">
+			<div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+				<!-- Ship ID -->
+				<div class="flex items-center gap-4">
+					<img
+						class="h-14 w-14 lg:h-16 lg:w-16 drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]"
+						src="{base}/assets/images/Star-Forge-Sun.webp"
+						alt="Star Forge"
+					/>
+					<div class="flex flex-col">
+						<h1 class="text-xl lg:text-2xl font-mono font-bold tracking-[0.2em] bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-transparent">
+							STAR FORGE
+						</h1>
+						<div class="flex items-center gap-3 mt-0.5">
+							<span class="text-[10px] font-mono px-2 py-0.5 rounded border border-green-500/30 bg-green-500/10 text-green-400 tracking-[0.3em]">
+								OTG
+							</span>
+							<HudStatusLight label="ONLINE" active={!loading && !poolError} size="sm" />
+						</div>
+					</div>
 				</div>
+
+				<!-- Delegate CTA -->
+				<div class="hidden sm:block">
+					<DelegateBtn />
+				</div>
+			</div>
+
+			<!-- Tagline + Scanner Links -->
+			<div class="max-w-7xl mx-auto mt-3 flex items-center justify-between gap-4">
+				<p class="text-xs lg:text-sm font-mono text-green-500/70 tracking-wider"
+					style="text-shadow: 0 0 8px rgba(0, 255, 0, 0.2);">
+					THE EFFICIENT OFF GRID SOLAR POWERED MOBILE STAKEPOOL
+				</p>
+				<div class="hidden sm:flex items-center gap-2">
+					{#each NAV_LINKS as link}
+						<a
+							href={link.href}
+							rel="noopener noreferrer"
+							target="_blank"
+							class="text-xs font-mono px-2.5 py-1 rounded border border-green-500/15 text-green-500/60 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors tracking-wider"
+						>
+							{link.label}
+						</a>
+					{/each}
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<!-- ═══════════════════════════════════════════════════════════════
+	     MAIN INSTRUMENT PANEL
+	     ═══════════════════════════════════════════════════════════════ -->
+	<div class="relative z-20 flex-1 px-4 sm:px-6 lg:px-8 py-6">
+		<div class="max-w-7xl mx-auto space-y-5">
+
+			<!-- Mission Brief + Pool Instruments -->
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+				<div class="flex flex-col gap-5">
+					<div class="sm:hidden">
+						<HudPanel title="Delegate">
+							<DelegateBtn />
+						</HudPanel>
+					</div>
+
+					<HudPanel title="THE MISSION">
+						<p class="text-sm font-mono text-base-content/70 leading-relaxed">
+							Design and build a stake pool capable of operating under any circumstance
+							with multiple power sources and redundant internet. While all communication with
+							external relays stays private within encrypted UDP Wireguard VPN tunnels.
+						</p>
+						<p class="mt-3 text-sm font-mono text-base-content/70 leading-relaxed">
+							Decentralizing block production away from data centers. Running cardano-node
+							on low-powered ARM64 architecture, powered by solar, connected by satellite.
+							Capable of forging blocks while in motion.
+						</p>
+						<p class="mt-3 text-xs font-mono text-amber-500/60 tracking-wider">
+							EVERYTHING HAS A BACKUP — INCLUDING THE OPERATOR
+						</p>
+					</HudPanel>
+				</div>
+
+				<HudPanel title="Mission Status">
+					{#if loading}
+						<div class="flex items-center justify-center py-8">
+							<div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500" />
+						</div>
+					{:else if poolError}
+						<p class="text-red-500/60 font-mono text-sm py-4">SENSOR ARRAY OFFLINE — Koios unreachable</p>
+					{:else if poolData}
+						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+							<HudReadout label="Lifetime Blocks" value={poolData.block_count} />
+							<HudReadout label="Epoch Blocks" value={blockCount} />
+							<HudReadout label="Pledge" value="500K" />
+							<HudReadout label="Active Stake" value="{(poolData.active_stake / 1000000000000).toFixed(2)}M" unit="₳" />
+							<HudReadout label="Delegators" value={poolData.live_delegators} />
+							<HudReadout
+								label="Saturation"
+								value="{poolData.live_saturation}%"
+								status={parseFloat(poolData.live_saturation) > 90 ? 'warn' : 'normal'}
+							/>
+						</div>
+
+						<div class="mt-3 border-t border-green-500/10 pt-3">
+							<HudProgressBar value={parseFloat(progressPercentage)} max={100} label="EPOCH {currentEpoch} PROGRESS" />
+						</div>
+					{/if}
+				</HudPanel>
+			</div>
+
+			<!-- Row 1: Nodes -->
+			{#if !fleetOffline}
+				<HudPanel title="Nodes">
+				<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+					{#each NODES as node}
+						<HudPanel title={node.label}>
+							<div class="flex items-center gap-2 mb-3">
+								<HudStatusLight active={nodeStatus[node.alias] ?? false} size="md" />
+								<span class="text-xs font-mono px-1.5 py-0.5 rounded {node.role === 'BP' ? 'bg-amber-500/20 text-amber-500' : 'bg-cyan-500/20 text-cyan-500'}">
+									{node.role}
+								</span>
+								<span class="text-xs font-mono text-green-500/60">
+									{peerCounts[node.alias] !== null && peerCounts[node.alias] !== undefined ? `${peerCounts[node.alias]} hot peers` : ''}
+								</span>
+							</div>
+							<div class="space-y-2">
+								<HudReadout label="Mempool" value={formatNum(mempool[node.alias])} unit="tx" />
+								<HudReadout label="TX Processed" value={formatNum(txProcessed[node.alias])} />
+								<HudReadout
+									label="Block Delay"
+									value={blockDelay[node.alias] !== null && blockDelay[node.alias] !== undefined ? blockDelay[node.alias].toFixed(3) : '--'}
+									unit="s"
+									status={blockDelay[node.alias] > 5 ? 'error' : blockDelay[node.alias] > 2 ? 'warn' : 'normal'}
+								/>
+								<HudReadout
+									label="<5s Blocks"
+									value={cdfFive[node.alias] !== null && cdfFive[node.alias] !== undefined ? (cdfFive[node.alias] * 100).toFixed(1) : '--'}
+									unit="%"
+								/>
+							</div>
+						</HudPanel>
+					{/each}
+				</div>
+				</HudPanel>
 			{/if}
 
-			<div class="absolute bottom-2 z-30 left-1/2 transform -translate-x-1/2">
-				<div class="hidden lg:block">
-					{#await getPoolInfo}
-						<div class="flex justify-center items-center mb-10">
-							<div
-								class="
-				animate-spin
-				rounded-full
-				h-10
-				w-10
-				border-t-2 border-b-2 border-gray-500
-			  "
-							/>
-						</div>
-					{:then data}
-						<div class="flex justify-center text-center">
-							<dl class="flex flex-cols-1 gap-2 sm:flex-cols-7 mb-1">
-								<div class="px-4 py-5 sm:p-6">
-									<dt class="text-sm text-amber-500 font-medium truncate">Blocks</dt>
-									<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-										{data[0].block_count}
-									</dd>
-									<div class="stat-desc text-green-500" />
-								</div>
-								<div class="px-4 py-5 sm:p-6">
-									<dt class="text-sm text-amber-500 font-medium truncate">Pledge</dt>
-									<dd class="mt-1 text-3xl text-cyan-500 font-semibold">500K</dd>
-								</div>
-								<div class="px-4 py-5 sm:p-6">
-									<dt class="text-sm text-amber-500 font-medium truncate">Margin</dt>
-									<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-										{data[0].margin * 100}%
-									</dd>
-								</div>
-								<div class="px-4 py-5 sm:p-6">
-									<dt class="text-sm text-amber-500 font-medium truncate">Stake</dt>
-									<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-										{(data[0].active_stake / 1000000000000).toFixed(2)}M
-									</dd>
-								</div>
-								<div class="px-4 py-5 sm:p-6">
-									<dt class="text-sm text-amber-500 font-medium truncate">Delegators</dt>
-									<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-										{data[0].live_delegators}
-									</dd>
-								</div>
-								<div class="px-4 py-5 sm:p-6">
-									<dt class="text-sm text-amber-500 font-medium truncate">Saturated</dt>
-									<dd class="mt-1 text-3xl text-cyan-500 font-semibold">
-										{data[0].live_saturation}%
-									</dd>
-								</div>
-							</dl>
-						</div>
-					{:catch error}
-						<p>Koios API error</p>
-					{/await}
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="absolute inset-0 flex flex-col justify-center items-center z-20">
-		<div
-			class="hidden lg:block absolute top-10 text-green-500 font-mono text-lg flex items-center group hover:bg-transparent mb-8"
-		>
-			<DelegateBtn />
-			<span
-				class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-			/>
-		</div>
-		<div class="drop-shadow-lg text-center mb-8">
-			<h1
-				class="bg-clip-text text-4xl pb-3 font-extrabold uppercase tracking-wider lg:text-5xl text-transparent bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500"
-				style="direction: ltr; unicode-bidi: normal;"
-			>
-				🌟 Star Forge ⚡
-			</h1>
-			<img
-				class="h-28 w-28 m-auto my-8"
-				src="{base}/assets/images/Star-Forge-Sun.webp"
-				alt="Cardano Stake Pool Star Forge"
-			/>
-		</div>
-
-		<!-- Typewriter Section -->
-		<div class="text-center">
-			<!-- reserved height -->
-			<div
-				class="typewriter-container text-green-500 font-mono text-2xl tracking-widest lg:text-4xl"
-				style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-			>
-				<Typewriter
-					cursor={false}
-					mode="loopOnce"
-					interval={100}
-					delay={350}
-					pauseFor={2500}
-					wordInterval={1500}
-					repeat={1}
-					{endState}
-				>
-					<h1>Welcome</h1>
-					<h1>{`Epoch:${currentEpoch}`}</h1>
-					<h1>{`Progress:${progressPercentage}%`}</h1>
-					<h1>{`Epoch Blocks:${blockCount}`}</h1>
-				</Typewriter>
-			</div>
-		</div>
-	</div>
-
-	<div class="overflow-hidden">
-		<div class="relative py-2 sm:py-3 lg:py-4">
-			<div class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
-				<div class="hidden md:block" />
-				<p class="mt-2 text-xl font-semibold tracking-tight">Ticker = OTG (Off The Grid)</p>
-				<span
-					class="relative pb-5 z-0 m-5 inline-grid grid-cols-2 justify-center gap-4 md:grid-cols-5 md:gap-0"
-				>
-					<button
-						on:click={() => handleClick((location.href = 'https://tosidrop.me/claims'))}
-						rel="nofollow"
-						href="https://tosidrop.me/claims"
-						tabIndex="0"
-						type="button"
-						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
-						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-					>
-						Tosidrop ☂️
-						<span
-							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-						/>
-					</button>
-
-					<button
-						on:click={() =>
-							handleClick(
-								(location.href =
-									'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
-							)}
-						rel="nofollow"
-						type="button"
-						href="https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
-						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
-						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-					>
-						PoolPM 🐉
-						<span
-							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-						/>
-					</button>
-
-					<button
-						on:click={() =>
-							handleClick(
-								(location.href =
-									'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae')
-							)}
-						rel="nofollow"
-						href="https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae"
-						type="button"
-						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
-						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-					>
-						PoolTool 🎱
-						<span
-							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-						/>
-					</button>
-
-					<button
-						on:click={() => handleClick((location.href = 'https://twitter.com/Star_Forge_Pool'))}
-						rel="nofollow"
-						href="https://twitter.com/Star_Forge_Pool"
-						type="button"
-						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
-						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-					>
-						<span class="mr-1">Twitter</span>
-						<svg
-							width="20"
-							height="20"
-							version="1.1"
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 300 251"
-						>
-							<circle cx="150" cy="125.5" r="150" fill="#fff" />
-							<path
-								d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"
-							/>
-						</svg>
-						<span
-							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-						/>
-					</button>
-
-					<button
-						on:click={() =>
-							handleClick(
-								(location.href =
-									'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c')
-							)}
-						rel="nofollow"
-						href="https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c"
-						type="button"
-						class="relative group inline-flex items-center justify-center px-4 py-3 text-lg font-medium text-green-500 font-mono tracking-widest bg-transparent hover:bg-transparent transition duration-200"
-						style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8); direction: ltr; unicode-bidi: normal;"
-					>
-						Cexplorer 🔍
-						<span
-							class="absolute bottom-0 left-0 right-0 h-0.5 bg-yellow-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
-						/>
-					</button>
-				</span>
-			</div>
-		</div>
-		<div>
-			<div class="relative mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8">
-				<div class="absolute top-0 bottom-0 left-3/4 hidden w-screen lg:block" />
-
-				<div class="mt-8 lg:grid lg:grid-cols-2 lg:gap-8">
-					<div class="relative lg:col-start-2 lg:row-start-1">
-						<svg
-							class="absolute top-2 right-2 -mt-20 -mr-20 hidden text-accent lg:block"
-							width={404}
-							height={384}
-							fill="none"
-							viewBox="0 0 404 384"
-							aria-hidden="true"
-						>
-							<defs>
-								<pattern
-									id="de316486-4a29-4312-bdfc-fbce2132a2c1"
-									x={0}
-									y={0}
-									width={20}
-									height={20}
-									patternUnits="userSpaceOnUse"
-								>
-									<rect x={0} y={0} width={4} height={4} class="" fill="currentColor" />
-								</pattern>
-							</defs>
-							<rect width={404} height={384} fill="url(#de316486-4a29-4312-bdfc-fbce2132a2c1)" />
-						</svg>
-						<div class="relative mx-auto max-w-prose text-base lg:max-w-none">
-							<figure>
-								<div class="aspect-w-12 aspect-h-7 lg:aspect-none">
-									<img
-										class="rounded-lg object-cover object-center shadow-lg ring-2 ring-accent"
-										src="{base}/assets/images/better-img.webp"
-										alt="Cardano Stake Pool Star Forge"
-										width={599}
-										height={839}
-									/>
-								</div>
-							</figure>
-						</div>
+			<!-- Mission Log — Pool History Table -->
+			<HudPanel title="RECENT EPOCHS">
+				{#if loading}
+					<div class="flex items-center justify-center py-8">
+						<div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500" />
 					</div>
-					<div class="mt-4 lg:mt-0">
-						<div class="rounded-lg border-2 border-accent">
-							<!-- svelte-ignore a11y-media-has-caption -->
-							<video
-								bind:this={video}
-								class="rounded-lg"
-								width="100%"
-								controls
-								muted
-								poster="{base}/assets/images/vid-cover.jpg"
-							>
-								<source src="{base}/assets/videos/star-2.mp4" type="video/mp4" />
-								Your browser does not support the video tag.
-							</video>
-						</div>
-
-						<div class="mx-auto">
-							<div>
-								<h4
-									class="pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
-								>
-									Decentralization First
-								</h4>
-							</div>
-							<div>
-								<p class="container-fluid mx-auto mb-10 mt-5 max-w-prose text-xl">
-									This pool focuses primarily on decentralizing block production away from data
-									centers like AWS & Digital Ocean. We will always advocate for keeping the L1
-									ledger as small as possible and being able to run cardano-node on low powered ARM
-									architecture.
-								</p>
-								<div>
-									<h4
-										class="py-6 pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
-									>
-										Disaster Preparedness
-									</h4>
-								</div>
-								<div class="mb-5 flex items-center justify-center" />
-							</div>
-							<p class="container-fluid mx-auto mb-10 mt-5 max-w-prose text-xl">
-								Capable of forging blocks while in motion, parked remotely with the high performance
-								Starlink panel or the roof mounted antenna with WWAN networking. The Star Forge was
-								designed to operate in the most decentralized manner possible safely auto connecting
-								through a Wireguard VPN.
-							</p>
-							<p class="container-fluid text-center mx-auto mb-10 mt-5 max-w-prose text-xl">
-								Everything has a backup including the operator.
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="relative pb-2 sm:pb-4 lg:pb-8">
-				<div class="mx-auto max-w-md px-4 text-center sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
-					<div class="items-center justify-center" />
-					<div class="flex items-center">
-						<div class="flex-auto">
-							<h1
-								class="pt-10 text-center leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl"
-							>
-								Latest Pool Stats
-							</h1>
-
-							<p class="my-5">Information about pools performance/rewards for the last 5 payouts</p>
-							<p class="my-5">
-								Cardano's verified random function in scheduling blocks varies in what is referred
-								to as 'luck'. ROA fluctuates epoch to epoch depending on VRF.
-							</p>
-						</div>
-					</div>
-					<div class="mb-8 overflow-auto rounded-lg border-2 border-accent">
-						<table class="table-zebra table w-full">
-							<thead class="">
-								<tr>
-									<th class="hidden" />
-									<th>EPOCH</th>
-									<th>ACTIVE STAKE</th>
-									<th>BLOCKS</th>
-									<th>DELEGATE PAYOUT</th>
-									<th>EPOCH RO₳</th>
-									<th>OPERATOR FEE</th>
+				{:else if historyError}
+					<p class="text-red-500/60 font-mono text-sm py-4">LOG RETRIEVAL FAILED</p>
+				{:else if poolHistory}
+					<div class="overflow-x-auto -mx-4 px-4">
+						<table class="w-full text-sm font-mono">
+							<thead>
+								<tr class="border-b border-green-500/20">
+									<th class="text-left py-2 px-3 text-xs text-amber-500/80 tracking-wider">EPOCH</th>
+									<th class="text-left py-2 px-3 text-xs text-amber-500/80 tracking-wider">ACTIVE STAKE</th>
+									<th class="text-left py-2 px-3 text-xs text-amber-500/80 tracking-wider">BLOCKS</th>
+									<th class="text-left py-2 px-3 text-xs text-amber-500/80 tracking-wider">DELEGATE PAYOUT</th>
+									<th class="text-left py-2 px-3 text-xs text-amber-500/80 tracking-wider">EPOCH RO₳</th>
 								</tr>
 							</thead>
 							<tbody>
-								{#await getPoolHistory}
-									<div class="flex justify-center items-center mb-10">
-										<div
-											class="
-										  animate-spin
-										  rounded-full
-										  h-10
-										  w-10
-										  border-t-2 border-b-2 cyan-500
-										  "
-										/>
-									</div>
-								{:then data}
-									{#each data.slice(1) as val}
-										<tr class="hover">
-											<td class="sm:pl-6">{val.epoch_no}</td>
-											<td class="">
-												{(val.active_stake / 1000000000000).toFixed(2)} M
-											</td>
-											<td class="">{val.block_cnt}</td>
-											<td class="">
-												{numberFormatter.format((val.deleg_rewards / 1000000).toFixed(0))} ₳
-											</td>
-											<td class="">
-												{val.epoch_ros.toFixed(2)} %
-											</td>
-											<td class="">
-												{(val.pool_fees / 1000000).toFixed(0)} ₳
-											</td>
-										</tr>
-									{/each}
-								{:catch error}
-									<p>An error occurred!</p>
-								{/await}
+								{#each poolHistory.slice(1) as val, i}
+									<tr class="border-b border-green-500/5 hover:bg-green-500/5 transition-colors">
+										<td class="py-2 px-3 text-cyan-500">{val.epoch_no}</td>
+										<td class="py-2 px-3 text-base-content/80">{(val.active_stake / 1000000000000).toFixed(2)} M</td>
+										<td class="py-2 px-3 text-base-content/80">{val.block_cnt}</td>
+										<td class="py-2 px-3 text-green-400">{numberFormatter.format((val.deleg_rewards / 1000000).toFixed(0))} ₳</td>
+										<td class="py-2 px-3 text-base-content/80">{val.epoch_ros.toFixed(2)} %</td>
+									</tr>
+								{/each}
 							</tbody>
 						</table>
 					</div>
-				</div>
-			</div>
-		</div>
+					<p class="mt-3 text-xs font-mono text-base-content/30">
+						ROA fluctuates epoch to epoch due to Cardano's VRF block scheduling.
+					</p>
+				{/if}
+			</HudPanel>
 
-		<div>
-			<h4
-				class="py-6 leading-8 bg-gradient-to-r from-amber-500 via-cyan-500 to-amber-500 bg-clip-text text-4xl font-extrabold uppercase tracking-wider text-transparent lg:text-4xl text-center"
-			>
-				Reasons to Delegate ADA
-			</h4>
-		</div>
 
-		<div
-			class="mx-auto w-3/4 max-w-7xl py-8 px-4 sm:px-6 lg:grid lg:grid-cols-3 lg:gap-x-8 lg:py-12 lg:px-8"
-		>
-			<div />
-			<div class="mt-12 lg:col-span-4 lg:mt-0">
-				<dl
-					class="space-y-10 sm:grid sm:grid-flow-col sm:grid-cols-2 sm:grid-rows-4 sm:gap-x-6 sm:gap-y-10 sm:space-y-0 lg:gap-x-8"
-				>
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Pool Operator Alliance's</p>
-						</dt>
-						<dd class="mt-2 ml-9 ">
-							<p class="mb-4">
-								Member of the <a class="underline" href="https://armada-alliance.com/"
-									>Armada (founding)</a
-								>
-								and
-								<a class="underline" href="https://singlepoolalliance.net/"
-									>Cardano Single Pool (spokesman)</a
-								>
-								alliances.
-							</p>
-							<p>
-								Many of the top single pool operators have become close friends. We work together
-								sharing our experiences with one another and connecting relays within Wireguard
-								VPN's strengthening each others pools with known good peering.
-							</p>
-						</dd>
-					</div>
-
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">World Mobile Earth Node(2)</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							<p class="mb-4">
-								The Star Forge Earth nodes are set to be accommodated within a robust, distributed
-								Kubernetes cluster, ensuring optimal performance through high availability.
-							</p>
-							<p>
-								Meanwhile, the mobile forge is anticipated to feature a World Mobile Airnode,
-								strategically deployed at major events such as stadiums. This configuration aims to
-								deliver the most robust signal possible to clients in dynamic and populous settings.
-							</p>
-						</dd>
-					</div>
-
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Redundant Power sources</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							<p class="mb-4">
-								Star Forge can charge it's batteries several ways. Solar, propane, diesel and grid.
-								Both the mobile and original backup location use 900 ah each of LiFeP04
-								<a
-									class="underline"
-									href="https://www.amperetime.com/products/ampere-time-12v-300ah-lithium-lifepo4-battery"
-									>storage</a
-								>.
-							</p>
-							<p>
-								While in motion the batteries are charged from the vehicle and solar panels.
-								Powering the stake pool indefinably.
-							</p>
-						</dd>
-					</div>
-
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Starlink Satellite</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							<p>
-								Both block producer locations use Starlink for it's connection to the internet. The
-								mobile stake pool has the high performance Starlink panel capable of in motion block
-								production.
-							</p>
-						</dd>
-					</div>
-
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Efficient aarch64 hardware</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							<p class="mb-4">
-								ARM Aarch64 architecture is often considered superior and more efficient in certain
-								contexts due to its emphasis on power efficiency, scalability, and versatility.
-							</p>
-							<p>
-								One of the key advantages lies in the energy efficiency of ARM processors, making
-								them particularly well-suited for mobile devices, embedded systems, and environments
-								where power consumption is a critical factor.
-							</p>
-						</dd>
-					</div>
-
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Building for the community</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							<p class="mb-4">
-								I provide support and open source documentation for operating cardano-node on
-								efficient ARM based processors. I wrote many and maintain the <a
-									class="underline"
-									href="https://armada-alliance.com/docs/">Armada Alliance documentation</a
-								>
-							</p>
-							<p>
-								Part of the core development team for <a
-									class="underline"
-									href="https://vm.adaseal.eu/">Vending Machine</a
-								>
-								& <a class="underline" href="https://app.tosidrop.io/cardano/claim">TosiDrop.</a>
-							</p>
-							<p>
-								Star Forge Cardano stake pool delegates by pass the fee for claiming premium tokens
-								on TosiDrop.
-							</p>
-						</dd>
-					</div>
-
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Strategic partnerships</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							<p class="mb-4">
-								Over the years I have been a part of some great projects. From ISPO's to providing a
-								submit-api endpoint. Notable projects include Liqwid Finance & Dexhunter.
-							</p>
-							<p class="mb-4">
-								Star Forge supports and runs open source software when at all possible. Preferably
-								software written by single stake pool operators or well known developers who share
-								the same vision for Cardano's continued decentralization of block production.
-							</p>
-							<p />
-						</dd>
-					</div>
-					<div class="relative">
-						<dt>
-							<!-- Heroicon name: outline/check -->
-							<svg
-								class="absolute h-6 w-6 text-green-500"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								aria-hidden="true"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-							</svg>
-							<p class="ml-9 text-lg font-medium leading-6">Disaster Preparedness</p>
-						</dt>
-						<dd class="mt-2 ml-9 text-base">
-							Our Cardano stake pool operations are equipped with redundant power and internet. They
-							are fortified, hardened, and thoroughly prepared, with backup hardware readily
-							available for swift deployment into production.
-						</dd>
-					</div>
-				</dl>
-			</div>
 		</div>
 	</div>
 </div>
 
 <style>
-	.starscreen {
-		height: 90vh;
-	}
-	.fade-in {
-		opacity: 0;
-		transition: opacity 2s ease-in-out;
-	}
-
-	.fade-in.show {
-		opacity: 1;
-	}
-	.typewriter-container {
-		min-height: 100px;
+	.cockpit-header-bg {
+		background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
 	}
 
 	.texture {
-		background-image: url('https://adamantium.online/assets/cubes.png');
+		background-image: url('/assets/cubes.png');
 		background-size: auto;
 	}
 </style>

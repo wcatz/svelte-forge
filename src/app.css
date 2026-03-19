@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+	scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+	display: none;
+}
+
+@layer utilities {
+	.hud-glow {
+		text-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+	}
+	.hud-border {
+		border-color: rgba(34, 197, 94, 0.2);
+	}
+}
+
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+	outline: 2px solid #06b6d4;
+	outline-offset: 2px;
+}

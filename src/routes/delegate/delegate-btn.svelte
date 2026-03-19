@@ -1,218 +1,158 @@
 <script>
-  import ActionBtn from "../../lib/component/action-button.svelte";
-  import Delegate from "./delegate.js";
-  //import NamiIcon from "../../lib/icons/nami.svelte";
-  import EternlIcon from "../../lib/icons/eternl.svelte";
-  import FlintIcon from "../../lib/icons/flint.svelte";
-  import YoroiIcon from "../../lib/icons/yoroi.svelte";
-  import LaceIcon from "../../lib/icons/lace.svelte";
-  import GeroIcon from "../../lib/icons/gero.svelte";
-  import Modal from "../../lib/component/modal.svelte";
+  import { onMount } from 'svelte';
 
   const poolId = 'pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c';
 
-  let show = false;
-  let wait = false;
-  let status = 'Please wait...';
-  let txHash = '';
+  let show = $state(false);
+  let status = $state('');
+  let statusType = $state('info'); // info | success | error
+  let wallets = $state([]);
 
-  // Modals
-  let errorModal;
-  let connectorErrorModal;
-  let networkErrorModal;
-  let alreadyDelegatedErrorModal;
-  let txSentModal;
-  let insufficientFundsModal;
-  let successModal;
+  onMount(() => {
+    detectWallets();
+    setTimeout(detectWallets, 500);
+  });
+
+  function detectWallets() {
+    if (typeof window === 'undefined' || !window.cardano) {
+      wallets = [];
+      return;
+    }
+    const BLOCKED = new Set(['brave']);
+    wallets = Object.keys(window.cardano)
+      .filter(key => {
+        if (BLOCKED.has(key.toLowerCase())) return false;
+        const w = window.cardano[key];
+        return w && typeof w === 'object' && typeof w.enable === 'function' && typeof w.icon === 'string';
+      })
+      .map(key => ({
+        id: key,
+        name: window.cardano[key].name || key,
+        icon: window.cardano[key].icon
+      }));
+  }
 
   function toggleShow() {
+    detectWallets();
+    if (wallets.length === 0) {
+      setStatus('Install a CIP-30 wallet (Eternl, Lace, Yoroi)', 'error');
+      return;
+    }
     show = !show;
   }
 
-  function stopWait() {
-    wait = false;
-    status = 'Please wait...';
-  }
-
-  function handleOutClick() {
-    show = false;
+  function setStatus(msg, type = 'info', timeout = 0) {
+    status = msg;
+    statusType = type;
+    if (timeout > 0) setTimeout(() => { status = ''; }, timeout);
   }
 
   async function delegate(walletId) {
     show = false;
-    wait = true;
-    if (cardano && cardano[walletId]) {
-      const connector = cardano[walletId];
-      // Attempt to fetch connector API
-      let wallet;
-      try {
-        wallet = await connector.enable();
-      } catch (e) {
-        console.error(e);
-        stopWait();
-        return null;
-      }
 
-      // Flint workaround
-      if(!(await connector.isEnabled())) {
-        wallet = await connector.enable();
-        if(!(await connector.isEnabled())) {
-          stopWait();
-          return null;
-        }
-      }
+    const connector = window.cardano?.[walletId];
+    if (!connector) {
+      setStatus('Wallet not found', 'error', 4000);
+      return;
+    }
 
-      if ((await wallet.getNetworkId()) !== 1) {
-        networkErrorModal.open();
-        return null;
-      }
+    setStatus('Connecting...');
+    let wallet;
+    try {
+      wallet = await connector.enable();
+    } catch {
+      status = '';
+      return;
+    }
 
-      const delegate = new Delegate(wallet);
+    if ((await wallet.getNetworkId()) !== 1) {
+      setStatus('Switch wallet to mainnet', 'error', 5000);
+      return;
+    }
 
-      // Handle Delegation
-      try {
-        const currentPoolId = await delegate.checkDelegation();
+    const { default: Delegate } = await import('./delegate.js');
+    const del = new Delegate(wallet);
 
-        // Notice user if already delegated
-        if (currentPoolId === poolId) {
-          alreadyDelegatedErrorModal.open();
-          return null;
-        }
+    try {
+      setStatus('Checking delegation...');
+      const currentPoolId = await del.checkDelegation();
 
-        status = 'Submitting...'
-        txHash = await delegate.delegate(poolId);
-        txSentModal.open();
-      } catch (e) {
-        if (e.code && e.code === 2) {
-          // User declined to sign the transaction.
-          stopWait();
-          return null;
-        } else if (e === 'Insufficient input in transaction') {
-          console.error(e);
-          insufficientFundsModal.open();
-          return null;
-        }
-        console.error(e);
-        errorModal.open();
+      if (currentPoolId === poolId) {
+        setStatus('Already delegated to Star Forge!', 'success', 5000);
         return;
       }
 
-      // Open success modal once the transaction is confirmed
-      status = 'Waiting confirmation...'
-      delegate.awaitTx().then((success) => {
-        if (success) {
-          successModal.open();
-        }
-      }).catch(console.error);
+      setStatus('Sign in your wallet...');
+      await del.delegate(poolId);
+      setStatus('Delegation submitted!', 'success');
 
-    } else {
-      connectorErrorModal.open();
+      del.awaitTx().then((success) => {
+        if (success) {
+          setStatus('Delegation confirmed!', 'success', 8000);
+        }
+      }).catch(() => {});
+
+    } catch (e) {
+      if (e?.code === 2) {
+        status = '';
+      } else if (String(e).includes('Insufficient')) {
+        setStatus('Need ~2.5 ADA for delegation deposit + fees', 'error', 8000);
+      } else {
+        setStatus(e?.message || 'Something went wrong', 'error', 5000);
+      }
     }
   }
 </script>
 
-<svelte:window on:click|stopPropagation="{handleOutClick}" />
+<svelte:window onclick={() => { show = false; }} />
 
-<div class="relative">
-  <ActionBtn action={toggleShow} type="button" text="Delegate" wait="{wait}" status="{status}" />
-  <div class="absolute left-12 z-10 mt-5 flex -translate-x-1/2 px-4 {show ? '' : 'hidden'}">
-    <div on:click|stopPropagation class="flex-auto overflow-hidden rounded-3xl z-50 mb-1">
-      <div class="p-4 flex flex-row">
-        <div on:click|stopPropagation={() => delegate('eternl')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <EternlIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Eternl
-          </div>
+<div class="relative inline-block">
+  {#if status}
+    <span class="text-xs font-mono tracking-wider"
+      class:text-green-400={statusType === 'info'}
+      class:text-emerald-400={statusType === 'success'}
+      class:text-red-400={statusType === 'error'}
+      class:animate-pulse={statusType === 'info'}
+    >
+      {status}
+    </span>
+  {:else}
+    <button
+      onclick={(e) => { e.stopPropagation(); toggleShow(); }}
+      class="relative text-green-500 font-mono text-center tracking-widest inline-flex items-center justify-center rounded-md text-lg font-medium transition duration-200 hover:bg-opacity-10 hover:bg-transparent"
+      style="text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);"
+    >
+      <span class="point-finger">👉</span> Delegate
+    </button>
+  {/if}
+
+  {#if show}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div onclick={(e) => e.stopPropagation()}
+      class="absolute right-0 z-50 mt-2 rounded-lg bg-black/95 border border-green-500/30 p-3 min-w-[200px]">
+      {#each wallets as w}
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={() => delegate(w.id)}
+          class="flex items-center gap-3 p-2 rounded hover:bg-green-500/10 cursor-pointer transition-colors">
+          <img src={w.icon} alt={w.name} class="h-8 w-8 rounded" />
+          <span class="font-mono text-sm text-green-400 font-bold">{w.name}</span>
         </div>
-        <div on:click|stopPropagation={() => delegate('flint')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <FlintIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Flint
-          </div>
-        </div>
-        <div on:click|stopPropagation={() => delegate('yoroi')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <YoroiIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Yoroi
-          </div>
-        </div>
-        <div on:click|stopPropagation={() => delegate('gerowallet')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <GeroIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Gero
-          </div>
-        </div>
-        <div on:click|stopPropagation={() => delegate('lace')} class="group relative flex rounded-lg p-2 hover:bg-gray-600 cursor-pointer">
-          <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-800 p-2">
-            <LaceIcon/>
-          </div>
-          <div class="font-bold text-green-500 flex items-center pl-4 pr-2">
-            Lace
-          </div>
-        </div>
-      </div>
+      {/each}
     </div>
-  </div>
+  {/if}
 </div>
 
+<style>
+  .point-finger {
+    display: inline-block;
+    animation: nudge 0.8s ease-in-out infinite;
+    margin-right: 10px;
+  }
 
-<Modal bind:this="{errorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Error</span></svelte:fragment>
-  <p slot="body">
-    Oops, something unexpected happened. Please try again later or contact support.
-  </p>
-</Modal>
-
-<Modal bind:this="{connectorErrorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Wallet extension not found!</span></svelte:fragment>
-  <p slot="body">
-    Make sure the selected wallet extension is installed.
-  </p>
-</Modal>
-
-<Modal bind:this="{networkErrorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Wrong network!</span></svelte:fragment>
-  <p slot="body">
-    Make sure the selected wallet is set to mainnet.
-  </p>
-</Modal>
-
-<Modal bind:this="{insufficientFundsModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-error">Insufficient funds!</span></svelte:fragment>
-  <p slot="body">
-    Make sure the selected account have sufficient funds.
-  </p>
-</Modal>
-
-<Modal bind:this="{alreadyDelegatedErrorModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-success">Account already delegated to OTG!</span></svelte:fragment>
-  <p slot="body">
-    The selected wallet account is already delegated to Star Forge [OTG].
-  </p>
-</Modal>
-
-<Modal bind:this="{txSentModal}" hideAction="{true}" outClick="{false}">
-  <svelte:fragment slot="title"><span class="text-success">Delegation transaction sent!</span></svelte:fragment>
-  <div slot="body">
-    <p>The delegation transaction has been sent, it should be confirmed shortly.</p>
-    <p class="mt-4">Transaction ID:</p>
-    <p class="break-words text-sm text-gray-400" style="max-width: 420px">{txHash}</p>
-  </div>
-</Modal>
-
-<Modal bind:this="{successModal}" hideAction="{true}" outClick="{true}" callback="{stopWait}">
-  <svelte:fragment slot="title"><span class="text-success">Delegation Active!</span></svelte:fragment>
-  <div slot="body">
-    <p class="text-center mb-4">Your delegation to <strong>OTG</strong> is now active!</p>
-    <p class="text-center">Thank you for supporting Star Forge!</p>
-  </div>
-</Modal>
-
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+  }
+</style>

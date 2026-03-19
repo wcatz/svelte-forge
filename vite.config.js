@@ -1,23 +1,26 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import wasm from 'vite-plugin-wasm';
-import topLevelAwait from 'vite-plugin-top-level-await';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import path from 'path';
 
+/** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [sveltekit(), topLevelAwait(), wasm()],
+	plugins: [sveltekit(), wasm(), nodePolyfills({ exclude: ['crypto', 'module'] })],
 	resolve: {
 		alias: {
-			'node-fetch': 'node-fetch-polyfill',
-		},
+			'node-fetch': '/src/lib/fetch-shim.js',
+			'./libsodium-sumo.mjs': path.resolve('node_modules/libsodium-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs'),
+		}
 	},
-	optimizeDeps: {
-		esbuildOptions: {
-			target: 'es2020',
-		},
-		exclude: ['lucid-cardano'],
+	ssr: {
+		external: ['better-sqlite3'],
+	},
+	server: {
+		allowedHosts: ['silver.boston-woodpecker.ts.net'],
 	},
 	build: {
-		target: 'es2020',
-	},
+		target: 'esnext'
+	}
 };
 
 export default config;

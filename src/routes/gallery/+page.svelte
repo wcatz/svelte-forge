@@ -1,309 +1,122 @@
 <script>
 	import { base } from '$app/paths';
+	import HudPanel from '$lib/component/hud-panel.svelte';
+	import ScanLines from '$lib/component/scan-lines.svelte';
+
+	const sections = [
+		{
+			title: 'Mobile Forge',
+			images: [
+				{ src: 'mobile-lifepo4-bank.jpg', alt: '900Ah LiFePO4 battery bank with Victron MPPT', span: true },
+				{ src: 'mobile-victron-multiplus.jpg', alt: 'Victron MultiPlus inverter install' },
+				{ src: 'victron-install.jpg', alt: 'Victron inverter and wiring in progress' },
+				{ src: 'm3-star-forge.webp', alt: 'Mobile forge interior' },
+				{ src: 'stake-pool-batteries.jpg', alt: 'Battery compartment overview' },
+				{ src: 'better-img.webp', alt: 'Mobile forge exterior' },
+				{ src: 'fleet-sunset.jpg', alt: 'Cybertruck, trailer, and mobile forge at sunset' },
+				{ src: 'mobile-starlink.jpg', alt: 'Mobile Starlink deployment' }
+			]
+		},
+		{
+			title: 'Current Bare Metal',
+			images: [
+				{ src: 'current-bare-metal.jpg', alt: 'Current ARM64 node with red ambient lighting', span: true },
+				{ src: 'm1-star-forge.webp', alt: 'Bare metal node rack' },
+				{ src: 'm2-star-forge.webp', alt: 'Server hardware closeup' }
+			]
+		},
+		{
+			title: 'Original Pi-Pool',
+			images: [
+				{ src: 'pipool-night-glow.jpg', alt: 'Pi-Pool at night — Cardano logo, voltage displays, Pi cluster', span: true },
+				{ src: 'pipool-full-view.jpg', alt: 'Full Pi-Pool cabinet with Cardano medallion and Victron gear' },
+				{ src: 'original-pipool-cabinet.jpg', alt: 'Original cabinet build with 18650 packs' },
+				{ src: 'pi-cluster-watt-meter.jpg', alt: 'Pi cluster with watt meter reading' },
+				{ src: 'stake-cardano.webp', alt: 'Original Raspberry Pi stake pool' },
+				{ src: 'ssd-stake-pool.webp', alt: 'SSD powered stake pool' }
+			]
+		},
+		{
+			title: 'Power Systems',
+			images: [
+				{ src: 'original-18650-victron.jpg', alt: '18650 pack with Victron inverter and MPPT solar controller' },
+				{ src: 'solar-panel-ground-mount.jpg', alt: 'Solar panel on ground mount' },
+				{ src: '18650-powerwall.webp', alt: '18650 cell powerwall build' },
+				{ src: 'completed-packs.webp', alt: 'Completed battery packs' },
+				{ src: 'soldering-powerwall-18650.webp', alt: 'Soldering 18650 cells' },
+				{ src: 'powerwall-fuse-positive.webp', alt: 'Powerwall fuse and positive bus' }
+			]
+		},
+		{
+			title: 'The Farm',
+			images: [
+				{ src: 'strawberry-cardano.webp', alt: 'Star Forge strawberry farm' },
+				{ src: 'strawberry-blossom.webp', alt: 'Strawberry blossoms' },
+				{ src: 'strawberries-bins.webp', alt: 'Harvested strawberries' },
+				{ src: 'baby-ducks.webp', alt: 'Farm ducks' },
+				{ src: 'ducks-big.webp', alt: 'Grown ducks' },
+				{ src: 'ducks-on-grass.webp', alt: 'Ducks on grass' }
+			]
+		}
+	];
 </script>
 
 <svelte:head>
-	<title>Cardano Stake Pool Star Forge - Gallery</title>
+	<title>Infrastructure Gallery | Star Forge Cardano Stake Pool</title>
 	<meta
 		name="description"
-		content="Stake ADA for passive income, best Cardano stake pool to delegate ADA cryptocurrency"
+		content="Photos of Star Forge's solar-powered Cardano infrastructure — battery banks, ARM64 nodes, mobile forge, and off-grid power systems."
 	/>
+	<link rel="canonical" href="https://adamantium.online/gallery" />
 </svelte:head>
 
-<div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
-	<!-- Static sidebar for desktop -->
-</div>
-<div class="flex flex-1 flex-col md:pl-64 texture">
-	<!-- Main content -->
-	<div class="flex flex-1 items-stretch overflow-hidden">
-		<main class="flex-1 overflow-y-auto">
-			<div class="mx-auto max-w-7xl py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
-				<div class="sm:flex sm:items-baseline sm:justify-between">
-					<h2
-						class="pt-24 text-2xl font-bold tracking-tight mt-2 block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
-					>
-						Gallery
-					</h2>
-				</div>
+<div class="flex flex-col min-h-screen texture relative">
+	<ScanLines opacity={0.015} />
+
+	<div class="relative z-20 px-4 sm:px-6 lg:px-8 py-6">
+		<div class="max-w-7xl mx-auto space-y-6">
+
+			<div class="mb-2">
+				<h1 class="text-2xl font-mono font-bold tracking-[0.2em] bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-transparent">
+					VISUAL LOG
+				</h1>
+				<p class="text-xs font-mono text-green-500/50 mt-1 tracking-wider">STAR FORGE INFRASTRUCTURE DOCUMENTATION</p>
 			</div>
 
-			<div class="">
-				<div class="mx-auto max-w-7xl py-4 px-4 sm:py-4 sm:px-6 lg:px-8">
-					<div class="sm:flex sm:items-baseline sm:justify-between">
-						<h2
-							class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
-						>
-							Star Forge Mobile
-						</h2>
-					</div>
-
-					<div
-						class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8"
-					>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/stake-pool-batteries.jpg"
-								alt="Starlink connected crypto currency stake pool"
-								class="object-cover object-center group-hover:opacity-75"
-							/>
+			{#each sections as section}
+				<HudPanel title={section.title}>
+					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+						{#each section.images as image}
 							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50"
-							/>
-						</div>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/stake-pool-batteries.jpg"
-								alt="Solar powered Stake pool ADA"
-								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-							/>
-							<div class="flex items-end p-6 sm:absolute sm:inset-0" />
-						</div>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/mobile-starlink.jpg"
-								alt="ARM64 Cardano relay and stake pool"
-								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="">
-				<div class="mx-auto max-w-7xl py-4 px-4 sm:py-4 sm:px-6 lg:px-8">
-					<div class="sm:flex sm:items-baseline sm:justify-between">
-						<h2
-							class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
-						>
-							Star Forge Bare Metal
-						</h2>
-					</div>
-
-					<div
-						class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8"
-					>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/m2-star-forge.webp"
-								alt="Starlink connected crypto currency stake pool"
-								class="object-cover object-center group-hover:opacity-75"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50"
-							/>
-						</div>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/better-img.webp"
-								alt="Solar powered Stake pool ADA"
-								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-							/>
-							<div class="flex items-end p-6 sm:absolute sm:inset-0" />
-						</div>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/m1-star-forge.webp"
-								alt="ARM64 Cardano relay and stake pool"
-								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
-				<div class="mx-auto max-w-2xl py-8 sm:py-8 lg:max-w-none lg:py-8">
-					<div class="sm:flex sm:items-baseline sm:justify-between">
-						<h2
-							class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
-						>
-							Original Pi-Pool
-						</h2>
-					</div>
-
-					<div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-						<div class="group relative">
-							<div
-								class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
+								class="group relative overflow-hidden rounded border border-green-500/10 hover:border-cyan-500/30 transition-colors duration-200
+									{image.span ? 'row-span-2' : ''}"
 							>
 								<img
-									src="{base}/assets/images/stake-cardano.webp"
-									alt="Stake pool operating on the Cardano blockchain"
-									class="h-full w-full object-cover object-center ring-2 ring-accent"
+									src="{base}/assets/images/{image.src}"
+									alt={image.alt}
+									loading="lazy"
+									width="800"
+									height="600"
+									class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300
+										{image.span ? 'min-h-[300px]' : 'aspect-[4/3]'}"
 								/>
+								<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+								<div class="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+									<span class="text-[10px] font-mono text-green-400/80 tracking-wider">{image.alt}</span>
+								</div>
 							</div>
-						</div>
-
-						<div class="group relative">
-							<div
-								class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
-							>
-								<img
-									src="{base}/assets/images/ssd-stake-pool.webp"
-									alt="Stake pool rewards ADA Cardano"
-									class="h-full w-full object-cover object-center "
-								/>
-							</div>
-						</div>
-
-						<div class="group relative">
-							<div
-								class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
-							>
-								<img
-									src="{base}/assets/images/cardano-stake-pool.webp"
-									alt="Efficient yeild farming. Best Cardano stake pool"
-									class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
-								/>
-							</div>
-						</div>
+						{/each}
 					</div>
-				</div>
-			</div>
-			<div class="">
-				<div class="mx-auto max-w-7xl py-4 px-4 sm:py-8 sm:px-6 lg:px-8">
-					<div class="sm:flex sm:items-baseline sm:justify-between">
-						<h2
-							class="pt-4 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
-						>
-							Strawberries
-						</h2>
-					</div>
+				</HudPanel>
+			{/each}
 
-					<div
-						class="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8"
-					>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-h-1 sm:aspect-w-1 sm:row-span-2 shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/strawberry-cardano.webp"
-								alt="Best Cardano stake pool, stake ada merchandise"
-								class="object-cover object-center group-hover:opacity-75"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50"
-							/>
-							<div class="flex items-end p-6" />
-						</div>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/strawberry-blossom.webp"
-								alt="Strawberry Blossoms Cardano developer"
-								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-							/>
-							<div class="flex items-end p-6 sm:absolute sm:inset-0" />
-						</div>
-						<div
-							class="group aspect-w-2 aspect-h-1 overflow-hidden rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent"
-						>
-							<img
-								src="{base}/assets/images/strawberries-bins.webp"
-								alt="Small single Cardano stake pool operator. Organic strawberries."
-								class="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
-							/>
-							<div
-								aria-hidden="true"
-								class="bg-gradient-to-b from-transparent to-black opacity-50 sm:absolute sm:inset-0"
-							/>
-							<div class="flex items-end p-6 sm:absolute sm:inset-0" />
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
-				<div class="mx-auto max-w-2xl py-8 sm:py-8 lg:max-w-none lg:py-8">
-					<div class="sm:flex sm:items-baseline sm:justify-between">
-						<h2
-							class="pt-8 text-2xl font-bold tracking-tight block bg-clip-text text-transparent bg-gradient-to-r from-accent to-teal-500 lg:text-4xl"
-						>
-							The Ducks
-						</h2>
-					</div>
-
-					<div class="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
-						<div class="group relative">
-							<div
-								class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
-							>
-								<img
-									src="{base}/assets/images/baby-ducks.webp"
-									alt="Best rewards are from a stake pool operator who has ducks"
-									class="h-full w-full object-cover object-center ring-2 ring-accent"
-								/>
-							</div>
-						</div>
-
-						<div class="group relative">
-							<div
-								class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
-							>
-								<img
-									src="{base}/assets/images/ducks-big.webp"
-									alt="Ducks who love staking ada"
-									class="h-full w-full object-cover object-center "
-								/>
-							</div>
-						</div>
-
-						<div class="group relative">
-							<div
-								class="relative h-80 w-full overflow-hidden rounded-lg group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1 shadow-lg ring-2 ring-accent"
-							>
-								<img
-									src="{base}/assets/images/ducks-on-grass.webp"
-									alt="Duck tokens are available on the Cardano preview testnet"
-									class="rounded-lg sm:aspect-none sm:relative sm:h-full shadow-lg ring-2 ring-accent h-full w-full object-cover object-center"
-								/>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
+		</div>
 	</div>
 </div>
 
 <style>
 	.texture {
-		background-image: url('https://adamantium.online/assets/cubes.png');
+		background-image: url('/assets/cubes.png');
 		background-size: auto;
 	}
 </style>
