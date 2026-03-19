@@ -1,5 +1,6 @@
 <script>
 	import { base } from '$app/paths';
+	import { onMount, onDestroy } from 'svelte';
 	import DelegateBtn from './delegate/delegate-btn.svelte';
 	import HudPanel from '$lib/component/hud-panel.svelte';
 	import HudReadout from '$lib/component/hud-readout.svelte';
@@ -32,54 +33,124 @@
 	let blockCount = $state(data.blockCount);
 	let loading = $state(false);
 
-	const SHIP_SPECS = [
-		{
-			title: 'Alliance Networks',
-			desc: 'Founding member of Armada Alliance. Spokesman for Cardano Single Pool Alliance. Operators share relay peering over Wireguard VPN for hardened connectivity.',
-			links: [
-				{ text: 'Armada', href: 'https://armada-alliance.com/' },
-				{ text: 'CSPA', href: 'https://singlepoolalliance.net/' }
-			]
-		},
-		{
-			title: 'K3S Distributed Cluster',
-			desc: 'K3s distributed hybrid cluster with pod CIDR routing inside Wireguard VPN. GitOps managed with Helmfile.'
-		},
-		{
-			title: 'Redundant Power Grid',
-			desc: 'Solar, propane, diesel and grid charging. 900 Ah LiFePO4 storage at each location. Batteries charge from vehicle and panels while in motion.'
-		},
-		{
-			title: 'Starlink Uplink',
-			desc: 'Both block producers connect via Starlink. Mobile forge runs the high-performance panel — capable of in-motion block production with sub-second latency.'
-		},
-		{
-			title: 'ARM64 Architecture',
-			desc: 'Efficient aarch64 processors draw minimal power while running full cardano-node. Optimized for off-grid solar operation with zero performance compromise.'
-		},
-		{
-			title: 'Community Engineering',
-			desc: 'Core dev for Vending Machine and TosiDrop. Star Forge delegators bypass premium token claiming fees. Maintainer of Armada Alliance documentation.',
-			links: [
-				{ text: 'Vending Machine', href: 'https://vm.adaseal.eu/' },
-				{ text: 'TosiDrop', href: 'https://tosidrop.me/claims' }
-			]
-		},
-		{
-			title: 'Strategic Partnerships',
-			desc: 'ISPO participation with Liqwid Finance and Dexhunter. Runs submit-api endpoints. Exclusively uses open source software from SPO and community developers.'
-		},
-		{
-			title: 'Disaster Ready',
-			desc: 'Redundant power, internet, and hardware at every location. Hardened systems with backup equipment staged for immediate deployment into production.'
-		}
+	// ── Fleet telemetry (SSE from server) ──────────────────────────
+	const NODES = [
+		{ alias: 'cn.m.bp.rv', hostname: 'rv', label: 'Core Mobile', role: 'BP' },
+		{ alias: 'cn.m.relay.mobile2', hostname: null, label: 'Relay Mobile', role: 'RELAY' },
+		{ alias: 'cn.m.relay.az1', hostname: null, label: 'Relay AZ1', role: 'RELAY' },
+		{ alias: 'cn.m.relay.az2', hostname: null, label: 'Relay AZ2', role: 'RELAY' },
+		{ alias: 'cn.m.bp.c2', hostname: 'c2', label: 'Core NH', role: 'BP' }
 	];
+
+	let fleetOffline = $state(false);
+	let blocksForged = $state('--');
+	let forgingEnabled = $state(false);
+	let kesRemaining = $state(0);
+	let nodeStatus = $state({});
+	let peerCounts = $state({});
+	let blockDelay = $state({});
+	let cdfFive = $state({});
+	let mempool = $state({});
+	let txProcessed = $state({});
+	let connections = $state({});
+	let cpuUsage = $state({});
+	let memUsage = $state({});
+	let diskUsage = $state({});
+	let lastUpdate = $state(null);
+
+	let eventSource;
+
+	function extractValue(results, alias) {
+		if (!results) return null;
+		const match = results.find((r) => r.metric?.alias === alias || r.metric?.hostname === alias);
+		return match ? parseFloat(match.value[1]) : null;
+	}
+
+	function applySnapshot(d) {
+		if (d.type === 'error') { fleetOffline = true; return; }
+		fleetOffline = false;
+
+		if (d.forged) {
+			blocksForged = d.forged.reduce((sum, r) => sum + parseFloat(r.value[1]), 0);
+		}
+		if (d.forging) {
+			forgingEnabled = d.forging.some((r) => parseFloat(r.value[1]) === 1);
+		}
+		if (d.kes && d.kes.length > 0) {
+			kesRemaining = Math.min(...d.kes.map((r) => parseFloat(r.value[1])));
+		}
+		if (d.up) {
+			const status = {};
+			for (const node of NODES) {
+				const match = d.up.find((r) => r.metric?.alias === node.alias);
+				status[node.alias] = match ? parseFloat(match.value[1]) === 1 : false;
+			}
+			nodeStatus = status;
+		}
+
+		const newPeers = {}, newDelay = {}, newCdf = {};
+		const newMempool = {}, newTx = {}, newConns = {};
+		for (const node of NODES) {
+			newPeers[node.alias] = extractValue(d.peers, node.alias);
+			newDelay[node.alias] = extractValue(d.delay, node.alias);
+			newCdf[node.alias] = extractValue(d.cdf, node.alias);
+			newMempool[node.alias] = extractValue(d.mempool, node.alias);
+			newTx[node.alias] = extractValue(d.tx, node.alias);
+			const outVal = extractValue(d.outConns, node.alias) || 0;
+			const inVal = extractValue(d.inConns, node.alias) || 0;
+			newConns[node.alias] = { out: outVal, in: inVal };
+		}
+		peerCounts = newPeers;
+		blockDelay = newDelay;
+		cdfFive = newCdf;
+		mempool = newMempool;
+		txProcessed = newTx;
+		connections = newConns;
+
+		const newCpu = {}, newMem = {}, newDisk = {};
+		for (const node of NODES.filter((n) => n.role === 'BP')) {
+			newCpu[node.alias] = extractValue(d.cpu, node.alias);
+			const memAvail = extractValue(d.memAvail, node.alias);
+			const memTotal = extractValue(d.memTotal, node.alias);
+			if (memAvail !== null && memTotal !== null) {
+				newMem[node.alias] = (1 - memAvail / memTotal) * 100;
+			}
+			const diskAvail = extractValue(d.diskAvail, node.alias);
+			const diskTotal = extractValue(d.diskTotal, node.alias);
+			if (diskAvail !== null && diskTotal !== null) {
+				newDisk[node.alias] = (1 - diskAvail / diskTotal) * 100;
+			}
+		}
+		cpuUsage = newCpu;
+		memUsage = newMem;
+		diskUsage = newDisk;
+		lastUpdate = new Date();
+	}
+
+	function formatNum(val) {
+		if (val === null || val === undefined) return '--';
+		return typeof val === 'number' ? val.toLocaleString() : val;
+	}
+
+	onMount(() => {
+		eventSource = new EventSource('/api/fleet-stream');
+		eventSource.onmessage = (e) => {
+			try {
+				applySnapshot(JSON.parse(e.data));
+			} catch { /* ignore parse errors */ }
+		};
+		eventSource.onerror = () => { fleetOffline = true; };
+	});
+
+	onDestroy(() => {
+		if (eventSource) eventSource.close();
+	});
 
 	const NAV_LINKS = [
 		{ label: 'TosiDrop', href: 'https://tosidrop.me/claims' },
 		{ label: 'PoolPM', href: 'https://pool.pm/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae' },
 		{ label: 'PoolTool', href: 'https://pooltool.io/pool/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae' },
-		{ label: 'CExplorer', href: 'https://cexplorer.io/pool/pool1eqj3dzpkcklc2r0v8pt8adrhrshq8m4zsev072ga7a52uj5wv5c' },
+		{ label: 'AdaStat', href: 'https://adastat.net/pools/c825168836c5bf850dec38567eb4771c2e03eea28658ff291df768ae' },
 		{ label: 'Twitter', href: 'https://twitter.com/Star_Forge_Pool' }
 	];
 </script>
@@ -128,12 +199,24 @@
 				</div>
 			</div>
 
-			<!-- Tagline -->
-			<div class="max-w-7xl mx-auto mt-3">
+			<!-- Tagline + Scanner Links -->
+			<div class="max-w-7xl mx-auto mt-3 flex items-center justify-between gap-4">
 				<p class="text-xs lg:text-sm font-mono text-green-500/70 tracking-wider"
 					style="text-shadow: 0 0 8px rgba(0, 255, 0, 0.2);">
-					OFF THE GRID SINCE EPOCH 208 — 110W SOLAR / ARM64 / STARLINK
+					THE EFFICIENT OFF GRID SOLAR POWERED MOBILE STAKEPOOL
 				</p>
+				<div class="hidden sm:flex items-center gap-2">
+					{#each NAV_LINKS as link}
+						<a
+							href={link.href}
+							rel="noopener noreferrer"
+							target="_blank"
+							class="text-xs font-mono px-2.5 py-1 rounded border border-green-500/15 text-green-500/60 hover:text-cyan-400 hover:border-cyan-500/30 transition-colors tracking-wider"
+						>
+							{link.label}
+						</a>
+					{/each}
+				</div>
 			</div>
 		</div>
 	</header>
@@ -144,24 +227,33 @@
 	<div class="relative z-20 flex-1 px-4 sm:px-6 lg:px-8 py-6">
 		<div class="max-w-7xl mx-auto space-y-5">
 
-			<!-- Row 1: Epoch Progress — full-width primary instrument -->
-			<HudPanel title="Epoch {currentEpoch}">
-				<HudProgressBar value={parseFloat(progressPercentage)} max={100} label="Epoch Progress" />
-				<div class="mt-2 flex items-center justify-between">
-					<span class="text-xs font-mono text-green-500/50">
-						{EpochDurationInDays}d cycle
-					</span>
-					<span class="text-xs font-mono text-base-content/40">
-						{progressPercentage}% complete
-					</span>
-				</div>
-			</HudPanel>
-
-			<!-- Row 2: Primary pool instruments — 2 col grid -->
+			<!-- Mission Brief + Pool Instruments -->
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+				<div class="flex flex-col gap-5">
+					<div class="sm:hidden">
+						<HudPanel title="Delegate">
+							<DelegateBtn />
+						</HudPanel>
+					</div>
 
-				<!-- Left: Pool Vitals -->
-				<HudPanel title="Pool Instruments">
+					<HudPanel title="THE MISSION">
+						<p class="text-sm font-mono text-base-content/70 leading-relaxed">
+							Design and build a stake pool capable of operating under any circumstance
+							with multiple power sources and redundant internet. While all communication with
+							external relays stays private within encrypted UDP Wireguard VPN tunnels.
+						</p>
+						<p class="mt-3 text-sm font-mono text-base-content/70 leading-relaxed">
+							Decentralizing block production away from data centers. Running cardano-node
+							on low-powered ARM64 architecture, powered by solar, connected by satellite.
+							Capable of forging blocks while in motion.
+						</p>
+						<p class="mt-3 text-xs font-mono text-amber-500/60 tracking-wider">
+							EVERYTHING HAS A BACKUP — INCLUDING THE OPERATOR
+						</p>
+					</HudPanel>
+				</div>
+
+				<HudPanel title="Mission Status">
 					{#if loading}
 						<div class="flex items-center justify-center py-8">
 							<div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500" />
@@ -173,7 +265,7 @@
 							<HudReadout label="Lifetime Blocks" value={poolData.block_count} />
 							<HudReadout label="Epoch Blocks" value={blockCount} />
 							<HudReadout label="Pledge" value="500K" />
-							<HudReadout label="Margin" value="{poolData.margin * 100}%" />
+							<HudReadout label="Active Stake" value="{(poolData.active_stake / 1000000000000).toFixed(2)}M" unit="₳" />
 							<HudReadout label="Delegators" value={poolData.live_delegators} />
 							<HudReadout
 								label="Saturation"
@@ -182,75 +274,51 @@
 							/>
 						</div>
 
-						<!-- Active Stake gauge -->
-						<div class="mt-4 flex items-center gap-4 border-t border-green-500/10 pt-4">
-							<HudGauge
-								value={parseFloat(poolData.live_saturation)}
-								label="SAT"
-								thresholds={{ warn: 80, crit: 95 }}
-							/>
-							<div class="flex-1 space-y-2">
-								<HudReadout
-									label="Active Stake"
-									value="{(poolData.active_stake / 1000000000000).toFixed(2)}M"
-									unit="₳"
-								/>
-								<HudReadout
-									label="Live Stake"
-									value="{(poolData.live_stake / 1000000000000).toFixed(2)}M"
-									unit="₳"
-								/>
-							</div>
+						<div class="mt-3 border-t border-green-500/10 pt-3">
+							<HudProgressBar value={parseFloat(progressPercentage)} max={100} label="EPOCH {currentEpoch} PROGRESS" />
 						</div>
 					{/if}
 				</HudPanel>
-
-				<!-- Right: External Scanners (links) + Delegate -->
-				<div class="flex flex-col gap-5">
-					<HudPanel title="External Scanners">
-						<div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-							{#each NAV_LINKS as link}
-								<a
-									href={link.href}
-									rel="noopener noreferrer"
-									target="_blank"
-									class="group flex items-center gap-2 px-3 py-2.5 rounded
-										border border-green-500/10 bg-green-500/5
-										hover:border-cyan-500/30 hover:bg-cyan-500/5
-										transition-all duration-200"
-								>
-									<span class="w-1.5 h-1.5 rounded-full bg-green-500/50 group-hover:bg-cyan-400 transition-colors" />
-									<span class="text-sm font-mono text-green-400 group-hover:text-cyan-400 tracking-wider transition-colors">
-										{link.label}
-									</span>
-								</a>
-							{/each}
-						</div>
-					</HudPanel>
-
-					<!-- Mobile delegate -->
-					<div class="sm:hidden">
-						<HudPanel title="Delegate">
-							<DelegateBtn />
-						</HudPanel>
-					</div>
-
-					<!-- Decentralization mission -->
-					<HudPanel title="Mission Brief">
-						<p class="text-sm font-mono text-base-content/70 leading-relaxed">
-							Decentralizing block production away from data centers. Running cardano-node
-							on low-powered ARM architecture, powered by solar, connected by satellite.
-							Capable of forging blocks while in motion through Wireguard VPN auto-connect.
-						</p>
-						<p class="mt-3 text-xs font-mono text-amber-500/60 tracking-wider">
-							EVERYTHING HAS A BACKUP — INCLUDING THE OPERATOR
-						</p>
-					</HudPanel>
-				</div>
 			</div>
 
-			<!-- Row 3: Mission Log — Pool History Table -->
-			<HudPanel title="Mission Log — Recent Epochs">
+			<!-- Row 1: Nodes -->
+			{#if !fleetOffline}
+				<HudPanel title="Nodes">
+				<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+					{#each NODES as node}
+						<HudPanel title={node.label}>
+							<div class="flex items-center gap-2 mb-3">
+								<HudStatusLight active={nodeStatus[node.alias] ?? false} size="md" />
+								<span class="text-xs font-mono px-1.5 py-0.5 rounded {node.role === 'BP' ? 'bg-amber-500/20 text-amber-500' : 'bg-cyan-500/20 text-cyan-500'}">
+									{node.role}
+								</span>
+								<span class="text-xs font-mono text-green-500/60">
+									{peerCounts[node.alias] !== null && peerCounts[node.alias] !== undefined ? `${peerCounts[node.alias]} hot peers` : ''}
+								</span>
+							</div>
+							<div class="space-y-2">
+								<HudReadout label="Mempool" value={formatNum(mempool[node.alias])} unit="tx" />
+								<HudReadout label="TX Processed" value={formatNum(txProcessed[node.alias])} />
+								<HudReadout
+									label="Block Delay"
+									value={blockDelay[node.alias] !== null && blockDelay[node.alias] !== undefined ? blockDelay[node.alias].toFixed(3) : '--'}
+									unit="s"
+									status={blockDelay[node.alias] > 5 ? 'error' : blockDelay[node.alias] > 2 ? 'warn' : 'normal'}
+								/>
+								<HudReadout
+									label="<5s Blocks"
+									value={cdfFive[node.alias] !== null && cdfFive[node.alias] !== undefined ? (cdfFive[node.alias] * 100).toFixed(1) : '--'}
+									unit="%"
+								/>
+							</div>
+						</HudPanel>
+					{/each}
+				</div>
+				</HudPanel>
+			{/if}
+
+			<!-- Mission Log — Pool History Table -->
+			<HudPanel title="RECENT EPOCHS">
 				{#if loading}
 					<div class="flex items-center justify-center py-8">
 						<div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500" />
@@ -288,35 +356,6 @@
 				{/if}
 			</HudPanel>
 
-			<!-- Row 4: Ship Specifications — the "reasons to delegate" -->
-			<HudPanel title="Ship Specifications">
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-					{#each SHIP_SPECS as spec}
-						<div class="group border border-green-500/10 rounded bg-black/20 p-4
-							hover:border-green-500/25 hover:bg-green-500/5 transition-all duration-200">
-							<div class="flex items-start gap-2 mb-2">
-								<span class="mt-1 w-1.5 h-1.5 rounded-full bg-green-500/60 flex-shrink-0" />
-								<h4 class="text-sm font-mono font-semibold text-amber-500 tracking-wider">{spec.title}</h4>
-							</div>
-							<p class="text-xs font-mono text-base-content/60 leading-relaxed">{spec.desc}</p>
-							{#if spec.links}
-								<div class="mt-3 flex flex-wrap gap-2">
-									{#each spec.links as link}
-										<a
-											href={link.href}
-											rel="noopener noreferrer"
-											target="_blank"
-											class="text-[10px] font-mono px-2 py-0.5 rounded border border-cyan-500/20 text-cyan-500/70 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
-										>
-											{link.text}
-										</a>
-									{/each}
-								</div>
-							{/if}
-						</div>
-					{/each}
-				</div>
-			</HudPanel>
 
 		</div>
 	</div>

@@ -11,13 +11,10 @@ const ALLOWED_METRIC_PATTERNS = [
     'up',
 ];
 
-// Pre-approved queries that the public metrics page can use without auth
+// Pre-approved queries that the Bridge page can use without auth
 const PUBLIC_QUERIES = new Set([
     'up{app="cardano-node"}',
-    'cardano_node_metrics_epoch_int{alias=~"cn.m.bp.*"}',
-    'cardano_node_metrics_slotInEpoch_int{alias=~"cn.m.bp.*"}',
     'cardano_node_metrics_Forge_forged_int{alias=~"cn.m.bp.*"}',
-    'cardano_node_metrics_slotsMissedNum_int{alias=~"cn.m.bp.*"}',
     'cardano_node_metrics_forging_enabled{alias=~"cn.m.bp.*"}',
     'cardano_node_metrics_remainingKESPeriods_int{alias=~"cn.m.bp.*"}',
     'cardano_node_metrics_blockfetchclient_blockdelay_s',

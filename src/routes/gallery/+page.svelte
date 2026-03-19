@@ -5,14 +5,6 @@
 
 	const sections = [
 		{
-			title: 'The Fleet',
-			images: [
-				{ src: 'starforge-night-sky.jpg', alt: 'Star Forge under the night sky', span: true },
-				{ src: 'fleet-sunset.jpg', alt: 'Cybertruck, trailer, and mobile forge at sunset' },
-				{ src: 'mobile-starlink.jpg', alt: 'Mobile Starlink deployment' }
-			]
-		},
-		{
 			title: 'Mobile Forge',
 			images: [
 				{ src: 'mobile-lifepo4-bank.jpg', alt: '900Ah LiFePO4 battery bank with Victron MPPT', span: true },
@@ -20,7 +12,9 @@
 				{ src: 'victron-install.jpg', alt: 'Victron inverter and wiring in progress' },
 				{ src: 'm3-star-forge.webp', alt: 'Mobile forge interior' },
 				{ src: 'stake-pool-batteries.jpg', alt: 'Battery compartment overview' },
-				{ src: 'better-img.webp', alt: 'Mobile forge exterior' }
+				{ src: 'better-img.webp', alt: 'Mobile forge exterior' },
+				{ src: 'fleet-sunset.jpg', alt: 'Cybertruck, trailer, and mobile forge at sunset' },
+				{ src: 'mobile-starlink.jpg', alt: 'Mobile Starlink deployment' }
 			]
 		},
 		{
