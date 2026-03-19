@@ -104,41 +104,10 @@ export function drawHUD(ctx, game, now) {
 }
 
 function drawBatteryGauge(ctx, pct, now) {
-	const x = CANVAS_W - 68;
+	const w = 48;
+	const h = 46;
+	const x = CANVAS_W - w - 6;
 	const y = 4;
-	const w = 58;
-	const h = 42;
-
-	// Label
-	ctx.fillStyle = '#a3a3a3';
-	ctx.font = 'bold 10px monospace';
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'top';
-	ctx.fillText('⚡ BATTERY', x + w / 2, y);
-
-	// Outer glow when low
-	if (pct < 25) {
-		const glow = 0.15 + Math.sin(now / 200) * 0.1;
-		ctx.fillStyle = `rgba(239, 68, 68, ${glow})`;
-		ctx.beginPath();
-		ctx.roundRect(x - 3, y + 9, w + 6, h - 6, 4);
-		ctx.fill();
-	}
-
-	// Background
-	ctx.fillStyle = '#000000aa';
-	ctx.beginPath();
-	ctx.roundRect(x, y + 11, w, h - 8, 3);
-	ctx.fill();
-	ctx.strokeStyle = pct < 25 ? COLOR.red : COLOR.roadEdge;
-	ctx.lineWidth = 1.5;
-	ctx.beginPath();
-	ctx.roundRect(x, y + 11, w, h - 8, 3);
-	ctx.stroke();
-
-	// Battery terminal nub
-	ctx.fillStyle = pct < 25 ? COLOR.red : COLOR.roadEdge;
-	ctx.fillRect(x + w / 2 - 5, y + 8, 10, 4);
 
 	// Fill color based on level
 	let fillColor;
@@ -146,24 +115,50 @@ function drawBatteryGauge(ctx, pct, now) {
 	else if (pct > 25) fillColor = COLOR.amber;
 	else fillColor = COLOR.red;
 
+	const borderColor = pct < 25 ? COLOR.red : COLOR.roadEdge;
+
+	// Outer glow when low
+	if (pct < 25) {
+		const glow = 0.15 + Math.sin(now / 200) * 0.1;
+		ctx.fillStyle = `rgba(239, 68, 68, ${glow})`;
+		ctx.beginPath();
+		ctx.roundRect(x - 3, y - 1, w + 6, h + 2, 4);
+		ctx.fill();
+	}
+
+	// Battery terminal nub (top center)
+	ctx.fillStyle = borderColor;
+	ctx.fillRect(x + w / 2 - 5, y, 10, 3);
+
+	// Background
+	ctx.fillStyle = '#000000aa';
+	ctx.beginPath();
+	ctx.roundRect(x, y + 3, w, h - 3, 3);
+	ctx.fill();
+	ctx.strokeStyle = borderColor;
+	ctx.lineWidth = 1.5;
+	ctx.beginPath();
+	ctx.roundRect(x, y + 3, w, h - 3, 3);
+	ctx.stroke();
+
+	// Fill bar
+	const barX = x + 3;
+	const barY = y + 6;
+	const barW = w - 6;
+	const barH = h - 9;
+	const fillW = barW * (pct / 100);
+
 	// Pulse when low
 	let alpha = 1;
 	if (pct < 20) {
 		alpha = 0.4 + Math.sin(now / 120) * 0.6;
 	}
 
-	// Fill bar with segments
-	const barX = x + 3;
-	const barY = y + 14;
-	const barW = w - 6;
-	const barH = h - 14;
-	const fillW = barW * (pct / 100);
-
 	ctx.globalAlpha = alpha;
 	ctx.fillStyle = fillColor;
 	ctx.fillRect(barX, barY, fillW, barH);
 
-	// Segment lines for cell look
+	// Segment lines
 	ctx.fillStyle = '#00000055';
 	const segCount = 5;
 	for (let i = 1; i < segCount; i++) {
@@ -172,12 +167,12 @@ function drawBatteryGauge(ctx, pct, now) {
 	}
 	ctx.globalAlpha = 1;
 
-	// Percentage text (large, bold)
+	// Percentage text
 	ctx.fillStyle = pct < 25 ? COLOR.red : '#fff';
-	ctx.font = 'bold 14px monospace';
+	ctx.font = 'bold 13px monospace';
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(`${pct}%`, x + w / 2, barY + barH / 2 + 1);
+	ctx.fillText(`${pct}%`, x + w / 2, barY + barH / 2);
 }
 
 // Wallet icon image cache
