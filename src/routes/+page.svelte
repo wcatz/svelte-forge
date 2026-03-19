@@ -194,7 +194,7 @@
 				</div>
 
 				<!-- Delegate CTA -->
-				<div class="hidden sm:block">
+				<div class="flex-shrink-0">
 					<DelegateBtn />
 				</div>
 			</div>
@@ -230,12 +230,6 @@
 			<!-- Mission Brief + Pool Instruments -->
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 				<div class="flex flex-col gap-5">
-					<div class="sm:hidden">
-						<HudPanel title="Delegate">
-							<DelegateBtn />
-						</HudPanel>
-					</div>
-
 					<HudPanel title="THE MISSION">
 						<p class="text-sm font-mono text-base-content/70 leading-relaxed">
 							Design and build a stake pool capable of operating under any circumstance
