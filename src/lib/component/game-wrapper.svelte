@@ -251,15 +251,29 @@
 		try {
 			const { default: Delegate } = await import('../../routes/delegate/delegate.js');
 			const del = new Delegate(wallet.api);
-			await del.delegate(POOL_ID);
-			delegateStatus = 'Confirming on-chain...';
-			await del.awaitTx();
-			delegateStatus = 'Verifying delegation...';
-			wallet = await connectWallet(selectedWalletId);
-			nightMultiplier = wallet.isDelegated ? 10 : 1;
-			game.nightMultiplier = nightMultiplier;
+			const txHash = await del.delegate(POOL_ID);
+			// TX submitted — treat as delegated immediately, don't wait for confirmation
+			delegateStatus = 'TX submitted — 10x active!';
+			wallet.isDelegated = true;
+			wallet.delegatedPool = POOL_ID;
+			nightMultiplier = 10;
+			game.nightMultiplier = 10;
+			// Re-issue session token with delegation flag
+			if (wallet.sessionToken) {
+				try {
+					const res = await fetch('/api/game/refresh-session', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ sessionToken: wallet.sessionToken, delegated: true }),
+					});
+					if (res.ok) {
+						const data = await res.json();
+						if (data.sessionToken) wallet.sessionToken = data.sessionToken;
+					}
+				} catch {}
+			}
+			setTimeout(() => { delegateStatus = ''; }, 3000);
 			walletPhase = 'ready';
-			game.playerName = wallet.adaHandle || truncateStakeAddr(wallet.stakeAddress);
 			delegateStatus = '';
 			fetchLeaderboard().then(entries => { if (entries?.length) { leaderboard = entries; game.leaderboard = entries; } });
 		} catch (e) {
