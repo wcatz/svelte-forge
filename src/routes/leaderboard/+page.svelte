@@ -52,14 +52,14 @@
 			<h1 class="text-3xl sm:text-4xl font-mono font-bold tracking-[0.15em] bg-gradient-to-r from-amber-500 via-cyan-400 to-amber-500 bg-clip-text text-transparent">
 				FLEET RANKINGS
 			</h1>
-			<p class="mt-2 text-xs font-mono text-green-500/60 tracking-widest">STAR FORGE PILOT LEADERBOARD</p>
+			<p class="mt-2 text-xs font-mono text-green-500/60 tracking-widest">STAR FORGER LEADERBOARD</p>
 		</div>
 	</div>
 
 	<div class="relative z-20 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
 
 		<!-- Fleet Statistics -->
-		<HudPanel title="Fleet Statistics">
+		<HudPanel title="Statistics">
 			<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
 				<HudReadout label="Total Pilots" value={formatNumber(data.fleetStats.totalPilots)} />
 				<HudReadout label="Blocks Forged" value={formatNumber(data.fleetStats.totalBlocks)} />
@@ -94,7 +94,7 @@
 				{/if}
 				{#if !data.hallOfFame.highestScore && !data.hallOfFame.mostBlocksSession && !data.hallOfFame.mostGamesPlayed}
 					<div class="col-span-full text-center py-4">
-						<p class="text-sm font-mono text-green-500/40">No records yet — be the first pilot.</p>
+						<p class="text-sm font-mono text-green-500/40">No records yet — be the first to forge.</p>
 					</div>
 				{/if}
 			</div>
@@ -104,7 +104,7 @@
 		<HudPanel title="Rankings">
 			{#if data.rankings.entries.length === 0}
 				<div class="text-center py-8">
-					<p class="text-sm font-mono text-green-500/40">No pilots ranked yet.</p>
+					<p class="text-sm font-mono text-green-500/40">No forgers ranked yet.</p>
 				</div>
 			{:else}
 				<div class="overflow-x-auto -mx-3 sm:-mx-4">
