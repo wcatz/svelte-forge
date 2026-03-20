@@ -39,6 +39,8 @@
 	let delegateStatus = $state('');
 	let nightMultiplier = $state(1); // 10x for delegators, 1x for others
 	let guestMode = $state(false); // true when playing without wallet
+	let supplyDepleted = $state(false);
+	let supplyLow = $state(false);
 	let gameSessionId = null;
 	let turnstileToken = $state('');
 	let turnstileRequired = $state(false);
@@ -55,6 +57,8 @@
 			leaderboard,
 		};
 		game.guestMode = guestMode;
+		game.supplyDepleted = supplyDepleted;
+		game.supplyLow = supplyLow;
 
 		tick(game, input, now);
 		render(ctx, game, now);
@@ -72,6 +76,11 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ sessionToken: wallet.sessionToken, gameSessionId }),
+			}).then(r => r.json()).then(data => {
+				if (data.reason === 'supply_exhausted') {
+					supplyDepleted = true;
+					game.supplyDepleted = true;
+				}
 			}).catch(() => {});
 		}
 
@@ -242,15 +251,29 @@
 		try {
 			const { default: Delegate } = await import('../../routes/delegate/delegate.js');
 			const del = new Delegate(wallet.api);
-			await del.delegate(POOL_ID);
-			delegateStatus = 'Confirming on-chain...';
-			await del.awaitTx();
-			delegateStatus = 'Verifying delegation...';
-			wallet = await connectWallet(selectedWalletId);
-			nightMultiplier = wallet.isDelegated ? 10 : 1;
-			game.nightMultiplier = nightMultiplier;
+			const txHash = await del.delegate(POOL_ID);
+			// TX submitted — treat as delegated immediately, don't wait for confirmation
+			delegateStatus = 'TX submitted — 10x active!';
+			wallet.isDelegated = true;
+			wallet.delegatedPool = POOL_ID;
+			nightMultiplier = 10;
+			game.nightMultiplier = 10;
+			// Re-issue session token with delegation flag
+			if (wallet.sessionToken) {
+				try {
+					const res = await fetch('/api/game/refresh-session', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ sessionToken: wallet.sessionToken, delegated: true }),
+					});
+					if (res.ok) {
+						const data = await res.json();
+						if (data.sessionToken) wallet.sessionToken = data.sessionToken;
+					}
+				} catch {}
+			}
+			setTimeout(() => { delegateStatus = ''; }, 3000);
 			walletPhase = 'ready';
-			game.playerName = wallet.adaHandle || truncateStakeAddr(wallet.stakeAddress);
 			delegateStatus = '';
 			fetchLeaderboard().then(entries => { if (entries?.length) { leaderboard = entries; game.leaderboard = entries; } });
 		} catch (e) {
@@ -293,6 +316,14 @@
 
 		document.addEventListener('fullscreenchange', onFullscreenChange);
 		gameLoop(performance.now());
+
+		// Fetch NIGHT supply status
+		fetch('/api/game/night-supply').then(r => r.json()).then(data => {
+			supplyDepleted = !!data.depleted;
+			supplyLow = !!data.lowSupply;
+			game.supplyDepleted = supplyDepleted;
+			game.supplyLow = supplyLow;
+		}).catch(() => {});
 
 		// Load Cloudflare Turnstile (if site key is configured)
 		fetch('/api/game/turnstile-key').then(r => r.json()).then(data => {
