@@ -45,12 +45,9 @@ export async function POST({ request }) {
 		return json({ error: cip8Result.error || 'CIP-8 signature verification failed' }, { status: 403 });
 	}
 
-	// Cloudflare Turnstile bot check (skip in dev or if not configured)
+	// Cloudflare Turnstile bot check (skip in dev, if not configured, or if widget was blocked)
 	const turnstileSecret = env.TURNSTILE_SECRET_KEY;
-	if (turnstileSecret && !dev) {
-		if (!turnstileToken) {
-			return json({ error: 'Complete verification first' }, { status: 403 });
-		}
+	if (turnstileSecret && !dev && turnstileToken) {
 		try {
 			const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 				method: 'POST',
