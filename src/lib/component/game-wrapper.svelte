@@ -39,6 +39,8 @@
 	let delegateStatus = $state('');
 	let nightMultiplier = $state(1); // 10x for delegators, 1x for others
 	let guestMode = $state(false); // true when playing without wallet
+	let supplyDepleted = $state(false);
+	let supplyLow = $state(false);
 	let gameSessionId = null;
 	let turnstileToken = $state('');
 	let turnstileRequired = $state(false);
@@ -55,6 +57,8 @@
 			leaderboard,
 		};
 		game.guestMode = guestMode;
+		game.supplyDepleted = supplyDepleted;
+		game.supplyLow = supplyLow;
 
 		tick(game, input, now);
 		render(ctx, game, now);
@@ -72,6 +76,11 @@
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ sessionToken: wallet.sessionToken, gameSessionId }),
+			}).then(r => r.json()).then(data => {
+				if (data.reason === 'supply_exhausted') {
+					supplyDepleted = true;
+					game.supplyDepleted = true;
+				}
 			}).catch(() => {});
 		}
 
@@ -293,6 +302,14 @@
 
 		document.addEventListener('fullscreenchange', onFullscreenChange);
 		gameLoop(performance.now());
+
+		// Fetch NIGHT supply status
+		fetch('/api/game/night-supply').then(r => r.json()).then(data => {
+			supplyDepleted = !!data.depleted;
+			supplyLow = !!data.lowSupply;
+			game.supplyDepleted = supplyDepleted;
+			game.supplyLow = supplyLow;
+		}).catch(() => {});
 
 		// Load Cloudflare Turnstile (if site key is configured)
 		fetch('/api/game/turnstile-key').then(r => r.json()).then(data => {

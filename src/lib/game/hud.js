@@ -96,6 +96,9 @@ export function drawHUD(ctx, game, now) {
 	if (game.guestMode) {
 		ctx.fillStyle = COLOR.textDim;
 		ctx.fillText('GUEST MODE', CANVAS_W - 10, CANVAS_H - 14);
+	} else if (game.supplyDepleted) {
+		ctx.fillStyle = COLOR.red;
+		ctx.fillText('NIGHT: DEPLETED', CANVAS_W - 10, CANVAS_H - 14);
 	} else {
 		ctx.fillStyle = COLOR.amber;
 		const mult = game.nightMultiplier || 1;
@@ -447,8 +450,16 @@ export function drawTitleScreen(ctx, now, playerName, walletState) {
 			ctx.beginPath();
 			ctx.roundRect(40, bannerY - 14, CANVAS_W - 80, 28, 4);
 			ctx.stroke();
+			if (walletState?.supplyDepleted) {
+			drawGlowText(ctx, 'NIGHT SUPPLY DEPLETED — FORGE FOR SCORE', cx, bannerY,
+				'bold 11px monospace', COLOR.red, COLOR.red, 4);
+		} else if (walletState?.supplyLow) {
+			drawGlowText(ctx, 'LOW NIGHT SUPPLY — FORGE WHILE YOU CAN', cx, bannerY,
+				'bold 11px monospace', COLOR.amber, COLOR.amber, 4);
+		} else {
 			drawGlowText(ctx, 'DELEGATORS EARN 10x NIGHT PER BLOCK', cx, bannerY,
 				'bold 11px monospace', COLOR.amber, COLOR.amber, 4);
+		}
 
 			// "Play as Guest" button — visually distinct from wallet buttons
 			const guestY = bannerY + 44;
@@ -778,6 +789,12 @@ export function drawGameOver(ctx, game, now) {
 	if (game.guestMode) {
 		ctx.fillStyle = COLOR.textDim;
 		ctx.fillText('CONNECT WALLET TO EARN NIGHT', cx, 212);
+	} else if (game.supplyDepleted) {
+		ctx.fillStyle = COLOR.red;
+		ctx.fillText('NIGHT SUPPLY DEPLETED', cx, 212);
+		ctx.fillStyle = COLOR.textDim;
+		ctx.font = '10px monospace';
+		ctx.fillText('BLOCKS COUNT TOWARD LEADERBOARD', cx, 228);
 	} else {
 		ctx.fillStyle = COLOR.amber;
 		ctx.fillText(`NIGHT EARNED: ${game.forge.nightEarned}`, cx, 212);

@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private';
 import { json } from '@sveltejs/kit';
 import { getSessionRewards, logSessionReward, getIpRewards, logIpReward, getGameSession, recordForgeAtomic, logReward, recentRewardCount, pool } from '$lib/server/db.js';
 import { validateSessionToken } from '$lib/server/session.js';
+import { getNightSupply } from '$lib/server/night-supply.js';
 
 const RATE_LIMIT_WINDOW_MS = 30_000; // 30s
 const RATE_LIMIT_MAX = 3; // max 3 deliveries per 30s per address
@@ -125,6 +126,13 @@ async function processForge(stakeAddress, isDelegated, gameSessionId, clientIp) 
 	const ipTotal = await getIpRewards(clientIp, IP_WINDOW_MS);
 	if (ipTotal + amount > IP_CAP) {
 		return json({ error: 'Rate limited', delivered: false }, { status: 429 });
+	}
+
+	// Check NIGHT supply before wasting a VM call
+	const supply = await getNightSupply();
+	if (supply?.depleted) {
+		await logReward(stakeAddress, amount, 'supply_exhausted', null, now);
+		return json({ delivered: false, reason: 'supply_exhausted' });
 	}
 
 	// V5 fix: pre-reserve the reward slot BEFORE calling VM
