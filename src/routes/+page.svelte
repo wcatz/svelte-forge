@@ -258,7 +258,6 @@
 						<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
 							<HudReadout label="Lifetime Blocks" value={poolData.block_count} />
 							<HudReadout label="Epoch Blocks" value={blockCount} />
-							<HudReadout label="Pledge" value="500K" />
 							<HudReadout label="Active Stake" value="{(poolData.active_stake / 1000000000000).toFixed(2)}M" unit="₳" />
 							<HudReadout label="Delegators" value={poolData.live_delegators} />
 							<HudReadout
