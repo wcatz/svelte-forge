@@ -37,8 +37,7 @@
 	function toggleVideo() {
 		if (!videoEl) return;
 		if (videoEl.paused) {
-			videoEl.play();
-			videoPlaying = true;
+			videoEl.play().then(() => { videoPlaying = true; }).catch(() => { videoPlaying = false; });
 		} else {
 			videoEl.pause();
 			videoPlaying = false;
