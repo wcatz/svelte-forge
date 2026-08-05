@@ -1,12 +1,10 @@
 <script>
 	import { base } from '$app/paths';
-	import { onMount, onDestroy } from 'svelte';
 	import DelegateBtn from './delegate/delegate-btn.svelte';
 	import HudPanel from '$lib/component/hud-panel.svelte';
 	import HudReadout from '$lib/component/hud-readout.svelte';
 	import HudProgressBar from '$lib/component/hud-progress-bar.svelte';
 	import HudStatusLight from '$lib/component/hud-status-light.svelte';
-	import HudGauge from '$lib/component/hud-gauge.svelte';
 	import ScanLines from '$lib/component/scan-lines.svelte';
 
 	const EpochDurationInDays = 5;
@@ -33,118 +31,18 @@
 	let blockCount = $state(data.blockCount);
 	let loading = $state(false);
 
-	// ── Fleet telemetry (SSE from server) ──────────────────────────
-	const NODES = [
-		{ alias: 'cn.m.bp.rv', hostname: 'rv', label: 'Core Mobile', role: 'BP' },
-		{ alias: 'cn.m.relay.mobile2', hostname: null, label: 'Relay Mobile', role: 'RELAY' },
-		{ alias: 'cn.m.relay.az1', hostname: null, label: 'Relay AZ1', role: 'RELAY' },
-		{ alias: 'cn.m.relay.az2', hostname: null, label: 'Relay AZ2', role: 'RELAY' },
-		{ alias: 'cn.m.bp.c2', hostname: 'c2', label: 'Core NH', role: 'BP' }
-	];
+	let videoEl = $state();
+	let videoPlaying = $state(false);
 
-	let fleetOffline = $state(false);
-	let blocksForged = $state('--');
-	let forgingEnabled = $state(false);
-	let kesRemaining = $state(0);
-	let nodeStatus = $state({});
-	let peerCounts = $state({});
-	let blockDelay = $state({});
-	let cdfFive = $state({});
-	let mempool = $state({});
-	let txProcessed = $state({});
-	let connections = $state({});
-	let cpuUsage = $state({});
-	let memUsage = $state({});
-	let diskUsage = $state({});
-	let lastUpdate = $state(null);
-
-	let eventSource;
-
-	function extractValue(results, alias) {
-		if (!results) return null;
-		const match = results.find((r) => r.metric?.alias === alias || r.metric?.hostname === alias);
-		return match ? parseFloat(match.value[1]) : null;
+	function toggleVideo() {
+		if (!videoEl) return;
+		if (videoEl.paused) {
+			videoEl.play().then(() => { videoPlaying = true; }).catch(() => { videoPlaying = false; });
+		} else {
+			videoEl.pause();
+			videoPlaying = false;
+		}
 	}
-
-	function applySnapshot(d) {
-		if (d.type === 'error') { fleetOffline = true; return; }
-		fleetOffline = false;
-
-		if (d.forged) {
-			blocksForged = d.forged.reduce((sum, r) => sum + parseFloat(r.value[1]), 0);
-		}
-		if (d.forging) {
-			forgingEnabled = d.forging.some((r) => parseFloat(r.value[1]) === 1);
-		}
-		if (d.kes && d.kes.length > 0) {
-			kesRemaining = Math.min(...d.kes.map((r) => parseFloat(r.value[1])));
-		}
-		if (d.up) {
-			const status = {};
-			for (const node of NODES) {
-				const match = d.up.find((r) => r.metric?.alias === node.alias);
-				status[node.alias] = match ? parseFloat(match.value[1]) === 1 : false;
-			}
-			nodeStatus = status;
-		}
-
-		const newPeers = {}, newDelay = {}, newCdf = {};
-		const newMempool = {}, newTx = {}, newConns = {};
-		for (const node of NODES) {
-			newPeers[node.alias] = extractValue(d.peers, node.alias);
-			newDelay[node.alias] = extractValue(d.delay, node.alias);
-			newCdf[node.alias] = extractValue(d.cdf, node.alias);
-			newMempool[node.alias] = extractValue(d.mempool, node.alias);
-			newTx[node.alias] = extractValue(d.tx, node.alias);
-			const outVal = extractValue(d.outConns, node.alias) || 0;
-			const inVal = extractValue(d.inConns, node.alias) || 0;
-			newConns[node.alias] = { out: outVal, in: inVal };
-		}
-		peerCounts = newPeers;
-		blockDelay = newDelay;
-		cdfFive = newCdf;
-		mempool = newMempool;
-		txProcessed = newTx;
-		connections = newConns;
-
-		const newCpu = {}, newMem = {}, newDisk = {};
-		for (const node of NODES.filter((n) => n.role === 'BP')) {
-			newCpu[node.alias] = extractValue(d.cpu, node.alias);
-			const memAvail = extractValue(d.memAvail, node.alias);
-			const memTotal = extractValue(d.memTotal, node.alias);
-			if (memAvail !== null && memTotal !== null) {
-				newMem[node.alias] = (1 - memAvail / memTotal) * 100;
-			}
-			const diskAvail = extractValue(d.diskAvail, node.alias);
-			const diskTotal = extractValue(d.diskTotal, node.alias);
-			if (diskAvail !== null && diskTotal !== null) {
-				newDisk[node.alias] = (1 - diskAvail / diskTotal) * 100;
-			}
-		}
-		cpuUsage = newCpu;
-		memUsage = newMem;
-		diskUsage = newDisk;
-		lastUpdate = new Date();
-	}
-
-	function formatNum(val) {
-		if (val === null || val === undefined) return '--';
-		return typeof val === 'number' ? val.toLocaleString() : val;
-	}
-
-	onMount(() => {
-		eventSource = new EventSource('/api/fleet-stream');
-		eventSource.onmessage = (e) => {
-			try {
-				applySnapshot(JSON.parse(e.data));
-			} catch { /* ignore parse errors */ }
-		};
-		eventSource.onerror = () => { fleetOffline = true; };
-	});
-
-	onDestroy(() => {
-		if (eventSource) eventSource.close();
-	});
 
 	const NAV_LINKS = [
 		{ label: 'TosiDrop', href: 'https://tosidrop.me/claims' },
@@ -274,41 +172,36 @@
 				</HudPanel>
 			</div>
 
-			<!-- Row 1: Nodes -->
-			{#if !fleetOffline}
-				<HudPanel title="Nodes">
-				<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-					{#each NODES as node}
-						<HudPanel title={node.label}>
-							<div class="flex items-center gap-2 mb-3">
-								<HudStatusLight active={nodeStatus[node.alias] ?? false} size="md" />
-								<span class="text-xs font-mono px-1.5 py-0.5 rounded {node.role === 'BP' ? 'bg-amber-500/20 text-amber-500' : 'bg-cyan-500/20 text-cyan-500'}">
-									{node.role}
-								</span>
-								<span class="text-xs font-mono text-green-500/60">
-									{peerCounts[node.alias] !== null && peerCounts[node.alias] !== undefined ? `${peerCounts[node.alias]} hot peers` : ''}
-								</span>
+			<!-- Row 1: Video -->
+			<HudPanel title="Star Forge Overview">
+				<div
+					class="relative aspect-video rounded overflow-hidden bg-black/50 cursor-pointer group"
+					role="button"
+					tabindex="0"
+					onclick={toggleVideo}
+					onkeydown={(e) => e.key === 'Enter' && toggleVideo()}
+				>
+					<video
+						bind:this={videoEl}
+						class="w-full h-full object-cover"
+						poster="{base}/assets/images/vid-cover.jpg"
+						onended={() => videoPlaying = false}
+						preload="metadata"
+					>
+						<source src="{base}/assets/videos/star-2.mp4" type="video/mp4" />
+						<track kind="captions" />
+					</video>
+					{#if !videoPlaying}
+						<div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors">
+							<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-amber-500/80 bg-black/50 flex items-center justify-center group-hover:border-amber-400 group-hover:scale-110 transition-all">
+								<svg class="w-6 h-6 sm:w-8 sm:h-8 text-amber-500 ml-1" fill="currentColor" viewBox="0 0 24 24">
+									<path d="M8 5v14l11-7z"/>
+								</svg>
 							</div>
-							<div class="space-y-2">
-								<HudReadout label="Mempool" value={formatNum(mempool[node.alias])} unit="tx" />
-								<HudReadout label="TX Processed" value={formatNum(txProcessed[node.alias])} />
-								<HudReadout
-									label="Block Delay"
-									value={blockDelay[node.alias] !== null && blockDelay[node.alias] !== undefined ? blockDelay[node.alias].toFixed(3) : '--'}
-									unit="s"
-									status={blockDelay[node.alias] > 5 ? 'error' : blockDelay[node.alias] > 2 ? 'warn' : 'normal'}
-								/>
-								<HudReadout
-									label="<5s Blocks"
-									value={cdfFive[node.alias] !== null && cdfFive[node.alias] !== undefined ? (cdfFive[node.alias] * 100).toFixed(1) : '--'}
-									unit="%"
-								/>
-							</div>
-						</HudPanel>
-					{/each}
+						</div>
+					{/if}
 				</div>
-				</HudPanel>
-			{/if}
+			</HudPanel>
 
 			<!-- Mission Log — Pool History Table -->
 			<HudPanel title="RECENT EPOCHS">
