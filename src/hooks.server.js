@@ -9,6 +9,7 @@ export async function handle({ event, resolve }) {
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
     response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
     // CSP — permissive script-src needed for CIP-30 wallet browser extensions
     response.headers.set(
         'Content-Security-Policy',
@@ -22,6 +23,7 @@ export async function handle({ event, resolve }) {
             "connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com",
             "frame-src https://challenges.cloudflare.com",
             "frame-ancestors 'none'",
+            "worker-src 'self'",
             "base-uri 'self'",
             "form-action 'self'",
             "object-src 'none'",

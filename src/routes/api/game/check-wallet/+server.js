@@ -15,7 +15,11 @@ function getKoiosUrl() {
 }
 
 export async function POST({ request }) {
-	const { stakeAddress, turnstileToken, signature, key, nonce, stakeAddressHex } = await request.json();
+	let body;
+	try { body = await request.json(); } catch {
+		return json({ error: 'Invalid JSON' }, { status: 400 });
+	}
+	const { stakeAddress, turnstileToken, signature, key, nonce, stakeAddressHex } = body;
 
 	if (!stakeAddress || !STAKE_ADDR_RE.test(stakeAddress)) {
 		return json({ error: 'Invalid stake address' }, { status: 400 });
@@ -30,7 +34,7 @@ export async function POST({ request }) {
 	}
 
 	// Consume the nonce (single-use, expires after 5 min)
-	const validNonce = consumeNonce(stakeAddress, nonce);
+	const validNonce = await consumeNonce(stakeAddress, nonce);
 	if (!validNonce) {
 		return json({ error: 'Invalid or expired nonce — reconnect wallet' }, { status: 403 });
 	}
@@ -41,12 +45,9 @@ export async function POST({ request }) {
 		return json({ error: cip8Result.error || 'CIP-8 signature verification failed' }, { status: 403 });
 	}
 
-	// Cloudflare Turnstile bot check (skip in dev or if not configured)
+	// Cloudflare Turnstile bot check (skip in dev, if not configured, or if widget was blocked)
 	const turnstileSecret = env.TURNSTILE_SECRET_KEY;
-	if (turnstileSecret && !dev) {
-		if (!turnstileToken) {
-			return json({ error: 'Complete verification first' }, { status: 403 });
-		}
+	if (turnstileSecret && !dev && turnstileToken) {
 		try {
 			const cfRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 				method: 'POST',

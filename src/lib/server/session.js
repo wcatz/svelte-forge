@@ -1,7 +1,8 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { env } from '$env/dynamic/private';
 
-// Server-side secret — regenerated on restart (invalidates old sessions, which is fine)
-const SECRET = randomBytes(32).toString('hex');
+// Stable secret from env (multi-replica safe), random fallback for dev
+const SECRET = env.SESSION_SECRET || randomBytes(32).toString('hex');
 
 const MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
 
