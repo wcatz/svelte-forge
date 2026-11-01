@@ -1,36 +1,25 @@
 import { randomBytes } from 'node:crypto';
+import { query } from '$lib/server/db.js';
 
 const NONCE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-const CLEANUP_INTERVAL_MS = 60 * 1000; // run cleanup every 60s
-const MAX_NONCES = 10000; // hard cap to prevent memory abuse
-
-/** @type {Map<string, { nonce: string, expires: number }>} */
-const nonceStore = new Map();
-let lastCleanup = Date.now();
-
-function cleanupExpired() {
-	const now = Date.now();
-	if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
-	lastCleanup = now;
-	for (const [key, entry] of nonceStore) {
-		if (entry.expires <= now) nonceStore.delete(key);
-	}
-}
 
 /**
  * Generate and store a nonce for a stake address.
  * One nonce per stake address — requesting a new one invalidates the old one.
- * Returns the nonce hex string, or null if the store is full.
+ * Expired nonces are cleaned up opportunistically.
  */
-export function createNonce(stakeAddress) {
-	cleanupExpired();
-	if (nonceStore.size >= MAX_NONCES) return null;
+export async function createNonce(stakeAddress) {
+	const now = Date.now();
+
+	// Opportunistic cleanup of expired nonces
+	await query('DELETE FROM nonces WHERE expires_at < $1', [now]);
 
 	const nonce = randomBytes(32).toString('hex');
-	nonceStore.set(stakeAddress, {
-		nonce,
-		expires: Date.now() + NONCE_TTL_MS,
-	});
+	await query(
+		`INSERT INTO nonces (stake_address, nonce, expires_at) VALUES ($1, $2, $3)
+		ON CONFLICT (stake_address) DO UPDATE SET nonce = $2, expires_at = $3`,
+		[stakeAddress, nonce, now + NONCE_TTL_MS]
+	);
 	return nonce;
 }
 
@@ -38,11 +27,11 @@ export function createNonce(stakeAddress) {
  * Consume (lookup + delete) a nonce for a stake address.
  * Returns the nonce string if valid, null if expired or missing.
  */
-export function consumeNonce(stakeAddress, nonce) {
-	const entry = nonceStore.get(stakeAddress);
-	if (!entry) return null;
-	nonceStore.delete(stakeAddress);
-	if (Date.now() > entry.expires) return null;
-	if (entry.nonce !== nonce) return null;
-	return entry.nonce;
+export async function consumeNonce(stakeAddress, nonce) {
+	const now = Date.now();
+	const { rows } = await query(
+		'DELETE FROM nonces WHERE stake_address = $1 AND nonce = $2 AND expires_at > $3 RETURNING nonce',
+		[stakeAddress, nonce, now]
+	);
+	return rows[0]?.nonce ?? null;
 }

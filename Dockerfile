@@ -27,13 +27,10 @@ WORKDIR /app
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S sveltekit -u 1001
 
-# Copy built app and production dependencies (includes native better-sqlite3)
+# Copy built app and production dependencies
 COPY --from=builder --chown=sveltekit:nodejs /app/build ./build
 COPY --from=builder --chown=sveltekit:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=sveltekit:nodejs /app/package.json ./
-
-# better-sqlite3 native addon needs libstdc++ at runtime
-RUN apk add --no-cache libstdc++
 
 # Switch to non-root user
 USER sveltekit

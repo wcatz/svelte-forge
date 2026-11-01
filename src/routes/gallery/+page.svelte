@@ -1,3 +1,9 @@
+<svelte:head>
+	<title>Hardware Gallery | Star Forge [OTG] Cardano Stake Pool</title>
+	<meta name="description" content="Photos of the Star Forge off-grid Cardano stake pool hardware — solar panels, LiFePO4 battery banks, ARM64 nodes, Starlink satellite, and mobile RV setup." />
+	<link rel="canonical" href="https://adamantium.online/gallery" />
+</svelte:head>
+
 <script>
 	import { base } from '$app/paths';
 	import HudPanel from '$lib/component/hud-panel.svelte';

@@ -32,7 +32,6 @@ async function proxy(path, request) {
 	const targetUrl = `${baseUrl}/${path}${search}`;
 
 	const headers = { 'Content-Type': 'application/json' };
-
 	const opts = { method: request.method, headers };
 
 	if (request.method !== 'GET' && request.method !== 'HEAD') {

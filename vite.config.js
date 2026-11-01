@@ -12,9 +12,6 @@ const config = {
 			'./libsodium-sumo.mjs': path.resolve('node_modules/libsodium-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs'),
 		}
 	},
-	ssr: {
-		external: ['better-sqlite3'],
-	},
 	server: {
 		allowedHosts: ['silver.boston-woodpecker.ts.net'],
 	},

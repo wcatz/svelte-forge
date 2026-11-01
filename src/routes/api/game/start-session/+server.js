@@ -7,7 +7,11 @@ const MAX_SESSIONS_PER_HOUR = 10;
 const SESSION_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
 export async function POST({ request }) {
-	const { sessionToken } = await request.json();
+	let body;
+	try { body = await request.json(); } catch {
+		return json({ error: 'Invalid JSON' }, { status: 400 });
+	}
+	const { sessionToken } = body;
 
 	const session = validateSessionToken(sessionToken);
 	if (!session) {
@@ -15,16 +19,16 @@ export async function POST({ request }) {
 	}
 
 	// Rate limit: max 10 game sessions per hour per address
-	const recentCount = activeSessionCount(session.stakeAddress, SESSION_WINDOW_MS);
+	const recentCount = await activeSessionCount(session.stakeAddress, SESSION_WINDOW_MS);
 	if (recentCount >= MAX_SESSIONS_PER_HOUR) {
 		return json({ error: 'Too many sessions, try again later' }, { status: 429 });
 	}
 
 	// End all existing active sessions for this address (1 active at a time)
-	endActiveSessions(session.stakeAddress);
+	await endActiveSessions(session.stakeAddress);
 
 	const gameSessionId = randomBytes(16).toString('hex');
-	createGameSession(gameSessionId, session.stakeAddress);
+	await createGameSession(gameSessionId, session.stakeAddress);
 
 	return json({ gameSessionId });
 }
